@@ -4,3 +4,6 @@ doc/
 .vs/
 out/
 scripts/
+
+[Bb]in/
+[Oo]bj/
