@@ -1,14 +1,103 @@
-using System;
+﻿using Orbbec;
+using Samples.Common;
 
-namespace Orbbec
+namespace Samples.QuickStart
 {
     class Program
     {
-        [STAThread]
-        static void Main(string[] args)
+        private static volatile bool _isRunning = true;
+
+        static void Main()
         {
-            var w = new QuickStartWindow();
-            w.ShowDialog();
+            Console.CancelKeyPress += (s, e) =>
+            {
+                e.Cancel = true;
+                _isRunning = false;
+                Console.WriteLine("Exiting...");
+                Environment.Exit(0);
+            };
+
+            Console.Clear();
+            Console.WriteLine("Qucik Start - Starting...");
+
+            using (var renderer = new OrbbecRenderer(1280, 720, "Quick Start"))
+            {
+                int colorTextureIndex = renderer.AddVideoFrame();
+                int depthTextureIndex = renderer.AddVideoFrame();
+                renderer.Closing += (e) =>
+                {
+                    Console.WriteLine("Window closing, stopping...");
+                    _isRunning = false;
+                };
+
+                _ = Task.Run(() => StartStream(renderer, colorTextureIndex, depthTextureIndex));
+
+                renderer.Run();
+            }
+
+            Console.WriteLine("QuickStart sample exited.");
+        }
+
+        private static void StartStream(OrbbecRenderer renderer, int colorTextureIndex, int depthTextureIndex)
+        {
+            try
+            {
+                using var pipeline = new Pipeline();
+                using var config = new Config();
+
+                using var colorProfileList = pipeline.GetStreamProfileList(SensorType.OB_SENSOR_COLOR);
+                using var colorProfile = colorProfileList.GetVideoStreamProfile(0, 0, Format.OB_FORMAT_RGB, 0);
+
+                using var depthProfileList = pipeline.GetStreamProfileList(SensorType.OB_SENSOR_DEPTH);
+                using var depthProfile = depthProfileList.GetVideoStreamProfile(0, 0, Format.OB_FORMAT_Y16, 0);
+
+                Console.WriteLine($"Color Profile: {colorProfile.GetWidth()}x{colorProfile.GetHeight()}@{colorProfile.GetFormat()}");
+                Console.WriteLine($"Depth Profile: {depthProfile.GetWidth()}x{depthProfile.GetHeight()}@{depthProfile.GetFormat()}");
+                config.EnableStream(colorProfile);
+                config.EnableStream(depthProfile);
+                pipeline.Start(config);
+
+                while (_isRunning)
+                {
+                    using var frameSet = pipeline.WaitForFrames(100);
+                    if (frameSet == null) continue;
+
+                    var colorFrame = frameSet?.GetColorFrame();
+                    var depthFrame = frameSet?.GetDepthFrame();
+
+                    if (colorFrame != null)
+                    {
+                        byte[] data = new byte[colorFrame.GetDataSize()];
+                        colorFrame.CopyData(ref data);
+                        renderer.UpdateVideoFrame(colorTextureIndex, (int)colorFrame.GetWidth(),
+                            (int)colorFrame.GetHeight(), colorFrame.GetFormat(), data);
+                        colorFrame.Dispose();
+                    }
+                    else
+                    {
+                        Console.WriteLine("No color frame received - timeout or error");
+                    }
+
+                    if (depthFrame != null)
+                    {
+                        byte[] data = new byte[depthFrame.GetDataSize()];
+                        depthFrame.CopyData(ref data);
+                        renderer.UpdateVideoFrame(depthTextureIndex, (int)depthFrame.GetWidth(),
+                            (int)depthFrame.GetHeight(), depthFrame.GetFormat(), data);
+                        depthFrame.Dispose();
+                    }
+                    else
+                    {
+                        Console.WriteLine("No depth frame received - timeout or error");
+                    }
+                }
+
+                pipeline.Stop();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Start stream error: {ex.Message}");
+            }
         }
     }
 }
