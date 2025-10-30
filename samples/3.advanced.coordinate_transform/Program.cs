@@ -22,7 +22,6 @@ namespace Samples.CoordinateTransform
                 config.SetFrameAggregateOutputMode(FrameAggregateOutputMode.OB_FRAME_AGGREGATE_OUTPUT_ALL_TYPE_FRAME_REQUIRE);
 
                 pipe.Start(config);
-                config.Dispose();
 
                 string? testType = "1";
                 while (_isRunning)
