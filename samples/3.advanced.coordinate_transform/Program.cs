@@ -1,89 +1,71 @@
-using System;
+﻿using Orbbec;
 
-namespace Orbbec
+namespace Samples.CoordinateTransform
 {
     class Program
     {
-        [STAThread]
-        static void Main(string[] args)
-        {
-            Program program = new Program();
-            program.Run();
-        }
+        private static bool _isRunning = true;
 
-        public void Run()
+        static void Main()
         {
-            Pipeline pipeline = null;
+            Console.Clear();
+
+            Pipeline? pipe = null;
             try
             {
-                Context.SetLoggerToFile(LogSeverity.OB_LOG_SEVERITY_DEBUG, "C:\\Log\\OrbbecSDK");
-                Config config = new Config();
+                pipe = new Pipeline();
+                using var config = new Config();
+
                 config.EnableVideoStream(StreamType.OB_STREAM_DEPTH, 0, 0, 0, Format.OB_FORMAT_Y16);
                 config.EnableVideoStream(StreamType.OB_STREAM_COLOR, 0, 0, 0, Format.OB_FORMAT_RGB);
 
                 config.SetFrameAggregateOutputMode(FrameAggregateOutputMode.OB_FRAME_AGGREGATE_OUTPUT_ALL_TYPE_FRAME_REQUIRE);
 
-                pipeline = new Pipeline();
+                pipe.Start(config);
+                config.Dispose();
 
-                pipeline.Start(config);
-
-                string testType = "1";
-
-                while (true)
+                string? testType = "1";
+                while (_isRunning)
                 {
                     PrintUsage();
                     testType = InputWatcher();
 
-                    using (var frames = pipeline.WaitForFrames(100))
-                    {
-                        if (frames == null)
-                        {
-                            continue;
-                        }
+                    using var frameSet = pipe.WaitForFrames(100);
+                    if (frameSet == null)
+                        continue;
 
-                        var colorFrame = frames.GetColorFrame();
-                        var depthFrame = frames.GetDepthFrame();
+                    using var colorFrame = frameSet.GetColorFrame();
+                    using var depthFrame = frameSet.GetDepthFrame();
 
-                        if (testType == "1")
-                        {
-                            Transformation2dto2d(colorFrame, depthFrame);
-                        }
-                        else if (testType == "2")
-                        {
-                            Transformation2dto3d(colorFrame, depthFrame);
-                        }
-                        else if (testType == "3")
-                        {
-                            Transformation3dto3d(colorFrame, depthFrame);
-                        }
-                        else if (testType == "4")
-                        {
-                            Transformation3dto2d(colorFrame, depthFrame);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Invalid command");
-                        }
-                    }
+                    if (colorFrame == null || depthFrame == null)
+                        continue;
+
+                    if (testType == "1")
+                        Transformation2dto2d(colorFrame, depthFrame);
+                    else if (testType == "2")
+                        Transformation2dto3d(colorFrame, depthFrame);
+                    else if (testType == "3")
+                        Transformation3dto3d(colorFrame, depthFrame);
+                    else if (testType == "4")
+                        Transformation3dto2d(colorFrame, depthFrame);
+                    else
+                        Console.WriteLine("Invalid command");
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.Error.WriteLine(e.Message);
-                Environment.Exit(-1);
+                Console.WriteLine($"Unexpected error: {ex.Message}");
             }
             finally
             {
-                if (pipeline != null)
-                {
-                    pipeline.Stop();
-                    pipeline.Dispose();
-                }
+                pipe?.Stop();
+                pipe?.Dispose();
+                Environment.Exit(0);
             }
         }
 
         // test the transformation from one 2D coordinate system to another
-        private void Transformation2dto2d(ColorFrame colorFrame, DepthFrame depthFrame)
+        private static void Transformation2dto2d(ColorFrame colorFrame, DepthFrame depthFrame)
         {
             // Get the width and height of the color and depth frames
             uint colorFrameWidth = colorFrame.GetWidth();
@@ -92,17 +74,17 @@ namespace Orbbec
             uint depthFrameHeight = depthFrame.GetHeight();
 
             // Get the stream profiles for the color and depth frames
-            StreamProfile colorProfile = colorFrame.GetStreamProfile();
-            StreamProfile depthProfile = depthFrame.GetStreamProfile();
-            Extrinsic extrinsicD2C = depthProfile.GetExtrinsicTo(colorProfile);
+            var colorProfile = colorFrame.GetStreamProfile();
+            var depthProfile = depthFrame.GetStreamProfile();
+            var extrinsicD2C = depthProfile.GetExtrinsicTo(colorProfile);
 
             // Get the intrinsic and distortion parameters for the color and depth streams
-            VideoStreamProfile colorVideoStreamProfile = colorProfile.As<VideoStreamProfile>();
-            CameraIntrinsic colorIntrinsic = colorVideoStreamProfile.GetIntrinsic();
-            CameraDistortion colorDistortion = colorVideoStreamProfile.GetDistortion();
-            VideoStreamProfile depthVideoStreamProfile = depthProfile.As<VideoStreamProfile>();
-            CameraIntrinsic depthIntrinsic = depthVideoStreamProfile.GetIntrinsic();
-            CameraDistortion depthDistortion = depthVideoStreamProfile.GetDistortion();
+            var colorVideoStreamProfile = colorProfile.As<VideoStreamProfile>();
+            var colorIntrinsic = colorVideoStreamProfile.GetIntrinsic();
+            var colorDistortion = colorVideoStreamProfile.GetDistortion();
+            var depthVideoStreamProfile = depthProfile.As<VideoStreamProfile>();
+            var depthIntrinsic = depthVideoStreamProfile.GetIntrinsic();
+            var depthDistortion = depthVideoStreamProfile.GetDistortion();
             // Access the depth data from the frame
             byte[] pDepthData = new byte[depthFrame.GetDataSize()];
             depthFrame.CopyData(ref pDepthData);
@@ -114,8 +96,8 @@ namespace Orbbec
             {
                 for (uint j = depthFrameWidth / 2; j < (depthFrameWidth / 2 + convertAreaWidth); j++)
                 {
-                    Point2f sourcePixel = new Point2f { x = j, y = i };
-                    Point2f targetPixel = new Point2f();
+                    var sourcePixel = new Point2f { x = j, y = i };
+                    var targetPixel = new Point2f();
                     float depthValue = pDepthData[i * depthFrameWidth + j];
                     if (depthValue == 0)
                     {
@@ -146,19 +128,19 @@ namespace Orbbec
         }
 
         // test the transformation from 2D to 3D coordinates
-        void Transformation2dto3d(ColorFrame colorFrame, DepthFrame depthFrame)
+        private static void Transformation2dto3d(ColorFrame colorFrame, DepthFrame depthFrame)
         {
             // Get the width and height of the color and depth frames
             uint depthFrameWidth = depthFrame.GetWidth();
             uint depthFrameHeight = depthFrame.GetHeight();
 
             // Get the stream profiles for the color and depth frames
-            StreamProfile colorProfile = colorFrame.GetStreamProfile();
-            StreamProfile depthProfile = depthFrame.GetStreamProfile();
-            Extrinsic extrinsicD2C = depthProfile.GetExtrinsicTo(colorProfile);
+            var colorProfile = colorFrame.GetStreamProfile();
+            var depthProfile = depthFrame.GetStreamProfile();
+            var extrinsicD2C = depthProfile.GetExtrinsicTo(colorProfile);
 
             // Get the intrinsic and distortion parameters for the color and depth streams
-            CameraIntrinsic depthIntrinsic = depthProfile.As<VideoStreamProfile>().GetIntrinsic();
+            var depthIntrinsic = depthProfile.As<VideoStreamProfile>().GetIntrinsic();
             // Access the depth data from the frame
             byte[] pDepthData = new byte[depthFrame.GetDataSize()];
             depthFrame.CopyData(ref pDepthData);
@@ -171,8 +153,8 @@ namespace Orbbec
                 for (uint j = depthFrameWidth / 2; j < (depthFrameWidth / 2 + convertAreaWidth); j++)
                 {
                     // Get the coordinates of the current pixel
-                    Point2f sourcePixel = new Point2f { x = j, y = i };
-                    Point3f targetPixel = new Point3f();
+                    var sourcePixel = new Point2f { x = j, y = i };
+                    var targetPixel = new Point3f();
                     // Get the depth value of the current pixel
                     float depthValue = pDepthData[i * depthFrameWidth + j];
                     if (depthValue == 0)
@@ -194,20 +176,20 @@ namespace Orbbec
         }
 
         // test the transformation from 3D coordinates to 3D coordinates
-        void Transformation3dto3d(ColorFrame colorFrame, DepthFrame depthFrame)
+        private static void Transformation3dto3d(ColorFrame colorFrame, DepthFrame depthFrame)
         {
             // Get the width and height of the color and depth frames
             uint depthFrameWidth = depthFrame.GetWidth();
             uint depthFrameHeight = depthFrame.GetHeight();
 
             // Get the stream profiles for the color and depth frames
-            StreamProfile colorProfile = colorFrame.GetStreamProfile();
-            StreamProfile depthProfile = depthFrame.GetStreamProfile();
-            Extrinsic extrinsicC2D = colorProfile.GetExtrinsicTo(depthProfile);
-            Extrinsic extrinsicD2C = depthProfile.GetExtrinsicTo(colorProfile);
+            var colorProfile = colorFrame.GetStreamProfile();
+            var depthProfile = depthFrame.GetStreamProfile();
+            var extrinsicC2D = colorProfile.GetExtrinsicTo(depthProfile);
+            var extrinsicD2C = depthProfile.GetExtrinsicTo(colorProfile);
 
             // Get the intrinsic and distortion parameters for the color and depth streams
-            CameraIntrinsic depthIntrinsic = depthProfile.As<VideoStreamProfile>().GetIntrinsic();
+            var depthIntrinsic = depthProfile.As<VideoStreamProfile>().GetIntrinsic();
             // Access the depth data from the frame
             byte[] pDepthData = new byte[depthFrame.GetDataSize()];
             depthFrame.CopyData(ref pDepthData);
@@ -220,9 +202,9 @@ namespace Orbbec
                 for (uint j = depthFrameWidth / 2; j < (depthFrameWidth / 2 + convertAreaWidth); j++)
                 {
                     // Get the coordinates of the current pixel
-                    Point2f sourcePixel = new Point2f { x = j, y = i };
-                    Point3f tmpTargetPixel = new Point3f();
-                    Point3f targetPixel = new Point3f();
+                    var sourcePixel = new Point2f { x = j, y = i };
+                    var tmpTargetPixel = new Point3f();
+                    var targetPixel = new Point3f();
                     // Get the depth value of the current pixel
                     float depthValue = pDepthData[i * depthFrameWidth + j];
                     if (depthValue == 0)
@@ -251,22 +233,22 @@ namespace Orbbec
         }
 
         // test the transformation from 3D coordinates back to 2D coordinates
-        void Transformation3dto2d(ColorFrame colorFrame, DepthFrame depthFrame)
+        private static void Transformation3dto2d(ColorFrame colorFrame, DepthFrame depthFrame)
         {
             // Get the width and height of the color and depth frames
             uint depthFrameWidth = depthFrame.GetWidth();
             uint depthFrameHeight = depthFrame.GetHeight();
 
             // Get the stream profiles for the color and depth frames
-            StreamProfile colorProfile = colorFrame.GetStreamProfile();
-            StreamProfile depthProfile = depthFrame.GetStreamProfile();
-            Extrinsic extrinsicC2D = colorProfile.GetExtrinsicTo(depthProfile);
-            Extrinsic extrinsicD2C = depthProfile.GetExtrinsicTo(colorProfile);
+            var colorProfile = colorFrame.GetStreamProfile();
+            var depthProfile = depthFrame.GetStreamProfile();
+            var extrinsicC2D = colorProfile.GetExtrinsicTo(depthProfile);
+            var extrinsicD2C = depthProfile.GetExtrinsicTo(colorProfile);
 
             // Get the intrinsic and distortion parameters for the color and depth streams
-            VideoStreamProfile depthVideoStreamProfile = depthProfile.As<VideoStreamProfile>();
-            CameraIntrinsic depthIntrinsic = depthVideoStreamProfile.GetIntrinsic();
-            CameraDistortion depthDistortion = depthVideoStreamProfile.GetDistortion();
+            var depthVideoStreamProfile = depthProfile.As<VideoStreamProfile>();
+            var depthIntrinsic = depthVideoStreamProfile.GetIntrinsic();
+            var depthDistortion = depthVideoStreamProfile.GetDistortion();
             // Access the depth data from the frame
             byte[] pDepthData = new byte[depthFrame.GetDataSize()];
             depthFrame.CopyData(ref pDepthData);
@@ -279,9 +261,9 @@ namespace Orbbec
                 for (uint j = depthFrameWidth / 2; j < (depthFrameWidth / 2 + convertAreaWidth); j++)
                 {
                     // Get the coordinates of the current pixel
-                    Point2f sourcePixel = new Point2f { x = (float)j, y = (float)i };
-                    Point3f tmpTargetPixel = new Point3f();
-                    Point2f targetPixel = new Point2f();
+                    var sourcePixel = new Point2f { x = (float)j, y = (float)i };
+                    var tmpTargetPixel = new Point3f();
+                    var targetPixel = new Point2f();
                     // Get the depth value of the current pixel
                     float depthValue = (float)pDepthData[i * depthFrameWidth + j];
                     if (depthValue == 0)
@@ -310,49 +292,50 @@ namespace Orbbec
             }
         }
 
-
-        private void PrintRuslt(string msg, Point2f sourcePixel, Point2f targetPixel)
+        private static void PrintRuslt(string msg, Point2f sourcePixel, Point2f targetPixel)
         {
             Console.WriteLine($"{msg}: ({sourcePixel.x}, {sourcePixel.y}) -> ({targetPixel.x}, {targetPixel.y})");
         }
 
-        private void PrintRuslt(string msg, Point2f sourcePixel, Point3f targetPixel, float depthValue)
+        private static void PrintRuslt(string msg, Point2f sourcePixel, Point3f targetPixel, float depthValue)
         {
             Console.WriteLine($"{msg}: depth {depthValue} ({sourcePixel.x}, {sourcePixel.y}) -> ({targetPixel.x}, {targetPixel.y}, {targetPixel.z})");
         }
 
-        private void PrintRuslt(string msg, Point3f sourcePixel, Point2f targetPixel)
+        private static void PrintRuslt(string msg, Point3f sourcePixel, Point2f targetPixel)
         {
             Console.WriteLine($"{msg}: ({sourcePixel.x}, {sourcePixel.y}, {sourcePixel.z}) -> ({targetPixel.x}, {targetPixel.y})");
         }
 
-        private void PrintRuslt(string msg, Point3f sourcePixel, Point3f targetPixel)
+        private static void PrintRuslt(string msg, Point3f sourcePixel, Point3f targetPixel)
         {
             Console.WriteLine($"{msg}: ({sourcePixel.x}, {sourcePixel.y}, {sourcePixel.z}) -> ({targetPixel.x}, {targetPixel.y}, {targetPixel.z})");
         }
 
-        private string InputWatcher()
+        private static string? InputWatcher()
         {
             while (true)
             {
                 Console.Write("\nInput command:  ");
-                string cmd = Console.ReadLine();
+                var cmd = Console.ReadLine();
                 if (cmd == "quit" || cmd == "q")
                 {
-                    Environment.Exit(0);
+                    _isRunning = false;
+                    Console.WriteLine("Exiting...");
                 }
                 return cmd;
             }
         }
 
-        private void PrintUsage()
+        private static void PrintUsage()
         {
-            Console.WriteLine("\nAvailable commands:");
-            Console.WriteLine("1: Transformation 2D to 2D");
-            Console.WriteLine("2: Transformation 2D to 3D");
-            Console.WriteLine("3: Transformation 3D to 3D");
-            Console.WriteLine("4: Transformation 3D to 2D");
-            Console.WriteLine("q or quit: Exit");
+            Console.WriteLine("Support commands:");
+            Console.WriteLine("    1 - transformation 2d to 2d");
+            Console.WriteLine("    2 - transformation 2d to 3d");
+            Console.WriteLine("    3 - transformation 3d to 3d");
+            Console.WriteLine("    4 - transformation 3d to 2d");
+            Console.WriteLine(new string('-', 33));
+            Console.WriteLine("    quit / q- quit application");
         }
     }
 }

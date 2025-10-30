@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.FirmwareUpdate", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.HotPlugin", "samples\2.device.hot_plugin\Samples.HotPlugin.csproj", "{6B0B7A52-2D11-4194-8158-29CF027BC7A4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.CoordinateTransform", "samples\3.advanced.coordinate_transform\Samples.CoordinateTransform.csproj", "{39BA6E6A-2B78-4679-9041-7A0EC4BBAB85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,10 @@ Global
 		{6B0B7A52-2D11-4194-8158-29CF027BC7A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B0B7A52-2D11-4194-8158-29CF027BC7A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B0B7A52-2D11-4194-8158-29CF027BC7A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39BA6E6A-2B78-4679-9041-7A0EC4BBAB85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39BA6E6A-2B78-4679-9041-7A0EC4BBAB85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39BA6E6A-2B78-4679-9041-7A0EC4BBAB85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39BA6E6A-2B78-4679-9041-7A0EC4BBAB85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F6C863DB-2486-47DC-A41B-B1DB089C1DCA} = {742E2BC6-D5BA-486D-9E09-D8B295663873}
@@ -85,5 +91,6 @@ Global
 		{3E217805-EADC-4A35-8FC0-AB2AAB744707} = {742E2BC6-D5BA-486D-9E09-D8B295663873}
 		{6F3A5B38-A0FB-4BDF-837C-9F9D111C287B} = {742E2BC6-D5BA-486D-9E09-D8B295663873}
 		{6B0B7A52-2D11-4194-8158-29CF027BC7A4} = {742E2BC6-D5BA-486D-9E09-D8B295663873}
+		{39BA6E6A-2B78-4679-9041-7A0EC4BBAB85} = {742E2BC6-D5BA-486D-9E09-D8B295663873}
 	EndGlobalSection
 EndGlobal
