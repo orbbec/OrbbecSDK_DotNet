@@ -38,7 +38,7 @@ namespace Samples.HWD2CAlign
                         _isRunning = false;
                     };
 
-                    _ = Task.Run(() => HandleKeyPress(pipe, config));
+                    _ = Task.Run(async () => await HandleKeyPress(pipe, config));
                     _ = Task.Run(() => StartStream(pipe, renderer, d2cTextureIndex));
 
                     renderer.Run();

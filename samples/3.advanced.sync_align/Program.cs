@@ -41,7 +41,7 @@ namespace Samples.SyncAlign
                         _isRunning = false;
                     };
 
-                    _ = Task.Run(() => HandleKeyPress(pipe, config));
+                    _ = Task.Run(async () => await HandleKeyPress(pipe));
                     _ = Task.Run(() => StartStream(pipe, d2cAlign, c2dAlign, renderer, syncAlignTextureIndex));
 
                     renderer.Run();
@@ -55,7 +55,7 @@ namespace Samples.SyncAlign
             Console.WriteLine("Sync Align sample exited.");
         }
 
-        private static async Task HandleKeyPress(Pipeline pipeline, Config config)
+        private static async Task HandleKeyPress(Pipeline pipeline)
         {
             Console.WriteLine("'T': Switch Align Mode, 'F': Toggle Synchronization, '+/-': Adjust Transparency");
             while (_isRunning)
