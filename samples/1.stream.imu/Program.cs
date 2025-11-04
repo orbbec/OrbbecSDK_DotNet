@@ -1,14 +1,99 @@
-using System;
+﻿using System.Runtime.InteropServices;
+using Orbbec;
 
-namespace Orbbec
+class Program
 {
-    class Program
+    private static bool _isRunning = true;
+
+    static void Main(string[] args)
     {
-        [STAThread]
-        static void Main(string[] args)
+        Console.CancelKeyPress += (s, e) =>
         {
-            var w = new ImuWindow();
-            w.ShowDialog();
+            e.Cancel = true;
+            _isRunning = false;
+        };
+
+        Console.Clear();
+        Console.WriteLine("IMU - Starting...");
+
+        Pipeline? pipe = null;
+        try
+        {
+            pipe = new Pipeline();
+
+            using var config = new Config();
+            config.EnableAccelStream();
+            config.EnableGyroStream();
+            config.SetFrameAggregateOutputMode(FrameAggregateOutputMode.OB_FRAME_AGGREGATE_OUTPUT_ALL_TYPE_FRAME_REQUIRE);
+
+            pipe.Start(config);
+
+            while (_isRunning)
+            {
+                using var frameSet = pipe.WaitForFrames(100);
+                if (frameSet == null) continue;
+
+                using var accelFrameRaw = frameSet.GetFrame(FrameType.OB_FRAME_ACCEL);
+                using var accelFrame = accelFrameRaw.As<AccelFrame>();
+                var accelIndex = accelFrame.GetIndex();
+                var accelTimeStampUs = accelFrame.GetTimeStampUs();
+                var accelTemperature = accelFrame.GetTemperature();
+                var accelType = accelFrame.GetFrameType();
+                if (accelIndex % 50 == 0)
+                {
+                    // print information every  50 frames.
+                    // var accelValue = accelFrame.GetAccelValue();
+                    // var obFloat3d = new Float3D { x = accelValue.x, y = accelValue.y, z = accelValue.z };
+                    var dataPtr = accelFrame.GetDataPtr();
+                    if (dataPtr == IntPtr.Zero)
+                        continue;
+                    var obFloat3d = Marshal.PtrToStructure<Float3D>(dataPtr);
+                    PrintImuValue(obFloat3d, accelIndex, accelTimeStampUs, accelTemperature, accelType, "m/s^2");
+                }
+
+                using var gyroFrameRaw = frameSet.GetFrame(FrameType.OB_FRAME_GYRO);
+                using var gyroFrame = gyroFrameRaw.As<GyroFrame>();
+                var gyroIndex = gyroFrame.GetIndex();
+                var gyroTimeStampUs = gyroFrame.GetTimeStampUs();
+                var gyroTemperature = gyroFrame.GetTemperature();
+                var gyroType = gyroFrame.GetFrameType();
+                if (gyroIndex % 50 == 0)
+                {
+                    // print information every 50 frames.
+                    // var gyroValue = gyroFrame.GetGyroValue();
+                    // var obFloat3d = new Float3D { x = gyroValue.x, y = gyroValue.y, z = gyroValue.z };
+                    var dataPtr = gyroFrame.GetDataPtr();
+                    if (dataPtr == IntPtr.Zero)
+                        continue;
+                    var obFloat3d = Marshal.PtrToStructure<Float3D>(dataPtr);
+                    PrintImuValue(obFloat3d, gyroIndex, gyroTimeStampUs, gyroTemperature, gyroType, "rad/s");
+                }
+            }
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+        }
+        finally
+        {
+            pipe?.Stop();
+            Console.WriteLine("IMU sample exited.");
+            Environment.Exit(0);
+        }
+    }
+
+    private static void PrintImuValue(Float3D obFloat3d, ulong index, ulong timeStampUs, float temperature, FrameType type, string unit)
+    {
+        Console.WriteLine("frame index: " + index);
+        string typeStr = type.ToString();
+        Console.WriteLine($"{typeStr} Frame: ");
+        Console.WriteLine("{");
+        Console.WriteLine($"  tsp = {timeStampUs}");
+        Console.WriteLine($"  temperature = {temperature}");
+        Console.WriteLine($"  {typeStr}.x = {obFloat3d.x}{unit}");
+        Console.WriteLine($"  {typeStr}.y = {obFloat3d.y}{unit}");
+        Console.WriteLine($"  {typeStr}.z = {obFloat3d.z}{unit}");
+        Console.WriteLine("}");
+        Console.WriteLine();
     }
 }
