@@ -12,6 +12,14 @@ namespace Samples.HDR
             Console.Clear();
             Console.WriteLine("HDR - Starting...");
 
+            using var renderer = new OrbbecRenderer(title: "HDR");
+
+            Console.CancelKeyPress += (s, e) =>
+            {
+                e.Cancel = true;
+                renderer.Close();
+            };
+
             Pipeline? pipe = null;
             Device? device = null;
             try
@@ -47,33 +55,33 @@ namespace Samples.HDR
 
                 pipe.Start(config);
 
-                using (var renderer = new OrbbecRenderer(1280, 720, "HDR"))
+                for (int i = 0; i < 7; ++i)
                 {
-                    for (int i = 0; i < 7; ++i)
-                    {
-                        renderer.AddVideoFrame();
-                    }
-                    renderer.Closing += (e) =>
-                    {
-                        Console.WriteLine("Window closing, stopping...");
-                        _isRunning = false;
-                    };
-
-                    _ = Task.Run(() => StartStream(pipe, renderer, hdrMerge));
-
-                    renderer.Run();
+                    renderer.AddVideoFrame();
                 }
+                renderer.Closing += (e) =>
+                {
+                    Console.WriteLine("Window closing, stopping...");
+                    _isRunning = false;
+                };
+
+                _ = Task.Run(() => StartStream(pipe, renderer, hdrMerge));
+
+                renderer.Run();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
             }
             finally
             {
                 var hdrConfig = new HdrConfig { enable = 0 };
                 device?.SetStructuredData(PropertyId.OB_STRUCT_DEPTH_HDR_CONFIG, hdrConfig);
                 pipe?.Stop();
-                pipe?.Dispose();
                 device?.Dispose();
+                Console.WriteLine("HDR sample exited.");
+                Environment.Exit(0);
             }
-
-            Console.WriteLine("HDR sample exited.");
         }
 
         private static void StartStream(Pipeline pipeline, OrbbecRenderer renderer, HdrMerge hdrMerge)
