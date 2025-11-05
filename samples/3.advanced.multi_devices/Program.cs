@@ -8,10 +8,18 @@ namespace Samples.MultiDevices
         private static volatile bool _isRunning = true;
         private static readonly Dictionary<uint, Pipeline> _pipes = [];
 
-        static void Main()
+        static void Main(string[] args)
         {
             Console.Clear();
             Console.WriteLine("Multi Devices - Starting...");
+
+            using var renderer = new OrbbecRenderer(title: "Multi Devices");
+
+            Console.CancelKeyPress += (s, e) =>
+            {
+                e.Cancel = true;
+                renderer.Close();
+            };
 
             Context? ctx = null;
             try
@@ -36,22 +44,23 @@ namespace Samples.MultiDevices
                     pipe.Start(config);
                 }
 
-                using (var renderer = new OrbbecRenderer(1280, 720, "Multi Devices"))
+                for (uint i = 0; i < count * 2; ++i)
                 {
-                    for (uint i = 0; i < count * 2; ++i)
-                    {
-                        renderer.AddVideoFrame();
-                    }
-                    renderer.Closing += (e) =>
-                    {
-                        Console.WriteLine("Window closing, stopping...");
-                        _isRunning = false;
-                    };
-
-                    _ = Task.Run(() => StartStream(renderer));
-
-                    renderer.Run();
+                    renderer.AddVideoFrame();
                 }
+                renderer.Closing += (e) =>
+                {
+                    Console.WriteLine("Window closing, stopping...");
+                    _isRunning = false;
+                };
+
+                _ = Task.Run(() => StartStream(renderer));
+
+                renderer.Run();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
             }
             finally
             {
@@ -60,9 +69,9 @@ namespace Samples.MultiDevices
                     pipe.Stop();
                 }
                 ctx?.Dispose();
+                Console.WriteLine("Multi Devices sample exited.");
+                Environment.Exit(0);
             }
-
-            Console.WriteLine("Multi Devices sample exited.");
         }
 
         private static void StartStream(OrbbecRenderer renderer)
