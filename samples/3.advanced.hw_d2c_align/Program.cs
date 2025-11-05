@@ -9,10 +9,18 @@ namespace Samples.HWD2CAlign
         private static volatile bool _enableAlignMode = true;
         private static volatile float _alpha = 0.6f;
 
-        static void Main()
+        static void Main(string[] args)
         {
             Console.Clear();
             Console.WriteLine("HW D2C Align - Starting...");
+
+            using var renderer = new OrbbecRenderer(title: "HW D2C Align");
+
+            Console.CancelKeyPress += (s, e) =>
+            {
+                e.Cancel = true;
+                renderer.Close();
+            };
 
             Pipeline? pipe = null;
             try
@@ -29,27 +37,28 @@ namespace Samples.HWD2CAlign
 
                 pipe.Start(config);
 
-                using (var renderer = new OrbbecRenderer(1280, 720, "HW D2C Align"))
+                int d2cTextureIndex = renderer.AddVideoFrame();
+                renderer.Closing += (e) =>
                 {
-                    int d2cTextureIndex = renderer.AddVideoFrame();
-                    renderer.Closing += (e) =>
-                    {
-                        Console.WriteLine("Window closing, stopping...");
-                        _isRunning = false;
-                    };
+                    Console.WriteLine("Window closing, stopping...");
+                    _isRunning = false;
+                };
 
-                    _ = Task.Run(async () => await HandleKeyPress(pipe, config));
-                    _ = Task.Run(() => StartStream(pipe, renderer, d2cTextureIndex));
+                _ = Task.Run(async () => await HandleKeyPress(pipe, config));
+                _ = Task.Run(() => StartStream(pipe, renderer, d2cTextureIndex));
 
-                    renderer.Run();
-                }
+                renderer.Run();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
             }
             finally
             {
                 pipe?.Stop();
+                Console.WriteLine("HW D2C Align sample exited.");
+                Environment.Exit(0);
             }
-
-            Console.WriteLine("HW D2C Align sample exited.");
         }
 
         private static Config? CreateHwD2CAlignConfig(Pipeline pipe)
@@ -103,8 +112,8 @@ namespace Samples.HWD2CAlign
             int count = (int)hwD2CSupportedDepthStreamProfiles.ProfileCount();
             for (int i = 0; i < count; i++)
             {
-                var sp = hwD2CSupportedDepthStreamProfiles.GetProfile(i);
-                var vsp = sp.As<VideoStreamProfile>();
+                using var sp = hwD2CSupportedDepthStreamProfiles.GetProfile(i);
+                using var vsp = sp.As<VideoStreamProfile>();
                 if (vsp.GetWidth() == depthVsp.GetWidth() && vsp.GetHeight() == depthVsp.GetHeight() && vsp.GetFormat() == depthVsp.GetFormat()
                     && vsp.GetFPS() == depthVsp.GetFPS())
                 {

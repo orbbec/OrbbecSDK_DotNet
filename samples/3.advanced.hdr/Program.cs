@@ -7,7 +7,7 @@ namespace Samples.HDR
     {
         private static volatile bool _isRunning = true;
 
-        static void Main()
+        static void Main(string[] args)
         {
             Console.Clear();
             Console.WriteLine("HDR - Starting...");
