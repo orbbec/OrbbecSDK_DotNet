@@ -7,52 +7,61 @@ namespace Samples.Infrared
     {
         private static volatile bool _isRunning = true;
 
-        static void Main()
+        static void Main(string[] args)
         {
-            Console.CancelKeyPress += (s, e) =>
-            {
-                e.Cancel = true;
-                _isRunning = false;
-                Console.WriteLine("Exiting...");
-                Environment.Exit(0);
-            };
-
             Console.Clear();
             Console.WriteLine("Infrared - Starting...");
 
-            var pipeline = new Pipeline();
-            var device = pipeline.GetDevice();
+            using var renderer = new OrbbecRenderer(title: "Infrared");
 
+            Console.CancelKeyPress += (s, e) =>
+            {
+                e.Cancel = true;
+                renderer.Close();
+            };
+
+            Pipeline? pipe = null;
+            Device? device = null;
             try
             {
-                using (var renderer = new OrbbecRenderer(1280, 720, "Infrared"))
+                pipe = new Pipeline();
+                device = pipe.GetDevice();
+                var availableIrTypes = GetAvailableIrTypes(device);
+                using var config = new Config();
+
+                foreach (var sensorType in availableIrTypes)
                 {
-                    var availableIrTypes = GetAvailableIrTypes(device);
-                    var textureIndices = new Dictionary<SensorType, int>();
-                    foreach (var sensorType in availableIrTypes)
-                    {
-                        int textureIndex = renderer.AddVideoFrame();
-                        textureIndices[sensorType] = textureIndex;
-                    }
-                    renderer.Closing += (e) =>
-                    {
-                        Console.WriteLine("Window closing, stopping...");
-                        _isRunning = false;
-                    };
-
-                    _ = Task.Run(() => StartStream(pipeline, renderer, textureIndices));
-
-                    renderer.Run();
+                    config.EnableVideoStream(sensorType, 0, 0, 0, Format.OB_FORMAT_Y8);
+                    Console.WriteLine($"Enabled stream for: {sensorType}");
                 }
+                pipe.Start(config);
+
+                var textureIndices = new Dictionary<SensorType, int>();
+                foreach (var sensorType in availableIrTypes)
+                {
+                    textureIndices[sensorType] = renderer.AddVideoFrame();
+                }
+                renderer.Closing += (e) =>
+                {
+                    Console.WriteLine("Window closing, stopping...");
+                    _isRunning = false;
+                };
+
+                _ = Task.Run(() => StartStream(pipe, renderer, textureIndices));
+
+                renderer.Run();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
             }
             finally
             {
-                pipeline?.Stop();
-                pipeline?.Dispose();
+                pipe?.Stop();
                 device?.Dispose();
+                Console.WriteLine("Infrared sample exited.");
+                Environment.Exit(0);
             }
-
-            Console.WriteLine("Infrared sample exited.");
         }
 
         private static List<SensorType> GetAvailableIrTypes(Device device)
@@ -86,16 +95,6 @@ namespace Samples.Infrared
         {
             try
             {
-                using var config = new Config();
-
-                foreach (var sensorType in textureIndices.Keys)
-                {
-                    config.EnableVideoStream(sensorType, 0, 0, 0, Format.OB_FORMAT_Y8);
-                    Console.WriteLine($"Enabled stream for: {sensorType}");
-                }
-
-                pipeline.Start(config);
-
                 while (_isRunning)
                 {
                     using var frameSet = pipeline.WaitForFrames(100);
@@ -111,16 +110,14 @@ namespace Samples.Infrared
                             _ => FrameType.OB_FRAME_IR
                         };
 
-                        var irFrame = frameSet?.GetFrame(frameType);
+                        using var frame = frameSet.GetFrame(frameType);
 
-                        if (irFrame != null)
+                        if (frame != null)
                         {
-                            var vf = irFrame.As<VideoFrame>();
-                            byte[] data = new byte[vf.GetDataSize()];
-                            vf.CopyData(ref data);
-                            renderer.UpdateVideoFrame(textureIndex, (int)vf.GetWidth(), (int)vf.GetHeight(), vf.GetFormat(), data);
-                            vf.Dispose();
-                            irFrame.Dispose();
+                            using var irFrame = frame.As<IRFrame>();
+                            byte[] data = new byte[irFrame.GetDataSize()];
+                            irFrame.CopyData(ref data);
+                            renderer.UpdateVideoFrame(textureIndex, (int)irFrame.GetWidth(), (int)irFrame.GetHeight(), irFrame.GetFormat(), data);
                         }
                     }
                 }
