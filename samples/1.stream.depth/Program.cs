@@ -7,21 +7,32 @@ namespace Samples.Depth
     {
         private static volatile bool _isRunning = true;
 
-        static void Main()
+        static void Main(string[] args)
         {
-            Console.CancelKeyPress += (s, e) =>
-            {
-                e.Cancel = true;
-                _isRunning = false;
-                Console.WriteLine("Exiting...");
-                Environment.Exit(0);
-            };
-
             Console.Clear();
             Console.WriteLine("Depth - Starting...");
 
-            using (var renderer = new OrbbecRenderer(1280, 720, "Depth"))
+            using var renderer = new OrbbecRenderer(title: "Depth");
+
+            Console.CancelKeyPress += (s, e) =>
             {
+                e.Cancel = true;
+                renderer.Close();
+            };
+
+            Pipeline? pipe = null;
+            try
+            {
+                pipe = new Pipeline();
+                using var config = new Config();
+
+                using var depthProfileList = pipe.GetStreamProfileList(SensorType.OB_SENSOR_DEPTH);
+                using var depthProfile = depthProfileList.GetVideoStreamProfile(0, 0, Format.OB_FORMAT_Y16, 0);
+                Console.WriteLine($"Depth Profile: {depthProfile.GetWidth()}x{depthProfile.GetHeight()}@{depthProfile.GetFormat()}");
+
+                config.EnableStream(depthProfile);
+                pipe.Start(config);
+
                 int depthTextureIndex = renderer.AddVideoFrame();
                 renderer.Closing += (e) =>
                 {
@@ -29,34 +40,32 @@ namespace Samples.Depth
                     _isRunning = false;
                 };
 
-                _ = Task.Run(() => StartStream(renderer, depthTextureIndex));
+                _ = Task.Run(() => StartStream(pipe, renderer, depthTextureIndex));
 
                 renderer.Run();
             }
-
-            Console.WriteLine("Depth sample exited.");
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
+            }
+            finally
+            {
+                pipe?.Stop();
+                Console.WriteLine("Depth sample exited.");
+                Environment.Exit(0);
+            }
         }
 
-        private static void StartStream(OrbbecRenderer renderer, int depthTextureIndex)
+        private static void StartStream(Pipeline pipeline, OrbbecRenderer renderer, int depthTextureIndex)
         {
             try
             {
-                using var pipeline = new Pipeline();
-                using var config = new Config();
-
-                using var depthProfileList = pipeline.GetStreamProfileList(SensorType.OB_SENSOR_DEPTH);
-                using var depthProfile = depthProfileList.GetVideoStreamProfile(0, 0, Format.OB_FORMAT_Y16, 0);
-
-                Console.WriteLine($"Depth Profile: {depthProfile.GetWidth()}x{depthProfile.GetHeight()}@{depthProfile.GetFormat()}");
-                config.EnableStream(depthProfile);
-                pipeline.Start(config);
-
                 while (_isRunning)
                 {
                     using var frameSet = pipeline.WaitForFrames(100);
                     if (frameSet == null) continue;
 
-                    var depthFrame = frameSet?.GetDepthFrame();
+                    using var depthFrame = frameSet.GetDepthFrame();
 
                     if (depthFrame != null)
                     {
@@ -64,15 +73,8 @@ namespace Samples.Depth
                         depthFrame.CopyData(ref data);
                         renderer.UpdateVideoFrame(depthTextureIndex, (int)depthFrame.GetWidth(),
                             (int)depthFrame.GetHeight(), depthFrame.GetFormat(), data);
-                        depthFrame.Dispose();
-                    }
-                    else
-                    {
-                        Console.WriteLine("No depth frame received - timeout or error");
                     }
                 }
-
-                pipeline.Stop();
             }
             catch (Exception ex)
             {
