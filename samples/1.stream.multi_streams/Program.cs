@@ -8,55 +8,80 @@ namespace Samples.MultiStreams
     {
         private static volatile bool _isRunning = true;
 
-        static void Main()
+        static void Main(string[] args)
         {
-            Console.CancelKeyPress += (s, e) =>
-            {
-                e.Cancel = true;
-                _isRunning = false;
-                Console.WriteLine("Exiting...");
-                Environment.Exit(0);
-            };
-
             Console.Clear();
             Console.WriteLine("Multi Streams - Starting...");
 
-            var pipeline = new Pipeline();
-            var device = pipeline.GetDevice();
-            var imuPipeline = new Pipeline(device);
+            using var renderer = new OrbbecRenderer(title: "Multi Streams");
 
+            Console.CancelKeyPress += (s, e) =>
+            {
+                e.Cancel = true;
+                renderer.Close();
+            };
+
+            Pipeline? pipe = null;
+            Device? device = null;
+            Pipeline? imuPipeline = null;
             try
             {
-                using (var renderer = new OrbbecRenderer(1280, 720, "Multi Streams"))
+                pipe = new Pipeline();
+                device = pipe.GetDevice();
+                var availableTypes = GetAvailableTypes(device);
+                using var config = new Config();
+
+                foreach (var sensorType in availableTypes)
                 {
-                    var availableTypes = GetAvailableTypes(device);
-                    var textureIndices = new Dictionary<SensorType, int>();
-                    foreach (var sensorType in availableTypes)
+                    var format = sensorType switch
                     {
-                        int textureIndex = renderer.AddVideoFrame();
-                        textureIndices[sensorType] = textureIndex;
-                    }
-                    renderer.Closing += (e) =>
-                    {
-                        Console.WriteLine("Window closing, stopping...");
-                        _isRunning = false;
+                        SensorType.OB_SENSOR_COLOR => Format.OB_FORMAT_RGB,
+                        SensorType.OB_SENSOR_DEPTH => Format.OB_FORMAT_Y16,
+                        SensorType.OB_SENSOR_IR or SensorType.OB_SENSOR_IR_LEFT
+                            or SensorType.OB_SENSOR_IR_RIGHT => Format.OB_FORMAT_Y8,
+                        _ => Format.OB_FORMAT_UNKNOWN
                     };
-
-                    _ = Task.Run(() => StartStream(pipeline, renderer, textureIndices));
-                    _ = Task.Run(() => StartIMU(imuPipeline));
-
-                    renderer.Run();
+                    config.EnableVideoStream(sensorType, 0, 0, 0, format);
+                    Console.WriteLine($"Enabled stream for: {sensorType}");
                 }
+                pipe.Start(config);
+
+                imuPipeline = new Pipeline(device);
+                using var imuConfig = new Config();
+
+                imuConfig.EnableAccelStream();
+                imuConfig.EnableGyroStream();
+                imuPipeline.Start(imuConfig);
+
+                var textureIndices = new Dictionary<SensorType, int>();
+                foreach (var sensorType in availableTypes)
+                {
+                    int textureIndex = renderer.AddVideoFrame();
+                    textureIndices[sensorType] = textureIndex;
+                }
+                renderer.Closing += (e) =>
+                {
+                    Console.WriteLine("Window closing, stopping...");
+                    _isRunning = false;
+                };
+
+                _ = Task.Run(() => StartStream(pipe, renderer, textureIndices));
+                _ = Task.Run(() => StartIMU(imuPipeline));
+
+                renderer.Run();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
             }
             finally
             {
-                pipeline?.Stop();
+                pipe?.Stop();
                 imuPipeline?.Stop();
-                pipeline?.Dispose();
                 device?.Dispose();
+                Console.WriteLine("MultiStreams sample exited.");
+                Environment.Exit(0);
             }
-
-            Console.WriteLine("Multi Streams sample exited.");
         }
 
         private static List<SensorType> GetAvailableTypes(Device device)
@@ -88,24 +113,6 @@ namespace Samples.MultiStreams
         {
             try
             {
-                using var config = new Config();
-
-                foreach (var sensorType in textureIndices.Keys)
-                {
-                    var format = sensorType switch
-                    {
-                        SensorType.OB_SENSOR_COLOR => Format.OB_FORMAT_RGB,
-                        SensorType.OB_SENSOR_DEPTH => Format.OB_FORMAT_Y16,
-                        SensorType.OB_SENSOR_IR or SensorType.OB_SENSOR_IR_LEFT
-                            or SensorType.OB_SENSOR_IR_RIGHT => Format.OB_FORMAT_Y8,
-                        _ => Format.OB_FORMAT_UNKNOWN
-                    };
-                    config.EnableVideoStream(sensorType, 0, 0, 0, format);
-                    Console.WriteLine($"Enabled stream for: {sensorType}");
-                }
-
-                pipeline.Start(config);
-
                 while (_isRunning)
                 {
                     using var frameSet = pipeline.WaitForFrames(100);
@@ -123,16 +130,14 @@ namespace Samples.MultiStreams
                             _ => FrameType.OB_FRAME_UNKNOWN
                         };
 
-                        var frame = frameSet?.GetFrame(frameType);
+                        using var frame = frameSet.GetFrame(frameType);
 
                         if (frame != null)
                         {
-                            var vf = frame.As<VideoFrame>();
+                            using var vf = frame.As<VideoFrame>();
                             byte[] data = new byte[vf.GetDataSize()];
                             vf.CopyData(ref data);
                             renderer.UpdateVideoFrame(textureIndex, (int)vf.GetWidth(), (int)vf.GetHeight(), vf.GetFormat(), data);
-                            vf.Dispose();
-                            frame.Dispose();
                         }
                     }
                 }
@@ -147,11 +152,6 @@ namespace Samples.MultiStreams
         {
             try
             {
-                using var config = new Config();
-                config.EnableAccelStream();
-                config.EnableGyroStream();
-                pipeline.Start(config);
-
                 while (_isRunning)
                 {
                     using var frameSet = pipeline.WaitForFrames(100);
