@@ -4,54 +4,67 @@ namespace Samples.HotPlugin
 {
     class Program
     {
-        private static volatile bool _isRunning = true;
+        private static volatile bool _shouldExit = false;
 
-        static void Main()
+        static void Main(string[] args)
         {
+            Console.Clear();
+            Console.WriteLine("Hot Plugin - Starting...");
+
             Console.CancelKeyPress += (s, e) =>
             {
                 e.Cancel = true;
-                _isRunning = false;
-                Console.WriteLine("Exiting...");
-                Environment.Exit(0);
+                _shouldExit = false;
             };
 
-            Console.Clear();
-
-            using var ctx = new Context();
-            ctx.SetDeviceChangedCallback((removedList, deviceList) =>
+            Context? ctx = null;
+            try
             {
-                PrintDeviceList("added", deviceList);
-                PrintDeviceList("removed", removedList);
-            });
-
-            var currentList = ctx.QueryDeviceList();
-            PrintDeviceList("connected", currentList);
-            currentList.Dispose();
-
-            Console.WriteLine("Press 'r' to reboot the connected devices to trigger the device disconnect and reconnect event, or manually unplug and plugin the device.");
-            Console.WriteLine("Press 'Esc' to exit.");
-
-            while (_isRunning)
-            {
-                if (Console.KeyAvailable)
+                ctx = new Context();
+                ctx.SetDeviceChangedCallback((removedList, deviceList) =>
                 {
-                    var keyInfo = Console.ReadKey(intercept: true);
+                    PrintDeviceList("added", deviceList);
+                    PrintDeviceList("removed", removedList);
+                });
 
-                    if (keyInfo.Key == ConsoleKey.Escape)
-                        break;
+                var currentList = ctx.QueryDeviceList();
+                PrintDeviceList("connected", currentList);
+                currentList.Dispose();
 
-                    if (keyInfo.Key == ConsoleKey.R)
+                Console.WriteLine("Press 'r' to reboot the connected devices to trigger the device disconnect and reconnect event, or manually unplug and plugin the device.");
+                Console.WriteLine("Press 'Esc' to exit.\n");
+
+                while (!_shouldExit)
+                {
+                    if (Console.KeyAvailable)
                     {
-                        using (currentList = ctx.QueryDeviceList())
+                        var keyInfo = Console.ReadKey(intercept: true);
+
+                        if (keyInfo.Key == ConsoleKey.Escape)
+                            break;
+
+                        if (keyInfo.Key == ConsoleKey.R)
                         {
-                            Console.WriteLine("Rebooting devices...");
-                            RebootDevices(currentList);
+                            using (currentList = ctx.QueryDeviceList())
+                            {
+                                Console.WriteLine("Rebooting devices...");
+                                RebootDevices(currentList);
+                            }
                         }
                     }
-                }
 
-                Thread.Sleep(100);
+                    Thread.Sleep(100);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
+            }
+            finally
+            {
+                ctx?.Dispose();
+                Console.WriteLine("HotPlugin sample exited.");
+                Environment.Exit(0);
             }
         }
 
