@@ -7,29 +7,27 @@ namespace Samples.Control
     {
         private static volatile bool _shouldExit = false;
 
-        static void Main()
+        static void Main(string[] args)
         {
+            Console.Clear();
+            Console.WriteLine("Control - Starting...");
+
             Console.CancelKeyPress += (s, e) =>
             {
                 e.Cancel = true;
                 _shouldExit = true;
-                Console.WriteLine("Exiting...");
             };
 
             Context? ctx = null;
-            DeviceList? deviceList = null;
-
             try
             {
-                Console.Clear();
-
                 ctx = new Context();
-                deviceList = ctx.QueryDeviceList();
+                using var deviceList = ctx.QueryDeviceList();
 
                 bool isSelectDevice = true;
                 while (isSelectDevice && !_shouldExit)
                 {
-                    var device = GetAvailableDevice(deviceList);
+                    using var device = GetAvailableDevice(deviceList);
                     if (device == null) break;
 
                     using var deviceInfo = device.GetDeviceInfo();
@@ -40,7 +38,7 @@ namespace Samples.Control
                                      $"pid: 0x{deviceInfo.Pid():X4}" +
                                      $"uid: 0x{deviceInfo.Uid()}");
 
-                    Console.WriteLine("Input \"?\" to get all properties.");
+                    Console.WriteLine("Input \"?\" to get all properties, \"exit\" to exit and reselect device.");
 
                     var propertyList = GetPropertyList(device);
                     propertyList.Sort((a, b) => a.id.CompareTo(b.id));
@@ -64,7 +62,6 @@ namespace Samples.Control
                             if (controlParts[0] == "exit")
                             {
                                 isSelectProperty = false;
-                                isSelectDevice = false;
                                 break;
                             }
 
@@ -108,8 +105,8 @@ namespace Samples.Control
             }
             finally
             {
-                deviceList?.Dispose();
                 ctx?.Dispose();
+                Console.WriteLine("Control sample exited.");
                 Environment.Exit(0);
             }
         }
@@ -130,7 +127,7 @@ namespace Samples.Control
         private static Device SelectDevice(DeviceList deviceList)
         {
             uint devCount = deviceList.DeviceCount();
-            Console.WriteLine("Device list: ");
+            Console.WriteLine("\nDevice list: ");
             for (uint i = 0; i < devCount; i++)
             {
                 Console.WriteLine($"{i}. name: {deviceList.Name(i)}, " +
