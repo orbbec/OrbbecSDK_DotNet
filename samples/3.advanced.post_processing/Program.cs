@@ -8,16 +8,25 @@ namespace Samples.PostProcessing
     {
         private static volatile bool _isRunning = true;
 
-        static void Main()
+        static void Main(string[] args)
         {
             Console.Clear();
             Console.WriteLine("Post Processing - Starting...");
 
+            using var renderer = new OrbbecRenderer(title: "Post Processing");
+
+            Console.CancelKeyPress += (s, e) =>
+            {
+                e.Cancel = true;
+                renderer.Close();
+            };
+
             Pipeline? pipe = null;
+            Device? device = null;
             try
             {
                 pipe = new Pipeline();
-                var device = pipe.GetDevice();
+                device = pipe.GetDevice();
                 var sensor = device.GetSensor(SensorType.OB_SENSOR_DEPTH);
                 var filterList = sensor.CreateRecommendedFilters();
 
@@ -28,28 +37,26 @@ namespace Samples.PostProcessing
 
                 pipe.Start(config);
 
-                using (var renderer = new OrbbecRenderer(1280, 720, "Post Processing"))
+                int depthTextureIndex = renderer.AddVideoFrame();
+                int processedTextureIndex = renderer.AddVideoFrame();
+                renderer.Closing += (e) =>
                 {
-                    int depthTextureIndex = renderer.AddVideoFrame();
-                    int processedTextureIndex = renderer.AddVideoFrame();
-                    renderer.Closing += (e) =>
-                    {
-                        Console.WriteLine("Window closing, stopping...");
-                        _isRunning = false;
-                    };
+                    Console.WriteLine("Window closing, stopping...");
+                    _isRunning = false;
+                };
 
-                    _ = Task.Run(() => StartStream(pipe, filterList, renderer, depthTextureIndex, processedTextureIndex));
-                    _ = Task.Run(() => FilterControl(filterList));
+                _ = Task.Run(() => StartStream(pipe, filterList, renderer, depthTextureIndex, processedTextureIndex));
+                _ = Task.Run(() => FilterControl(filterList));
 
-                    renderer.Run();
-                }
+                renderer.Run();
             }
             finally
             {
                 pipe?.Stop();
+                device?.Dispose();
+                Console.WriteLine("Post Processing sample exited.");
+                Environment.Exit(0);
             }
-
-            Console.WriteLine("Post Processing sample exited.");
         }
 
         private static void PrintFiltersInfo(List<Filter> filterList)
