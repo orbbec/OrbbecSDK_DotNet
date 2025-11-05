@@ -4,9 +4,10 @@ namespace Samples.PointCloud
 {
     class Program
     {
-        static void Main()
+        static void Main(string[] args)
         {
             Console.Clear();
+            Console.WriteLine("Point Cloud - Starting...");
 
             Pipeline? pipe = null;
             try
@@ -69,7 +70,8 @@ namespace Samples.PointCloud
             finally
             {
                 pipe?.Stop();
-                pipe?.Dispose();
+                Console.WriteLine("PointCloud sample exited.");
+                Environment.Exit(0);
             }
         }
 
