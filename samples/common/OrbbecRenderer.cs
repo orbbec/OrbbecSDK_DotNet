@@ -25,7 +25,7 @@ namespace Samples.Common
             1f, 1f, 1f, 1f,
         };
 
-        public OrbbecRenderer(int width, int height, string title)
+        public OrbbecRenderer(int width = 1280, int height = 720, string title = "")
             : base(GameWindowSettings.Default,
                 new NativeWindowSettings()
                 {
@@ -143,48 +143,6 @@ namespace Samples.Common
             CheckGLError("Clear buffer");
 
             RenderVideoGrid(_videoTextures, Size.X, Size.Y);
-            // for (int i = 0; i < n; ++i)
-            // {
-            //     var tex = _videoTextures[i];
-            //     if (tex == null)
-            //         continue;
-            //     if (tex.Width <= 0 || tex.Height <= 0)
-            //         continue;
-
-            //     int regionWidth = Size.X / n;
-            //     int regionHeight = Size.Y;
-
-            //     float videoAspect = (float)tex.Width / tex.Height;
-            //     float regionAspect = (float)regionWidth / regionHeight;
-
-            //     int drawWidth, drawHeight;
-            //     int offsetX, offsetY;
-
-            //     if (videoAspect > regionAspect)
-            //     {
-            //         drawWidth = regionWidth;
-            //         drawHeight = (int)(regionWidth / videoAspect);
-            //         offsetX = i * regionWidth;
-            //         offsetY = (regionHeight - drawHeight) / 2;
-            //     }
-            //     else
-            //     {
-            //         drawHeight = regionHeight;
-            //         drawWidth = (int)(regionHeight * videoAspect);
-            //         offsetX = i * regionWidth + (regionWidth - drawWidth) / 2;
-            //         offsetY = 0;
-            //     }
-
-            //     GL.Viewport(offsetX, offsetY, drawWidth, drawHeight);
-
-            //     GL.ActiveTexture(TextureUnit.Texture0);
-            //     GL.BindTexture(TextureTarget.Texture2D, tex.TextureId);
-            //     GL.Uniform1(GL.GetUniformLocation(_shaderProgram, "tex"), 0);
-
-            //     GL.DrawArrays(PrimitiveType.TriangleFan, 0, 4);
-            //     CheckGLError($"Draw call for texture {i}");
-            // }
-
             SwapBuffers();
         }
 
