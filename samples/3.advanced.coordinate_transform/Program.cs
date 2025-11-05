@@ -4,11 +4,18 @@ namespace Samples.CoordinateTransform
 {
     class Program
     {
-        private static bool _isRunning = true;
+        private static bool _shouldExit = true;
 
-        static void Main()
+        static void Main(string[] args)
         {
             Console.Clear();
+            Console.WriteLine("Coordinate Transform - Starting...");
+
+            Console.CancelKeyPress += (s, e) =>
+            {
+                e.Cancel = true;
+                _shouldExit = false;
+            };
 
             Pipeline? pipe = null;
             try
@@ -24,7 +31,7 @@ namespace Samples.CoordinateTransform
                 pipe.Start(config);
 
                 string? testType = "1";
-                while (_isRunning)
+                while (_shouldExit)
                 {
                     PrintUsage();
                     testType = InputWatcher();
@@ -58,7 +65,7 @@ namespace Samples.CoordinateTransform
             finally
             {
                 pipe?.Stop();
-                pipe?.Dispose();
+                Console.WriteLine("CoordinateTransform sample exited.");
                 Environment.Exit(0);
             }
         }
@@ -319,8 +326,7 @@ namespace Samples.CoordinateTransform
                 var cmd = Console.ReadLine();
                 if (cmd == "quit" || cmd == "q")
                 {
-                    _isRunning = false;
-                    Console.WriteLine("Exiting...");
+                    _shouldExit = false;
                 }
                 return cmd;
             }
