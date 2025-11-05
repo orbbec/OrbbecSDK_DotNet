@@ -4,39 +4,46 @@ namespace Samples.FirmwareUpdate
 {
     class Program
     {
-        private static bool firstCall = true;
+        private static bool _shouldExit = false;
         private static readonly List<Device> devices = [];
 
-        static void Main()
+        static void Main(string[] args)
         {
             Console.Clear();
+            Console.WriteLine("Firmware Update - Starting...");
+
+            Console.CancelKeyPress += (s, e) =>
+            {
+                e.Cancel = true;
+                _shouldExit = true;
+            };
 
             Context? ctx = null;
             try
             {
                 ctx = new Context();
-                var deviceList = ctx.QueryDeviceList();
+                using var deviceList = ctx.QueryDeviceList();
                 if (deviceList.DeviceCount() == 0)
                 {
                     Console.WriteLine("No device found. Please connect a device first!");
-                    deviceList.Dispose();
-                    Environment.Exit(0);
+                    return;
                 }
 
                 for (uint i = 0; i < deviceList.DeviceCount(); ++i)
                 {
                     devices.Add(deviceList.GetDevice(i));
                 }
-                deviceList.Dispose();
                 Console.WriteLine("Devices found:");
                 PrintDeviceList();
 
-                while (true)
+                bool isSelectDevice = true;
+                while (isSelectDevice && !_shouldExit)
                 {
-                    firstCall = true;
+                    bool firstCall = true;
                     int deviceIndex = -1;
 
-                    if (!SelectDevice(ref deviceIndex))
+                    isSelectDevice = SelectDevice(ref deviceIndex);
+                    if (!isSelectDevice)
                         break;
 
                     string firmwarePath = "";
@@ -46,7 +53,10 @@ namespace Samples.FirmwareUpdate
                     Console.WriteLine("Upgrading device firmware, please wait...\n");
                     try
                     {
-                        devices[deviceIndex].DeviceUpgrade(firmwarePath, FirmwareUpdateCallback, false);
+                        devices[deviceIndex].DeviceUpgrade(firmwarePath, (state, message, percent) =>
+                        {
+                            FirmwareUpdateCallback(firstCall, state, message, percent);
+                        }, false);
                     }
                     catch (Exception)
                     {
@@ -70,6 +80,7 @@ namespace Samples.FirmwareUpdate
             {
                 devices.ForEach(device => device?.Dispose());
                 ctx?.Dispose();
+                Console.WriteLine("FirmwareUpdate sample exited.");
                 Environment.Exit(0);
             }
         }
@@ -123,6 +134,7 @@ namespace Samples.FirmwareUpdate
                     continue;
                 }
             }
+
             return true;
         }
 
@@ -136,7 +148,7 @@ namespace Samples.FirmwareUpdate
                 string input = Console.ReadLine()?.Trim() ?? "";
 
                 if (input.Equals("q", StringComparison.OrdinalIgnoreCase))
-                    Environment.Exit(0);
+                    return false;
 
                 input = input.Trim().Trim('\"', '\'', '`');
 
@@ -145,20 +157,18 @@ namespace Samples.FirmwareUpdate
                 {
                     firmwarePath = input;
                     Console.WriteLine($"Firmware file confirmed: {firmwarePath}\n");
-                    return true;
+                    break;
                 }
 
                 Console.WriteLine("Invalid file format. Please provide a .bin file.\n");
             }
+
+            return true;
         }
 
-        private static void FirmwareUpdateCallback(UpgradeState state, string message, byte percent)
+        private static void FirmwareUpdateCallback(bool firstCall, UpgradeState state, string message, byte percent)
         {
-            if (firstCall)
-            {
-                firstCall = false;
-            }
-            else
+            if (!firstCall)
             {
                 Console.Write("\x1b[3F");
             }

@@ -5,7 +5,7 @@ namespace Samples.Control
 {
     class Program
     {
-        private static volatile bool _shouldExit = false;
+        private static bool _shouldExit = false;
 
         static void Main(string[] args)
         {
