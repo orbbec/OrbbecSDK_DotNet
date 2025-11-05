@@ -7,21 +7,32 @@ namespace Samples.Color
     {
         private static volatile bool _isRunning = true;
 
-        static void Main()
+        static void Main(string[] args)
         {
-            Console.CancelKeyPress += (s, e) =>
-            {
-                e.Cancel = true;
-                _isRunning = false;
-                Console.WriteLine("Exiting...");
-                Environment.Exit(0);
-            };
-
             Console.Clear();
             Console.WriteLine("Color - Starting...");
 
-            using (var renderer = new OrbbecRenderer(1280, 720, "Color"))
+            using var renderer = new OrbbecRenderer(title: "Color");
+
+            Console.CancelKeyPress += (s, e) =>
             {
+                e.Cancel = true;
+                renderer.Close();
+            };
+
+            Pipeline? pipe = null;
+            try
+            {
+                pipe = new Pipeline();
+                using var config = new Config();
+
+                using var colorProfileList = pipe.GetStreamProfileList(SensorType.OB_SENSOR_COLOR);
+                using var colorProfile = colorProfileList.GetVideoStreamProfile(0, 0, Format.OB_FORMAT_RGB, 0);
+                Console.WriteLine($"Color Profile: {colorProfile.GetWidth()}x{colorProfile.GetHeight()}@{colorProfile.GetFormat()}");
+                
+                config.EnableStream(colorProfile);
+                pipe.Start(config);
+
                 int colorTextureIndex = renderer.AddVideoFrame();
                 renderer.Closing += (e) =>
                 {
@@ -29,34 +40,32 @@ namespace Samples.Color
                     _isRunning = false;
                 };
 
-                _ = Task.Run(() => StartStream(renderer, colorTextureIndex));
+                _ = Task.Run(() => StartStream(pipe, renderer, colorTextureIndex));
 
                 renderer.Run();
             }
-
-            Console.WriteLine("Color sample exited.");
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
+            }
+            finally
+            {
+                pipe?.Stop();
+                Console.WriteLine("Color sample exited.");
+                Environment.Exit(0);
+            }
         }
 
-        private static void StartStream(OrbbecRenderer renderer, int colorTextureIndex)
+        private static void StartStream(Pipeline pipeline, OrbbecRenderer renderer, int colorTextureIndex)
         {
             try
             {
-                using var pipeline = new Pipeline();
-                using var config = new Config();
-
-                using var colorProfileList = pipeline.GetStreamProfileList(SensorType.OB_SENSOR_COLOR);
-                using var colorProfile = colorProfileList.GetVideoStreamProfile(0, 0, Format.OB_FORMAT_RGB, 0);
-
-                Console.WriteLine($"Color Profile: {colorProfile.GetWidth()}x{colorProfile.GetHeight()}@{colorProfile.GetFormat()}");
-                config.EnableStream(colorProfile);
-                pipeline.Start(config);
-
                 while (_isRunning)
                 {
                     using var frameSet = pipeline.WaitForFrames(100);
                     if (frameSet == null) continue;
 
-                    var colorFrame = frameSet?.GetColorFrame();
+                    using var colorFrame = frameSet.GetColorFrame();
 
                     if (colorFrame != null)
                     {
@@ -64,15 +73,8 @@ namespace Samples.Color
                         colorFrame.CopyData(ref data);
                         renderer.UpdateVideoFrame(colorTextureIndex, (int)colorFrame.GetWidth(),
                             (int)colorFrame.GetHeight(), colorFrame.GetFormat(), data);
-                        colorFrame.Dispose();
-                    }
-                    else
-                    {
-                        Console.WriteLine("No color frame received - timeout or error");
                     }
                 }
-
-                pipeline.Stop();
             }
             catch (Exception ex)
             {
