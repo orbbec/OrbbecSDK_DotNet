@@ -10,10 +10,18 @@ namespace Samples.SyncAlign
         private static volatile int _alignMode = 0;
         private static volatile float _alpha = 0.6f;
 
-        static void Main()
+        static void Main(string[] args)
         {
             Console.Clear();
             Console.WriteLine("Sync Align - Starting...");
+
+            using var renderer = new OrbbecRenderer(title: "Sync Align");
+
+            Console.CancelKeyPress += (s, e) =>
+            {
+                e.Cancel = true;
+                renderer.Close();
+            };
 
             Pipeline? pipe = null;
             try
@@ -32,27 +40,28 @@ namespace Samples.SyncAlign
                 // Create a filter to align color frame to depth frame
                 using var c2dAlign = new AlignFilter(StreamType.OB_STREAM_DEPTH);
 
-                using (var renderer = new OrbbecRenderer(1280, 720, "Sync Align"))
+                int syncAlignTextureIndex = renderer.AddVideoFrame();
+                renderer.Closing += (e) =>
                 {
-                    int syncAlignTextureIndex = renderer.AddVideoFrame();
-                    renderer.Closing += (e) =>
-                    {
-                        Console.WriteLine("Window closing, stopping...");
-                        _isRunning = false;
-                    };
+                    Console.WriteLine("Window closing, stopping...");
+                    _isRunning = false;
+                };
 
-                    _ = Task.Run(async () => await HandleKeyPress(pipe));
-                    _ = Task.Run(() => StartStream(pipe, d2cAlign, c2dAlign, renderer, syncAlignTextureIndex));
+                _ = Task.Run(async () => await HandleKeyPress(pipe));
+                _ = Task.Run(() => StartStream(pipe, d2cAlign, c2dAlign, renderer, syncAlignTextureIndex));
 
-                    renderer.Run();
-                }
+                renderer.Run();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
             }
             finally
             {
                 pipe?.Stop();
+                Console.WriteLine("Sync Align sample exited.");
+                Environment.Exit(0);
             }
-
-            Console.WriteLine("Sync Align sample exited.");
         }
 
         private static async Task HandleKeyPress(Pipeline pipeline)
