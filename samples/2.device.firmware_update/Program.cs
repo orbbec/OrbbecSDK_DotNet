@@ -58,9 +58,10 @@ namespace Samples.FirmwareUpdate
                             FirmwareUpdateCallback(firstCall, state, message, percent);
                         }, false);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         Console.WriteLine("\nThe upgrade was interrupted! An error occurred! ");
+                        Console.WriteLine($"Error message: {e.Message}\n");
                         break;
                     }
 

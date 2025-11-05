@@ -4,12 +4,19 @@ namespace Samples.OptionalDepthPresetsUpdate
 {
     class Program
     {
+        private static bool _shouldExit = false;
         private static readonly List<Device> devices = [];
 
-        static void Main()
+        static void Main(string[] args)
         {
             Console.Clear();
             Console.WriteLine("Optional Depth Presets Update - Starting...");
+
+            Console.CancelKeyPress += (s, e) =>
+            {
+                e.Cancel = true;
+                _shouldExit = true;
+            };
 
             Context? ctx = null;
             try
@@ -26,16 +33,17 @@ namespace Samples.OptionalDepthPresetsUpdate
                 {
                     devices.Add(deviceList.GetDevice(i));
                 }
-                deviceList.Dispose();
                 Console.WriteLine("Devices found:");
                 PrintDeviceList();
 
-                while (true)
+                bool isSelectDevice = true;
+                while (isSelectDevice && !_shouldExit)
                 {
                     bool firstCall = true;
                     var updateState = UpgradeState.STAT_START;
 
-                    if (!SelectDevice(out Device? device) || device == null)
+                    isSelectDevice = SelectDevice(out Device? device);
+                    if (!isSelectDevice || device == null)
                         break;
 
                     PrintPreset(device);
@@ -83,8 +91,7 @@ namespace Samples.OptionalDepthPresetsUpdate
                     {
                         Console.WriteLine($"\nThe update was interrupted! An error occurred! ");
                         Console.WriteLine($"Error message: {e.Message}\n");
-                        Console.WriteLine("Press any key to exit.");
-                        return;
+                        break;
                     }
                 }
             }
@@ -96,6 +103,7 @@ namespace Samples.OptionalDepthPresetsUpdate
             {
                 devices.ForEach(device => device?.Dispose());
                 ctx?.Dispose();
+                Console.WriteLine("OptionalDepthPresetsUpdate sample exited.");
                 Environment.Exit(0);
             }
         }
