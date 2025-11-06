@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Orbbec;
+﻿using Orbbec;
 using Samples.Common;
 
 namespace Samples.Record
@@ -154,12 +153,8 @@ namespace Samples.Record
                         if (accelIndex % 50 == 0)
                         {
                             // print information every  50 frames.
-                            // var accelValue = accelFrame.GetAccelValue();
-                            // var obFloat3d = new Float3D { x = accelValue.x, y = accelValue.y, z = accelValue.z };
-                            var dataPtr = accelFrame.GetDataPtr();
-                            if (dataPtr == IntPtr.Zero)
-                                continue;
-                            var obFloat3d = Marshal.PtrToStructure<Float3D>(dataPtr);
+                            var accelValue = accelFrame.GetAccelValue();
+                            var obFloat3d = new Float3D { x = accelValue.x, y = accelValue.y, z = accelValue.z };
                             PrintImuValue(obFloat3d, accelIndex, accelTimeStampUs, accelTemperature, accelType, "m/s^2");
                         }
                     }
@@ -175,12 +170,8 @@ namespace Samples.Record
                         if (gyroIndex % 50 == 0)
                         {
                             // print information every 50 frames.
-                            // var gyroValue = gyroFrame.GetGyroValue();
-                            // var obFloat3d = new Float3D { x = gyroValue.x, y = gyroValue.y, z = gyroValue.z };
-                            var dataPtr = gyroFrame.GetDataPtr();
-                            if (dataPtr == IntPtr.Zero)
-                                continue;
-                            var obFloat3d = Marshal.PtrToStructure<Float3D>(dataPtr);
+                            var gyroValue = gyroFrame.GetGyroValue();
+                            var obFloat3d = new Float3D { x = gyroValue.x, y = gyroValue.y, z = gyroValue.z };
                             PrintImuValue(obFloat3d, gyroIndex, gyroTimeStampUs, gyroTemperature, gyroType, "rad/s");
                         }
                     }

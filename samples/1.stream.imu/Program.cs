@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Orbbec;
+﻿using Orbbec;
 
 class Program
 {
@@ -34,39 +33,37 @@ class Program
                 if (frameSet == null) continue;
 
                 using var accelFrameRaw = frameSet.GetFrame(FrameType.OB_FRAME_ACCEL);
-                using var accelFrame = accelFrameRaw.As<AccelFrame>();
-                var accelIndex = accelFrame.GetIndex();
-                var accelTimeStampUs = accelFrame.GetTimeStampUs();
-                var accelTemperature = accelFrame.GetTemperature();
-                var accelType = accelFrame.GetFrameType();
-                if (accelIndex % 50 == 0)
+                if (accelFrameRaw != null)
                 {
-                    // print information every  50 frames.
-                    // var accelValue = accelFrame.GetAccelValue();
-                    // var obFloat3d = new Float3D { x = accelValue.x, y = accelValue.y, z = accelValue.z };
-                    var dataPtr = accelFrame.GetDataPtr();
-                    if (dataPtr == IntPtr.Zero)
-                        continue;
-                    var obFloat3d = Marshal.PtrToStructure<Float3D>(dataPtr);
-                    PrintImuValue(obFloat3d, accelIndex, accelTimeStampUs, accelTemperature, accelType, "m/s^2");
+                    using var accelFrame = accelFrameRaw.As<AccelFrame>();
+                    var accelIndex = accelFrame.GetIndex();
+                    var accelTimeStampUs = accelFrame.GetTimeStampUs();
+                    var accelTemperature = accelFrame.GetTemperature();
+                    var accelType = accelFrame.GetFrameType();
+                    if (accelIndex % 50 == 0)
+                    {
+                        // print information every  50 frames.
+                        var accelValue = accelFrame.GetAccelValue();
+                        var obFloat3d = new Float3D { x = accelValue.x, y = accelValue.y, z = accelValue.z };
+                        PrintImuValue(obFloat3d, accelIndex, accelTimeStampUs, accelTemperature, accelType, "m/s^2");
+                    }
                 }
 
                 using var gyroFrameRaw = frameSet.GetFrame(FrameType.OB_FRAME_GYRO);
-                using var gyroFrame = gyroFrameRaw.As<GyroFrame>();
-                var gyroIndex = gyroFrame.GetIndex();
-                var gyroTimeStampUs = gyroFrame.GetTimeStampUs();
-                var gyroTemperature = gyroFrame.GetTemperature();
-                var gyroType = gyroFrame.GetFrameType();
-                if (gyroIndex % 50 == 0)
+                if (gyroFrameRaw != null)
                 {
-                    // print information every 50 frames.
-                    // var gyroValue = gyroFrame.GetGyroValue();
-                    // var obFloat3d = new Float3D { x = gyroValue.x, y = gyroValue.y, z = gyroValue.z };
-                    var dataPtr = gyroFrame.GetDataPtr();
-                    if (dataPtr == IntPtr.Zero)
-                        continue;
-                    var obFloat3d = Marshal.PtrToStructure<Float3D>(dataPtr);
-                    PrintImuValue(obFloat3d, gyroIndex, gyroTimeStampUs, gyroTemperature, gyroType, "rad/s");
+                    using var gyroFrame = gyroFrameRaw.As<GyroFrame>();
+                    var gyroIndex = gyroFrame.GetIndex();
+                    var gyroTimeStampUs = gyroFrame.GetTimeStampUs();
+                    var gyroTemperature = gyroFrame.GetTemperature();
+                    var gyroType = gyroFrame.GetFrameType();
+                    if (gyroIndex % 50 == 0)
+                    {
+                        // print information every 50 frames.
+                        var gyroValue = gyroFrame.GetGyroValue();
+                        var obFloat3d = new Float3D { x = gyroValue.x, y = gyroValue.y, z = gyroValue.z };
+                        PrintImuValue(obFloat3d, gyroIndex, gyroTimeStampUs, gyroTemperature, gyroType, "rad/s");
+                    }
                 }
             }
         }
