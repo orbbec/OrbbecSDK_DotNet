@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+﻿﻿using System.Runtime.InteropServices;
 using Orbbec;
 using Samples.Common;
 
@@ -9,20 +9,30 @@ namespace Samples.Playback
         private static volatile bool _isRunning = true;
         private static volatile bool _isExited = false;
 
-        static void Main()
+        static void Main(string[] args)
         {
             Console.Clear();
             Console.WriteLine("Playback - Starting...");
 
-            bool result = GetRosbagPath(out string filePath);
+            using var renderer = new OrbbecRenderer(title: "Playback");
 
+            Console.CancelKeyPress += (s, e) =>
+            {
+                e.Cancel = true;
+                renderer.Close();
+            };
+
+            bool result = GetRosbagPath(out string filePath);
+            if (!result) return;
+
+            PlaybackDevice? playback = null;
+            Pipeline? pipe = null;
+            Pipeline? imuPipeline = null;
             try
             {
-                if (!result) return;
-
-                using var playback = new PlaybackDevice(filePath);
-                using var pipe = new Pipeline(playback);
-                using var imuPipe = new Pipeline(playback);
+                playback = new PlaybackDevice(filePath);
+                pipe = new Pipeline(playback);
+                imuPipeline = new Pipeline(playback);
                 using var config = new Config();
 
                 playback.SetPlaybackStatusChangeCallback(status =>
@@ -55,37 +65,39 @@ namespace Samples.Playback
                     };
                     config.EnableVideoStream(sensorType, 0, 0, 0, format);
                 }
-
                 pipe.Start(config);
 
-                using (var renderer = new OrbbecRenderer(1280, 720, "Playback"))
+                Dictionary<SensorType, int> textureIndices = [];
+                for (uint i = 0; i < sensorList.SensorCount(); ++i)
                 {
-                    Dictionary<SensorType, int> textureIndices = [];
-                    for (uint i = 0; i < sensorList.SensorCount(); ++i)
-                    {
-                        var sensorType = sensorList.SensorType(i);
-                        if (sensorType == SensorType.OB_SENSOR_ACCEL || sensorType == SensorType.OB_SENSOR_GYRO)
-                            continue;
+                    var sensorType = sensorList.SensorType(i);
+                    if (sensorType == SensorType.OB_SENSOR_ACCEL || sensorType == SensorType.OB_SENSOR_GYRO)
+                        continue;
 
-                        textureIndices.Add(sensorType, renderer.AddVideoFrame());
-                    }
-                    renderer.Closing += (e) =>
-                    {
-                        Console.WriteLine("Window closing, stopping...");
-                        _isRunning = false;
-                    };
-
-                    _ = Task.Run(() => StartStream(pipe, renderer, textureIndices));
-
-                    renderer.Run();
+                    textureIndices.Add(sensorType, renderer.AddVideoFrame());
                 }
+                renderer.Closing += (e) =>
+                {
+                    Console.WriteLine("Window closing, stopping...");
+                    _isRunning = false;
+                };
+
+                _ = Task.Run(() => StartStream(pipe, renderer, textureIndices));
+
+                renderer.Run();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Unexpected error: {ex.Message}");
             }
-
-            Console.WriteLine("Playback sample exited.");
+            finally
+            {
+                pipe?.Stop();
+                imuPipeline?.Stop();
+                playback?.Dispose();
+                Console.WriteLine("Playback sample exited.");
+                Environment.Exit(0);
+            }
         }
 
         private static bool GetRosbagPath(out string rosbagPath)
@@ -178,16 +190,14 @@ namespace Samples.Playback
                             _ => FrameType.OB_FRAME_UNKNOWN
                         };
 
-                        var frame = frameSet.GetFrame(frameType);
+                        using var frame = frameSet.GetFrame(frameType);
 
                         if (frame != null)
                         {
-                            var vf = frame.As<VideoFrame>();
+                            using var vf = frame.As<VideoFrame>();
                             byte[] data = new byte[vf.GetDataSize()];
                             vf.CopyData(ref data);
                             renderer.UpdateVideoFrame(textureIndex, (int)vf.GetWidth(), (int)vf.GetHeight(), vf.GetFormat(), data);
-                            vf.Dispose();
-                            frame.Dispose();
                         }
                     }
                 }
