@@ -19,7 +19,8 @@ namespace Orbbec
             return _handle;
         }
 
-        public T As<T>() where T : Frame {
+        public T As<T>() where T : Frame
+        {
             switch (GetFrameType())
             {
                 case FrameType.OB_FRAME_VIDEO:
@@ -241,19 +242,19 @@ namespace Orbbec
             return new Frame(handle);
         }
 
-/*        public Frame CreateFrameFromBuffer(FrameType frameType, Format format, IntPtr buffer, UInt32 bufferSize, FrameDestroyCallback callback, IntPtr userData)
-        {
-            IntPtr error = IntPtr.Zero;
-            NativeFrameDestroyCallback _nativeCallback = new NativeFrameDestroyCallback((buffer, userData) => {
-                callback();
-            });
-            IntPtr handle = obNative.ob_create_frame_from_buffer(frameType, format, buffer, bufferSize, _nativeCallback, userData, ref error);
-            if (error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
-            return new Frame(handle);
-        }*/
+        /*        public Frame CreateFrameFromBuffer(FrameType frameType, Format format, IntPtr buffer, UInt32 bufferSize, FrameDestroyCallback callback, IntPtr userData)
+                {
+                    IntPtr error = IntPtr.Zero;
+                    NativeFrameDestroyCallback _nativeCallback = new NativeFrameDestroyCallback((buffer, userData) => {
+                        callback();
+                    });
+                    IntPtr handle = obNative.ob_create_frame_from_buffer(frameType, format, buffer, bufferSize, _nativeCallback, userData, ref error);
+                    if (error != IntPtr.Zero)
+                    {
+                        throw new NativeException(new Error(error));
+                    }
+                    return new Frame(handle);
+                }*/
 
         public void CopyInfo(Frame dstFrame)
         {
@@ -457,7 +458,7 @@ namespace Orbbec
         public PixelType GetPixelType()
         {
             IntPtr error = IntPtr.Zero;
-            PixelType type =  obNative.ob_video_frame_get_pixel_type(_handle.Ptr, ref error);
+            PixelType type = obNative.ob_video_frame_get_pixel_type(_handle.Ptr, ref error);
             NativeException.HandleError(error);
             return type;
         }
@@ -595,8 +596,7 @@ namespace Orbbec
         public AccelValue GetAccelValue()
         {
             IntPtr error = IntPtr.Zero;
-            AccelValue accelValue;
-            obNative.ob_accel_frame_get_value(out accelValue, _handle.Ptr, ref error);
+            AccelValue accelValue = obNative.ob_accel_frame_get_value(_handle.Ptr, ref error);
             return accelValue;
         }
 
@@ -624,8 +624,7 @@ namespace Orbbec
         public GyroValue GetGyroValue()
         {
             IntPtr error = IntPtr.Zero;
-            GyroValue gyroValue;
-            obNative.ob_gyro_frame_get_value(out gyroValue, _handle.Ptr, ref error);
+            GyroValue gyroValue = obNative.ob_gyro_frame_get_value(_handle.Ptr, ref error);
             return gyroValue;
         }
 
@@ -678,7 +677,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_frameset_get_depth_frame(_handle.Ptr, ref error);
-            if(handle == IntPtr.Zero)
+            if (handle == IntPtr.Zero)
             {
                 return null;
             }

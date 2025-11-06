@@ -909,7 +909,7 @@ namespace Orbbec
 
         //ob_accel_value ob_accel_frame_get_value( ob_frame* frame, ob_error** error );
         [DllImport(obsdk, EntryPoint = "ob_accel_frame_get_value")]
-        public static extern void ob_accel_frame_get_value(out AccelValue accelValue, IntPtr frame, ref IntPtr error);
+        public static extern AccelValue ob_accel_frame_get_value(IntPtr frame, ref IntPtr error);
 
         //float ob_accel_frame_get_temperature( ob_frame* frame, ob_error** error );
         [DllImport(obsdk, EntryPoint = "ob_accel_frame_get_temperature")]
@@ -917,7 +917,7 @@ namespace Orbbec
 
         //ob_gyro_value ob_gyro_frame_get_value( ob_frame* frame, ob_error** error );
         [DllImport(obsdk, EntryPoint = "ob_gyro_frame_get_value")]
-        public static extern void ob_gyro_frame_get_value(out GyroValue gyroValue, IntPtr frame, ref IntPtr error);
+        public static extern GyroValue ob_gyro_frame_get_value(IntPtr frame, ref IntPtr error);
 
         //float ob_gyro_frame_get_temperature( ob_frame* frame, ob_error** error );
         [DllImport(obsdk, EntryPoint = "ob_gyro_frame_get_temperature")]
