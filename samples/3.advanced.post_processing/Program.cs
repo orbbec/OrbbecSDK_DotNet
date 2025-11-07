@@ -209,14 +209,13 @@ namespace Samples.PostProcessing
                     if (depthFrame == null)
                         continue;
 
-                    var processedFrame = depthFrame.Copy();
+                    var processedFrame = depthFrame;
                     foreach (var filter in filterList)
                     {
                         if (filter.IsEnabled())
                         {
-                            var newProcessedFrame = filter.Process(processedFrame);
-                            processedFrame.Dispose();
-                            processedFrame = newProcessedFrame;
+                            using var newProcessedFrame = filter.Process(processedFrame);
+                            processedFrame = newProcessedFrame.As<DepthFrame>();
                         }
                     }
 
@@ -225,11 +224,10 @@ namespace Samples.PostProcessing
                     renderer.UpdateVideoFrame(depthTextureIndex, (int)depthFrame.GetWidth(),
                         (int)depthFrame.GetHeight(), Format.OB_FORMAT_Y16, depthData);
 
-                    var result = processedFrame.As<DepthFrame>();
-                    byte[] resultData = new byte[result.GetDataSize()];
-                    result.CopyData(ref resultData);
-                    renderer.UpdateVideoFrame(processedTextureIndex, (int)result.GetWidth(),
-                        (int)result.GetHeight(), Format.OB_FORMAT_Y16, resultData);
+                    byte[] resultData = new byte[processedFrame.GetDataSize()];
+                    processedFrame.CopyData(ref resultData);
+                    renderer.UpdateVideoFrame(processedTextureIndex, (int)processedFrame.GetWidth(),
+                        (int)processedFrame.GetHeight(), Format.OB_FORMAT_Y16, resultData);
                 }
             }
             catch (Exception ex)
