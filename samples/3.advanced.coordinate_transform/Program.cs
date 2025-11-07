@@ -4,7 +4,7 @@ namespace Samples.CoordinateTransform
 {
     class Program
     {
-        private static bool _shouldExit = true;
+        private static bool _shouldExit = false;
 
         static void Main(string[] args)
         {
@@ -14,7 +14,7 @@ namespace Samples.CoordinateTransform
             Console.CancelKeyPress += (s, e) =>
             {
                 e.Cancel = true;
-                _shouldExit = false;
+                _shouldExit = true;
             };
 
             Pipeline? pipe = null;
@@ -31,7 +31,7 @@ namespace Samples.CoordinateTransform
                 pipe.Start(config);
 
                 string? testType = "1";
-                while (_shouldExit)
+                while (!_shouldExit)
                 {
                     PrintUsage();
                     testType = InputWatcher();
