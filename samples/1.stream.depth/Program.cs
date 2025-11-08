@@ -52,7 +52,6 @@ namespace Samples.Depth
             {
                 pipe?.Stop();
                 Console.WriteLine("Depth sample exited.");
-                Environment.Exit(0);
             }
         }
 

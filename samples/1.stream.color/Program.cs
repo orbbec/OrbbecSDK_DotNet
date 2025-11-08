@@ -52,7 +52,6 @@ namespace Samples.Color
             {
                 pipe?.Stop();
                 Console.WriteLine("Color sample exited.");
-                Environment.Exit(0);
             }
         }
 

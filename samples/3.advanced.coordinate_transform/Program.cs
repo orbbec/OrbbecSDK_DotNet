@@ -66,7 +66,6 @@ namespace Samples.CoordinateTransform
             {
                 pipe?.Stop();
                 Console.WriteLine("CoordinateTransform sample exited.");
-                Environment.Exit(0);
             }
         }
 

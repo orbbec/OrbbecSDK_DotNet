@@ -60,7 +60,6 @@ namespace Samples.Infrared
                 pipe?.Stop();
                 device?.Dispose();
                 Console.WriteLine("Infrared sample exited.");
-                Environment.Exit(0);
             }
         }
 

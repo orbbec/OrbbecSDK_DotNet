@@ -51,7 +51,6 @@ namespace Samples.CameraConfiguration
             {
                 pipe?.Stop();
                 Console.WriteLine("CameraConfiguration sample exited.");
-                Environment.Exit(0);
             }
         }
     }

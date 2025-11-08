@@ -70,7 +70,6 @@ namespace Samples.SequenceId
                 pipe?.Stop();
                 device?.Dispose();
                 Console.WriteLine("SequenceId sample exited.");
-                Environment.Exit(0);
             }
         }
 

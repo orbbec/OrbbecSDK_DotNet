@@ -82,7 +82,6 @@ namespace Samples.FirmwareUpdate
                 devices.ForEach(device => device?.Dispose());
                 ctx?.Dispose();
                 Console.WriteLine("FirmwareUpdate sample exited.");
-                Environment.Exit(0);
             }
         }
 

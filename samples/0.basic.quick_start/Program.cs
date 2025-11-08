@@ -58,7 +58,6 @@ namespace Samples.QuickStart
             {
                 pipe?.Stop();
                 Console.WriteLine("QuickStart sample exited.");
-                Environment.Exit(0);
             }
         }
 

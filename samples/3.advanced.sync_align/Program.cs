@@ -60,7 +60,6 @@ namespace Samples.SyncAlign
             {
                 pipe?.Stop();
                 Console.WriteLine("Sync Align sample exited.");
-                Environment.Exit(0);
             }
         }
 

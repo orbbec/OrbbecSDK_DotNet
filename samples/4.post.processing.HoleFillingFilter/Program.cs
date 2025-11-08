@@ -70,7 +70,6 @@ namespace Samples.HoleFilling
                 pipe?.Stop();
                 device?.Dispose();
                 Console.WriteLine("HoleFilling sample exited.");
-                Environment.Exit(0);
             }
         }
 

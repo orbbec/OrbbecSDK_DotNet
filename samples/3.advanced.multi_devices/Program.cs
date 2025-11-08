@@ -70,7 +70,6 @@ namespace Samples.MultiDevices
                 }
                 ctx?.Dispose();
                 Console.WriteLine("Multi Devices sample exited.");
-                Environment.Exit(0);
             }
         }
 

@@ -71,7 +71,6 @@ namespace Samples.Temporal
                 pipe?.Stop();
                 device?.Dispose();
                 Console.WriteLine("Temporal sample exited.");
-                Environment.Exit(0);
             }
         }
 

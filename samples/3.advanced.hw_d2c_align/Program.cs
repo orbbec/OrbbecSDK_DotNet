@@ -57,7 +57,6 @@ namespace Samples.HWD2CAlign
             {
                 pipe?.Stop();
                 Console.WriteLine("HW D2C Align sample exited.");
-                Environment.Exit(0);
             }
         }
 

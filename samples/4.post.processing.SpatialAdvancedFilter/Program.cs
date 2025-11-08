@@ -77,7 +77,6 @@ namespace Samples.SpatialAdvanced
                 pipe?.Stop();
                 device?.Dispose();
                 Console.WriteLine("SpatialAdvanced sample exited.");
-                Environment.Exit(0);
             }
         }
 

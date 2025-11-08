@@ -64,7 +64,6 @@ namespace Samples.HotPlugin
             {
                 ctx?.Dispose();
                 Console.WriteLine("HotPlugin sample exited.");
-                Environment.Exit(0);
             }
         }
 

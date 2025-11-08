@@ -70,7 +70,6 @@ namespace Samples.Threshold
                 pipe?.Stop();
                 device?.Dispose();
                 Console.WriteLine("Threshold sample exited.");
-                Environment.Exit(0);
             }
         }
 

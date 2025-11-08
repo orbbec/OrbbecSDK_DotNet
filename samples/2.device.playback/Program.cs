@@ -95,7 +95,6 @@ namespace Samples.Playback
                 imuPipeline?.Stop();
                 playback?.Dispose();
                 Console.WriteLine("Playback sample exited.");
-                Environment.Exit(0);
             }
         }
 

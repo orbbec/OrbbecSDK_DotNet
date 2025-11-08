@@ -80,7 +80,6 @@ namespace Samples.HDR
                 pipe?.Stop();
                 device?.Dispose();
                 Console.WriteLine("HDR sample exited.");
-                Environment.Exit(0);
             }
         }
 

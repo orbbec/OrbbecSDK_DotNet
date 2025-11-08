@@ -69,7 +69,6 @@ namespace Samples.DispTransform
                 pipe?.Stop();
                 device?.Dispose();
                 Console.WriteLine("DispTransform sample exited.");
-                Environment.Exit(0);
             }
         }
 

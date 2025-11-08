@@ -99,7 +99,6 @@ namespace Samples.Record
                 device?.Dispose();
                 ctx?.Dispose();
                 Console.WriteLine("Record sample exited.");
-                Environment.Exit(0);
             }
         }
 

@@ -107,7 +107,6 @@ namespace Samples.Control
             {
                 ctx?.Dispose();
                 Console.WriteLine("Control sample exited.");
-                Environment.Exit(0);
             }
         }
 

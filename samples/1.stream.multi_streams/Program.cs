@@ -79,7 +79,6 @@ namespace Samples.MultiStreams
                 imuPipeline?.Stop();
                 device?.Dispose();
                 Console.WriteLine("MultiStreams sample exited.");
-                Environment.Exit(0);
             }
         }
 

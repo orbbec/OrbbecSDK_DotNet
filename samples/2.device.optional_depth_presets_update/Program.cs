@@ -104,7 +104,6 @@ namespace Samples.OptionalDepthPresetsUpdate
                 devices.ForEach(device => device?.Dispose());
                 ctx?.Dispose();
                 Console.WriteLine("OptionalDepthPresetsUpdate sample exited.");
-                Environment.Exit(0);
             }
         }
 

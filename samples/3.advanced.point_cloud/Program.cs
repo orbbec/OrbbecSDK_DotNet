@@ -71,7 +71,6 @@ namespace Samples.PointCloud
             {
                 pipe?.Stop();
                 Console.WriteLine("PointCloud sample exited.");
-                Environment.Exit(0);
             }
         }
 

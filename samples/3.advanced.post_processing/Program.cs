@@ -55,7 +55,6 @@ namespace Samples.PostProcessing
                 pipe?.Stop();
                 device?.Dispose();
                 Console.WriteLine("Post Processing sample exited.");
-                Environment.Exit(0);
             }
         }
 

@@ -70,7 +70,6 @@ namespace Samples.Decimation
                 pipe?.Stop();
                 device?.Dispose();
                 Console.WriteLine("Decimation sample exited.");
-                Environment.Exit(0);
             }
         }
 

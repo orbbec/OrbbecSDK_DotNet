@@ -75,7 +75,6 @@ class Program
         {
             pipe?.Stop();
             Console.WriteLine("IMU sample exited.");
-            Environment.Exit(0);
         }
     }
 
