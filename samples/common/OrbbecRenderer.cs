@@ -18,12 +18,12 @@ namespace Samples.Common
         private readonly object _textureLock = new();
 
         private static readonly float[] _vertices =
-        {
-            -1f, 1f, 0f, 1f,
-            -1f, -1f, 0f, 0f,
-            1f, -1f, 1f, 0f,
-            1f, 1f, 1f, 1f,
-        };
+        [
+            -1f, 1f, 0f, 0f,
+            -1f, -1f, 0f, 1f,
+            1f, -1f, 1f, 1f,
+            1f, 1f, 1f, 0f,
+        ];
 
         public OrbbecRenderer(int width = 1280, int height = 720, string title = "")
             : base(GameWindowSettings.Default,
