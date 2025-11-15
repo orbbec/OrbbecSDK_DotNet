@@ -145,10 +145,59 @@ namespace Orbbec
             return Marshal.PtrToStringAnsi(ptr);
         }
 
-        public String IPAddress()
+        /**
+        * \if English
+        * @brief Get the device IP address
+        *
+        * @return String The IP address, such as "192.168.1.10"
+        * \else
+        * @brief 获取设备IP地址
+        *
+        * @return String IP地址，例如“192.168.1.10”
+        * \endif
+        */
+        public string IPAddress()
         {
             IntPtr error = IntPtr.Zero;
             IntPtr ptr = obNative.ob_device_info_get_ip_address(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+            return Marshal.PtrToStringAnsi(ptr);
+        }
+
+        /**
+        * \if English
+        * @brief Get the network device subnet mask
+        *
+        * @return String The subnet mask, such as "255.255.255.0"
+        * \else
+        * @brief 获取网络设备子网掩码
+        *
+        * @return String 子网掩码，例如“255.255.255.0”
+        * \endif
+        */
+        public string? GetSubnetMask()
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr ptr = obNative.ob_device_info_get_subnet_mask(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+            return Marshal.PtrToStringAnsi(ptr);
+        }
+
+        /**
+        * \if English
+        * @brief Get the network device gateway address
+        *
+        * @return String The gateway address, such as "192.168.1.1"
+        * \else
+        * @brief 获取网络设备网关地址
+        *
+        * @return String 网关地址，例如“192.168.1.1”
+        * \endif
+        */
+        public string? GetGateway()
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr ptr = obNative.ob_device_info_get_gateway(_handle.Ptr, ref error);
             NativeException.HandleError(error);
             return Marshal.PtrToStringAnsi(ptr);
         }

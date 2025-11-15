@@ -154,6 +154,44 @@ namespace Orbbec
 
         /**
         * \if English
+        * @brief Get device subnet mask
+        *
+        * @return String The device subnet mask, such as "255.255.255.0"
+        * \else
+        * @brief 获取设备子网掩码
+        *
+        * @return String 设备子网掩码，例如“255.255.255.0”
+        * \endif
+        */
+        public string? GetSubnetMask(uint index)
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_device_list_get_device_subnet_mask(_handle.Ptr, index, ref error);
+            NativeException.HandleError(error);
+            return Marshal.PtrToStringAnsi(handle);
+        }
+
+        /**
+        * \if English
+        * @brief Get device gateway
+        *
+        * @return String The device gateway, such as "192.168.1.1"
+        * \else
+        * @brief 获取设备网关
+        *
+        * @return String 设备网关，例如“192.168.1.1”
+        * \endif
+        */
+        public string? GetGateway(uint index)
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_device_list_get_device_gateway(_handle.Ptr, index, ref error);
+            NativeException.HandleError(error);
+            return Marshal.PtrToStringAnsi(handle);
+        }
+
+        /**
+        * \if English
         * @brief Get device local mac address
         * 
         * @attention Only valid for network devices, otherwise it will return "0:0:0:0:0:0".
@@ -171,6 +209,63 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_device_list_get_device_local_mac(_handle.Ptr, index, ref error);
+            NativeException.HandleError(error);
+            return Marshal.PtrToStringAnsi(handle);
+        }
+
+        /**
+        * \if English
+        * @brief Get the IP address of the host network interface corresponding to the network device
+        *
+        * @return String The IP address of the host network interface associated with the device
+        * \else
+        * @brief 获取网络设备对应的主机网络接口的IP地址
+        *
+        * @return String 与设备关联的主机网络接口的IP地址
+        * \endif
+        */
+        public string? GetLocalIp(uint index)
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_device_list_get_device_local_ip(_handle.Ptr, index, ref error);
+            NativeException.HandleError(error);
+            return Marshal.PtrToStringAnsi(handle);
+        }
+
+        /**
+        * \if English
+        * @brief Get the subnet length of the host network interface corresponding to the network device
+        *
+        * @return byte The subnet length (0~32) of the host network interface associated with the device
+        * \else
+        * @brief 获取网络设备对应的主机网络接口的子网长度
+        *
+        * @return byte 与设备关联的主机网络接口的子网长度（0~32）
+        * \endif
+        */
+        public byte GetLocalSubnetLength(uint index)
+        {
+            IntPtr error = IntPtr.Zero;
+            byte length = obNative.ob_device_list_get_device_local_subnet_length(_handle.Ptr, index, ref error);
+            NativeException.HandleError(error);
+            return length;
+        }
+
+        /**
+        * \if English
+        * @brief Get the gateway of the host network interface corresponding to the network device
+        *
+        * @return String The gateway of the host network interface associated with the device
+        * \else
+        * @brief 获取网络设备对应的主机网络接口的网关
+        *
+        * @return String 与设备关联的主机网络接口的网关
+        * \endif
+        */
+        public string? GetLocalGateway(uint index)
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_device_list_get_device_local_gateway(_handle.Ptr, index, ref error);
             NativeException.HandleError(error);
             return Marshal.PtrToStringAnsi(handle);
         }

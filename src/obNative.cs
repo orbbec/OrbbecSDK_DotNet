@@ -47,6 +47,10 @@ namespace Orbbec
         [DllImport(obsdk, EntryPoint = "ob_enable_net_device_enumeration")]
         public static extern void ob_enable_net_device_enumeration(IntPtr context, bool enable, ref IntPtr error);
 
+        //bool ob_force_ip_config(const char *deviceUid, ob_net_ip_config config, ob_error **error);
+        [DllImport(obsdk, EntryPoint = "ob_force_ip_config")]
+        public static extern bool ob_force_ip_config(string deviceUid, DeviceIpAddrConfig config, ref IntPtr error);
+
         //ob_device *ob_create_net_device(ob_context *context, const char *address, uint16_t port, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_create_net_device")]
         public static extern IntPtr ob_create_net_device(IntPtr context, String address, UInt16 port, ref IntPtr error);
@@ -85,7 +89,7 @@ namespace Orbbec
         [DllImport(obsdk, EntryPoint = "ob_device_list_get_count")]
         public static extern UInt32 ob_device_list_get_count(IntPtr deviceList, ref IntPtr error);
 
-        //const char *ob_device_list_get_device_name(ob_device_list *list, uint32_t index, ob_error **error);
+        //char *ob_device_list_get_device_name(ob_device_list *list, uint32_t index, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_name")]
         public static extern IntPtr ob_device_list_get_device_name(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
@@ -97,27 +101,47 @@ namespace Orbbec
         [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_vid")]
         public static extern int ob_device_list_get_device_vid(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
-        //const char *ob_device_list_get_device_uid(ob_device_list *list, uint32_t index, ob_error **error);
+        //char *ob_device_list_get_device_uid(ob_device_list *list, uint32_t index, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_uid")]
         public static extern IntPtr ob_device_list_get_device_uid(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
-        //const char *ob_device_list_get_device_serial_number(ob_device_list *list, uint32_t index, ob_error **error);
+        //char *ob_device_list_get_device_serial_number(ob_device_list *list, uint32_t index, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_serial_number")]
         public static extern IntPtr ob_device_list_get_device_serial_number(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
-        //const char *ob_device_list_get_device_connection_type(ob_device_list *list, uint32_t index, ob_error **error);
+        //char *ob_device_list_get_device_connection_type(ob_device_list *list, uint32_t index, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_connection_type")]
         public static extern IntPtr ob_device_list_get_device_connection_type(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
-        //const char *ob_device_list_get_device_ip_address(ob_device_list *list, uint32_t index, ob_error **error);
+        //char *ob_device_list_get_device_ip_address(ob_device_list *list, uint32_t index, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_ip_address")]
         public static extern IntPtr ob_device_list_get_device_ip_address(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
-        //const char *ob_device_list_get_device_local_mac(const ob_device_list *list, uint32_t index, ob_error **error);
+        //char *ob_device_list_get_device_subnet_mask(ob_device_list *list, uint32_t index, ob_error **error);
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_subnet_mask")]
+        public static extern IntPtr ob_device_list_get_device_subnet_mask(IntPtr deviceList, UInt32 index, ref IntPtr error);
+
+        //char *ob_device_list_get_device_gateway(ob_device_list *list, uint32_t index, ob_error **error);
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_gateway")]
+        public static extern IntPtr ob_device_list_get_device_gateway(IntPtr deviceList, UInt32 index, ref IntPtr error);
+
+        //char *ob_device_list_get_device_local_mac(const ob_device_list *list, uint32_t index, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_local_mac")]
         public static extern IntPtr ob_device_list_get_device_local_mac(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
-        //const char *ob_device_info_get_extension_info(ob_device_list *list, uint32_t index, ob_error **error);
+        //char *ob_device_list_get_device_local_ip(ob_device_list *list, uint32_t index, ob_error **error);
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_local_ip")]
+        public static extern IntPtr ob_device_list_get_device_local_ip(IntPtr deviceList, UInt32 index, ref IntPtr error);
+
+        //uint8_t ob_device_list_get_device_local_subnet_length(ob_device_list *list, uint32_t index, ob_error **error);
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_local_subnet_length")]
+        public static extern byte ob_device_list_get_device_local_subnet_length(IntPtr deviceList, UInt32 index, ref IntPtr error);
+
+        //char *ob_device_list_get_device_local_gateway(ob_device_list *list, uint32_t index, ob_error **error);
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_local_gateway")]
+        public static extern IntPtr ob_device_list_get_device_local_gateway(IntPtr deviceList, UInt32 index, ref IntPtr error);
+
+        //char *ob_device_info_get_extension_info(ob_device_list *list, uint32_t index, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_info_get_extension_info")]
         public static extern IntPtr ob_device_info_get_extension_info(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
@@ -249,7 +273,7 @@ namespace Orbbec
         [DllImport(obsdk, EntryPoint = "ob_device_reboot")]
         public static extern void ob_device_reboot(IntPtr device, ref IntPtr error);
 
-        //const char* ob_device_info_get_name( ob_device_info* info, ob_error** error );
+        //char* ob_device_info_get_name( ob_device_info* info, ob_error** error );
         [DllImport(obsdk, EntryPoint = "ob_device_info_get_name")]
         public static extern IntPtr ob_device_info_get_name(IntPtr deviceInfo, ref IntPtr error);
 
@@ -261,27 +285,35 @@ namespace Orbbec
         [DllImport(obsdk, EntryPoint = "ob_device_info_get_vid")]
         public static extern int ob_device_info_get_vid(IntPtr deviceInfo, ref IntPtr error);
 
-        //const char* ob_device_info_get_uid( ob_device_info* info, ob_error** error );
+        //char* ob_device_info_get_uid( ob_device_info* info, ob_error** error );
         [DllImport(obsdk, EntryPoint = "ob_device_info_get_uid")]
         public static extern IntPtr ob_device_info_get_uid(IntPtr deviceInfo, ref IntPtr error);
 
-        //const char* ob_device_info_get_serial_number( ob_device_info* info, ob_error** error );
+        //char* ob_device_info_get_serial_number( ob_device_info* info, ob_error** error );
         [DllImport(obsdk, EntryPoint = "ob_device_info_get_serial_number")]
         public static extern IntPtr ob_device_info_get_serial_number(IntPtr deviceInfo, ref IntPtr error);
 
-        //const char* ob_device_info_get_firmware_version( ob_device_info* info, ob_error** error );
+        //char* ob_device_info_get_firmware_version( ob_device_info* info, ob_error** error );
         [DllImport(obsdk, EntryPoint = "ob_device_info_get_firmware_version")]
         public static extern IntPtr ob_device_info_get_firmware_version(IntPtr deviceInfo, ref IntPtr error);
 
-        //const char *ob_device_info_get_connection_type(ob_device_info *info, ob_error **error);
+        //char *ob_device_info_get_connection_type(ob_device_info *info, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_info_get_connection_type")]
         public static extern IntPtr ob_device_info_connection_type(IntPtr deviceInfo, ref IntPtr error);
 
-        //const char *ob_device_info_get_ip_address(ob_device_info *info, ob_error **error);
+        //char *ob_device_info_get_ip_address(ob_device_info *info, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_info_get_ip_address")]
         public static extern IntPtr ob_device_info_get_ip_address(IntPtr deviceInfo, ref IntPtr error);
 
-        //const char *ob_device_info_get_hardware_version(ob_device_info *info, ob_error **error);
+        //char *ob_device_info_get_subnet_mask(const ob_device_info *info, ob_error **error);
+        [DllImport(obsdk, EntryPoint = "ob_device_info_get_subnet_mask")]
+        public static extern IntPtr ob_device_info_get_subnet_mask(IntPtr deviceInfo, ref IntPtr error);
+
+        //char *ob_device_info_get_gateway(const ob_device_info *info, ob_error **error);
+        [DllImport(obsdk, EntryPoint = "ob_device_info_get_gateway")]
+        public static extern IntPtr ob_device_info_get_gateway(IntPtr deviceInfo, ref IntPtr error);
+
+        //char *ob_device_info_get_hardware_version(ob_device_info *info, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_info_get_hardware_version")]
         public static extern IntPtr ob_device_info_get_hardware_version(IntPtr deviceInfo, ref IntPtr error);
 
@@ -289,15 +321,15 @@ namespace Orbbec
         [DllImport(obsdk, EntryPoint = "ob_device_is_extension_info_exist")]
         public static extern bool ob_device_is_extension_info_exist(IntPtr device, String infoKey, ref IntPtr error);
 
-        //const char *ob_device_get_extension_info(const ob_device *device, const char *info_key, ob_error **error);
+        //char *ob_device_get_extension_info(const ob_device *device, const char *info_key, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_get_extension_info")]
         public static extern IntPtr ob_device_get_extension_info(IntPtr device, String infoKey, ref IntPtr error);
 
-        //const char *ob_device_info_get_supported_min_sdk_version(ob_device_info *info, ob_error **error);
+        //char *ob_device_info_get_supported_min_sdk_version(ob_device_info *info, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_info_get_supported_min_sdk_version")]
         public static extern IntPtr ob_device_info_get_supported_min_sdk_version(IntPtr deviceInfo, ref IntPtr error);
 
-        //const char *ob_device_info_get_asicName(ob_device_info *info, ob_error **error);
+        //char *ob_device_info_get_asicName(ob_device_info *info, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_info_get_asicName")]
         public static extern IntPtr ob_device_info_get_asicName(IntPtr deviceInfo, ref IntPtr error);
 
@@ -331,7 +363,7 @@ namespace Orbbec
         [DllImport(obsdk, EntryPoint = "ob_device_get_current_depth_work_mode")]
         public static extern void ob_device_get_current_depth_work_mode(out DepthWorkMode workMode, IntPtr device, ref IntPtr error);
 
-        //const char *ob_device_get_current_depth_work_mode_name(const ob_device *device, ob_error **error);
+        //char *ob_device_get_current_depth_work_mode_name(const ob_device *device, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_get_current_depth_work_mode_name")]
         public static extern IntPtr ob_device_get_current_depth_work_mode_name(IntPtr device, ref IntPtr error);
 
@@ -359,7 +391,7 @@ namespace Orbbec
         [DllImport(obsdk, EntryPoint = "ob_delete_depth_work_mode_list")]
         public static extern void ob_delete_depth_work_mode_list(IntPtr workModeList, ref IntPtr error);
 
-        //const char *ob_device_get_current_preset_name(ob_device *device, ob_error **error);
+        //char *ob_device_get_current_preset_name(ob_device *device, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_get_current_preset_name")]
         public static extern IntPtr ob_device_get_current_preset_name(IntPtr device, ref IntPtr error);
 
@@ -395,7 +427,7 @@ namespace Orbbec
         [DllImport(obsdk, EntryPoint = "ob_device_preset_list_get_count")]
         public static extern UInt32 ob_device_preset_list_get_count(IntPtr presetList, ref IntPtr error);
 
-        //const char *ob_device_preset_list_get_name(ob_device_preset_list *preset_list, uint32_t index, ob_error **error);
+        //char *ob_device_preset_list_get_name(ob_device_preset_list *preset_list, uint32_t index, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_preset_list_get_name")]
         public static extern IntPtr ob_device_preset_list_get_name(IntPtr presetList, UInt32 index, ref IntPtr error);
 
@@ -447,15 +479,15 @@ namespace Orbbec
         [DllImport(obsdk, EntryPoint = "ob_error_get_status")]
         public static extern Status ob_error_get_status(IntPtr error);
 
-        //const char *ob_error_message(const ob_error *error);
+        //char *ob_error_message(const ob_error *error);
         [DllImport(obsdk, EntryPoint = "ob_error_get_message")]
         public static extern IntPtr ob_error_get_message(IntPtr error);
 
-        //const char* ob_error_get_function( ob_error* error );
+        //char* ob_error_get_function( ob_error* error );
         [DllImport(obsdk, EntryPoint = "ob_error_get_function")]
         public static extern IntPtr ob_error_get_function(IntPtr error);
 
-        //const char* ob_error_get_args( ob_error* error );
+        //char* ob_error_get_args( ob_error* error );
         [DllImport(obsdk, EntryPoint = "ob_error_get_args")]
         public static extern IntPtr ob_error_get_args(IntPtr error);
 
@@ -473,11 +505,11 @@ namespace Orbbec
         [DllImport(obsdk, EntryPoint = "ob_create_filter")]
         public static extern IntPtr ob_create_filter(String name, ref IntPtr error);
 
-        //const char *ob_filter_get_name(const ob_filter *filter, ob_error **error);
+        //char *ob_filter_get_name(const ob_filter *filter, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_filter_get_name")]
         public static extern IntPtr ob_filter_get_name(IntPtr filter, ref IntPtr error);
 
-        //const char* ob_filter_get_vendor_specific_code(const char* name, ob_error **error);
+        //char* ob_filter_get_vendor_specific_code(const char* name, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_filter_get_vendor_specific_code")]
         public static extern String ob_filter_get_vendor_specific_code(String name, ref IntPtr error);
 
@@ -485,7 +517,7 @@ namespace Orbbec
         [DllImport(obsdk, EntryPoint = "ob_create_private_filter")]
         public static extern IntPtr ob_create_private_filter(string name, string activationKey, ref IntPtr error);
 
-        //const char *ob_filter_get_config_schema(const ob_filter *filter, ob_error **error);
+        //char *ob_filter_get_config_schema(const ob_filter *filter, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_filter_get_config_schema")]
         public static extern IntPtr ob_filter_get_config_schema(IntPtr filter, ref IntPtr error);
 
@@ -1479,41 +1511,41 @@ namespace Orbbec
         [DllImport(obsdk, EntryPoint = "ob_get_patch_version")]
         public static extern int ob_get_patch_version();
 
-        //const char *ob_get_stage_version();
+        //char *ob_get_stage_version();
         [DllImport(obsdk, EntryPoint = "ob_get_stage_version")]
         public static extern IntPtr ob_get_stage_version();
         #endregion
 
         #region TypeHelper
-        //const char* ob_format_type_to_string(OBFormat type);
+        //char* ob_format_type_to_string(OBFormat type);
         [DllImport(obsdk, EntryPoint = "ob_format_type_to_string")]
         public static extern IntPtr ob_format_type_to_string(Format type);
 
-        //const char* ob_frame_type_to_string(OBFrameType type);
+        //char* ob_frame_type_to_string(OBFrameType type);
         [DllImport(obsdk, EntryPoint = "ob_frame_type_to_string")]
         public static extern IntPtr ob_frame_type_to_string(FrameType type);
 
-        //const char* ob_stream_type_to_string(OBStreamType type);
+        //char* ob_stream_type_to_string(OBStreamType type);
         [DllImport(obsdk, EntryPoint = "ob_stream_type_to_string")]
         public static extern IntPtr ob_stream_type_to_string(StreamType type);
 
-        //const char* ob_sensor_type_to_string(OBSensorType type);
+        //char* ob_sensor_type_to_string(OBSensorType type);
         [DllImport(obsdk, EntryPoint = "ob_sensor_type_to_string")]
         public static extern IntPtr ob_sensor_type_to_string(SensorType type);
 
-        //const char* ob_imu_rate_type_to_string(OBIMUSampleRate type);
+        //char* ob_imu_rate_type_to_string(OBIMUSampleRate type);
         [DllImport(obsdk, EntryPoint = "ob_imu_rate_type_to_string")]
         public static extern IntPtr ob_imu_rate_type_to_string(IMUSampleRate type);
 
-        //const char* ob_gyro_range_type_to_string(OBGyroFullScaleRange type);
+        //char* ob_gyro_range_type_to_string(OBGyroFullScaleRange type);
         [DllImport(obsdk, EntryPoint = "ob_gyro_range_type_to_string")]
         public static extern IntPtr ob_gyro_range_type_to_string(GyroFullScaleRange type);
 
-        //const char* ob_accel_range_type_to_string(OBAccelFullScaleRange type);
+        //char* ob_accel_range_type_to_string(OBAccelFullScaleRange type);
         [DllImport(obsdk, EntryPoint = "ob_accel_range_type_to_string")]
         public static extern IntPtr ob_accel_range_type_to_string(AccelFullScaleRange type);
 
-        //const char* ob_meta_data_type_to_string(OBFrameMetadataType type);
+        //char* ob_meta_data_type_to_string(OBFrameMetadataType type);
         [DllImport(obsdk, EntryPoint = "ob_meta_data_type_to_string")]
         public static extern IntPtr ob_meta_data_type_to_string(FrameMetadataType type);
 
@@ -1525,7 +1557,7 @@ namespace Orbbec
         [DllImport(obsdk, EntryPoint = "ob_sensor_type_to_stream_type")]
         public static extern StreamType ob_sensor_type_to_stream_type(SensorType type);
 
-        //const char* ob_format_to_string(OBFormat format);
+        //char* ob_format_to_string(OBFormat format);
         [DllImport(obsdk, EntryPoint = "ob_format_to_string")]
         public static extern IntPtr ob_format_to_string(Format format);
         #endregion

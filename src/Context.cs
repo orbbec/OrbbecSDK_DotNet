@@ -95,11 +95,41 @@ namespace Orbbec
             return new DeviceList(handle);
         }
 
+        /**
+        *\if English
+        * @brief Enable or disable network device enumeration
+        *
+        * @param enable true to enable, false to disable
+        * \else
+        * @brief 启用或禁用网络设备枚举
+        *
+        * @param 启用时设为true，禁用时设为false
+        * \endif
+        */
         public void EnableNetDeviceEnumeration(bool enable)
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_enable_net_device_enumeration(_handle.Ptr, enable, ref error);
             NativeException.HandleError(error);
+        }
+
+        /**
+        *\if English
+        * @brief Enable or disable network device enumeration
+        *
+        * @param enable true to enable, false to disable
+        * \else
+        * @brief 启用或禁用网络设备枚举
+        *
+        * @param 启用时设为true，禁用时设为false
+        * \endif
+        */
+        public static bool ForceIpConfig(string deviceUid, DeviceIpAddrConfig config)
+        {
+            IntPtr error = IntPtr.Zero;
+            bool result = obNative.ob_force_ip_config(deviceUid, config, ref error);
+            NativeException.HandleError(error);
+            return result;
         }
 
         /**
