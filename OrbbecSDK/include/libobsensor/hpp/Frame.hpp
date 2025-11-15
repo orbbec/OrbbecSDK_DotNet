@@ -554,6 +554,28 @@ public:
 };
 
 /**
+ * @brief Define the ConfidenceFrame class, which inherits from the VideoFrame class
+ *
+ */
+class ConfidenceFrame : public VideoFrame {
+
+public:
+    /**
+     * @brief Construct a new ConfidenceFrame object with a given pointer to the internal frame object.
+     *
+     * @attention After calling this constructor, the frame object will own the internal frame object, and the internal frame object will be deleted when the
+     * frame object is destroyed.
+     * @attention The internal frame object should not be deleted by the caller.
+     * @attention Please use the FrameFactory to create a Frame object.
+     *
+     * @param impl The pointer to the internal frame object.
+     */
+    explicit ConfidenceFrame(const ob_frame *impl) : VideoFrame(impl) {};
+
+    ~ConfidenceFrame() noexcept override = default;
+};
+
+/**
  * @brief Define the PointsFrame class, which inherits from the Frame class
  * @brief The PointsFrame class is used to obtain pointcloud data and point cloud information.
  *
@@ -977,6 +999,22 @@ public:
         return frame->as<VideoFrame>();
     }
 
+    /**
+     * @brief Create a new FrameSet object.
+     *
+     * This function creates a new FrameSet instance by internally calling the native C API.
+     * The returned FrameSet is managed by a std::shared_ptr, and its lifetime will be
+     * automatically managed. When no references remain, the underlying native resources will be released.
+     *
+     * @return std::shared_ptr<FrameSet> The created FrameSet object.
+     */
+    static std::shared_ptr<FrameSet> createFrameSet() {
+        ob_error *error = nullptr;
+        auto      impl  = ob_create_frameset(&error);
+        Error::handle(&error);
+        return std::make_shared<FrameSet>(impl);
+    }
+
 private:
     struct BufferDestroyContext {
         BufferDestroyCallback callback;
@@ -1036,6 +1074,8 @@ template <typename T> bool Frame::is() const {
         return (typeid(T) == typeid(DepthFrame) || typeid(T) == typeid(VideoFrame));
     case OB_FRAME_COLOR:
         return (typeid(T) == typeid(ColorFrame) || typeid(T) == typeid(VideoFrame));
+    case OB_FRAME_CONFIDENCE:
+        return (typeid(T) == typeid(ConfidenceFrame) || typeid(T) == typeid(VideoFrame));
     case OB_FRAME_GYRO:
         return (typeid(T) == typeid(GyroFrame));
     case OB_FRAME_ACCEL:
