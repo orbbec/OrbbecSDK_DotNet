@@ -325,7 +325,7 @@ namespace Samples.CoordinateTransform
                 var cmd = Console.ReadLine();
                 if (cmd == "quit" || cmd == "q")
                 {
-                    _shouldExit = false;
+                    _shouldExit = true;
                 }
                 return cmd;
             }
