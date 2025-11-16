@@ -82,16 +82,17 @@ namespace Orbbec
      */
     public enum SensorType
     {
-        OB_SENSOR_UNKNOWN   = 0, /**< Unknown type sensor */
-        OB_SENSOR_IR        = 1, /**< IR */
-        OB_SENSOR_COLOR     = 2, /**< Color */
-        OB_SENSOR_DEPTH     = 3, /**< Depth */
-        OB_SENSOR_ACCEL     = 4, /**< Accel */
-        OB_SENSOR_GYRO      = 5, /**< Gyro */
-        OB_SENSOR_IR_LEFT   = 6, /**< left IR */
-        OB_SENSOR_IR_RIGHT  = 7, /**< Right IR */
-        OB_SENSOR_RAW_PHASE = 8, /**< Raw Phase */
-        OB_SENSOR_TYPE_COUNT,
+        OB_SENSOR_UNKNOWN    = 0, /**< Unknown type sensor */
+        OB_SENSOR_IR         = 1, /**< IR */
+        OB_SENSOR_COLOR      = 2, /**< Color */
+        OB_SENSOR_DEPTH      = 3, /**< Depth */
+        OB_SENSOR_ACCEL      = 4, /**< Accel */
+        OB_SENSOR_GYRO       = 5, /**< Gyro */
+        OB_SENSOR_IR_LEFT    = 6, /**< left IR for stereo camera*/
+        OB_SENSOR_IR_RIGHT   = 7, /**< Right IR for stereo camera*/
+        OB_SENSOR_RAW_PHASE  = 8, /**< Raw Phase */
+        OB_SENSOR_CONFIDENCE = 9, /**< Confidence */
+        OB_SENSOR_TYPE_COUNT,     /**The total number of sensor types, is not a valid sensor type */
     }
 
     /**
@@ -113,6 +114,7 @@ namespace Orbbec
         OB_STREAM_IR_LEFT   = 6,  /**< Left IR stream */
         OB_STREAM_IR_RIGHT  = 7,  /**< Right IR stream */
         OB_STREAM_RAW_PHASE = 8,  /**< RawPhase Stream */
+        OB_STREAM_CONFIDENCE = 9, /**< Confidence Stream*/
         OB_SENSOR_TYPE_COUNT,     /**The total number of sensor types, is not a valid sensor type */
     }
 
@@ -125,19 +127,20 @@ namespace Orbbec
      */
     public enum FrameType
     {
-        OB_FRAME_UNKNOWN   = -1, /**< Unknown frame type */
-        OB_FRAME_VIDEO     = 0,  /**< Video frame */
-        OB_FRAME_IR        = 1,  /**< IR frame */
-        OB_FRAME_COLOR     = 2,  /**< Color frame */
-        OB_FRAME_DEPTH     = 3,  /**< Depth frame */
-        OB_FRAME_ACCEL     = 4,  /**< Accelerometer data frame */
-        OB_FRAME_SET       = 5,  /**< Frame collection (internally contains a variety of data frames) */
-        OB_FRAME_POINTS    = 6,  /**< Point cloud frame */
-        OB_FRAME_GYRO      = 7,  /**< Gyroscope data frame */
-        OB_FRAME_IR_LEFT   = 8,  /**< Left IR frame */
-        OB_FRAME_IR_RIGHT  = 9,  /**< Right IR frame */
-        OB_FRAME_RAW_PHASE = 10, /**< Rawphase frame*/
-        OB_FRAME_TYPE_COUNT,     /**< The total number of frame types, is not a valid frame type */
+        OB_FRAME_UNKNOWN    = -1, /**< Unknown frame type */
+        OB_FRAME_VIDEO      = 0,  /**< Video frame */
+        OB_FRAME_IR         = 1,  /**< IR frame */
+        OB_FRAME_COLOR      = 2,  /**< Color frame */
+        OB_FRAME_DEPTH      = 3,  /**< Depth frame */
+        OB_FRAME_ACCEL      = 4,  /**< Accelerometer data frame */
+        OB_FRAME_SET        = 5,  /**< Frame collection (internally contains a variety of data frames) */
+        OB_FRAME_POINTS     = 6,  /**< Point cloud frame */
+        OB_FRAME_GYRO       = 7,  /**< Gyroscope data frame */
+        OB_FRAME_IR_LEFT    = 8,  /**< Left IR frame for stereo camera */
+        OB_FRAME_IR_RIGHT   = 9,  /**< Right IR frame for stereo camera */
+        OB_FRAME_RAW_PHASE  = 10, /**< Raw Phase frame*/
+        OB_FRAME_CONFIDENCE = 11, /**< Confidence frame*/
+        OB_FRAME_TYPE_COUNT,      /**< The total number of frame types, is not a valid frame type */
     }
 
     public enum PixelType
@@ -227,7 +230,8 @@ namespace Orbbec
         OB_FORMAT_RGBA       = 31, /**< RGBA format */
         OB_FORMAT_BYR2       = 32, /**< byr2 format */
         OB_FORMAT_RW16       = 33, /**< RAW16 format */
-        OB_FORMAT_ANY        = OB_FORMAT_UNKNOWN
+        OB_FORMAT_Y12C4      = 34, /**< Y12C4 format */
+        OB_FORMAT_ANY = OB_FORMAT_UNKNOWN
     }
 
     /**
