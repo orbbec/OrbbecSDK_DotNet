@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+    <Version>2.5.1</Version>
   </PropertyGroup>
 
   <PropertyGroup>
