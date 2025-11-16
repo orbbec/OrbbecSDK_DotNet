@@ -7,9 +7,9 @@ using System.Drawing.Imaging;
 
 namespace Samples.Common
 {
-    public class ImageConverter
+    public class ImageUtils
     {
-        public static byte[] ConvertY8ToRgb(int width, int height, ReadOnlySpan<byte> y8Data)
+        public static byte[] Y8ToRgb(int width, int height, ReadOnlySpan<byte> y8Data)
         {
             if (y8Data == null)
                 throw new ArgumentException("Y8 data is null");
@@ -33,7 +33,7 @@ namespace Samples.Common
             return rgbData;
         }
 
-        public static byte[] ConvertY16ToRgb(int width, int height, ReadOnlySpan<byte> y16Data, bool normalize = true)
+        public static byte[] Y16ToRgb(int width, int height, ReadOnlySpan<byte> y16Data, bool normalize = false)
         {
             if (y16Data == null)
                 throw new ArgumentException("Y16 data is null");

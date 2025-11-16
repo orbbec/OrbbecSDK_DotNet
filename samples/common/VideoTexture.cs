@@ -37,8 +37,8 @@ namespace Samples.Common
                 byte[] finalData = format switch
                 {
                     Format.OB_FORMAT_RGB => data,
-                    Format.OB_FORMAT_Y8 => ImageConverter.ConvertY8ToRgb(width, height, data),
-                    Format.OB_FORMAT_Y16 => ImageConverter.ConvertY16ToRgb(width, height, data),
+                    Format.OB_FORMAT_Y8 => ImageUtils.Y8ToRgb(width, height, data),
+                    Format.OB_FORMAT_Y16 => ImageUtils.Y16ToRgb(width, height, data),
                     _ => throw new NotSupportedException($"Format {format} is not supported")
                 };
 

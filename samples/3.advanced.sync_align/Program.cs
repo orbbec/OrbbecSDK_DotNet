@@ -149,9 +149,9 @@ namespace Samples.SyncAlign
                 int depthH = (int)depthFrame.GetHeight();
                 byte[] depthDataRaw = new byte[depthFrame.GetDataSize()];
                 depthFrame.CopyData(ref depthDataRaw);
-                byte[] depthData = ImageConverter.ConvertY16ToRgb(depthW, depthH, depthDataRaw);
+                byte[] depthData = ImageUtils.Y16ToRgb(depthW, depthH, depthDataRaw);
 
-                alignData = ImageConverter.DepthAlignToColor(colorW, colorH, colorData, depthW, depthH, depthData, _alpha);
+                alignData = ImageUtils.DepthAlignToColor(colorW, colorH, colorData, depthW, depthH, depthData, _alpha);
             }
             catch (Exception ex)
             {
