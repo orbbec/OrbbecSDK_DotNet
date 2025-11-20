@@ -33,8 +33,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.Playback", "samples
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.Record", "samples\2.device.record\Samples.Record.csproj", "{16309C88-5DE9-4434-A850-38C33F87F8BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.CameraConfiguration", "samples\3.advanced.camera_configuration\Samples.CameraConfiguration.csproj", "{050FE3ED-0FE8-49A6-AA03-77A6E043530B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.CoordinateTransform", "samples\3.advanced.coordinate_transform\Samples.CoordinateTransform.csproj", "{39BA6E6A-2B78-4679-9041-7A0EC4BBAB85}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.HDR", "samples\3.advanced.hdr\Samples.HDR.csproj", "{A9857C16-A44A-477D-8E0B-5970CFF12EFA}"
@@ -67,9 +65,6 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{DED4D2ED-D892-4506-9B36-DAE218D33FDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -128,10 +123,6 @@ Global
 		{16309C88-5DE9-4434-A850-38C33F87F8BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16309C88-5DE9-4434-A850-38C33F87F8BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16309C88-5DE9-4434-A850-38C33F87F8BE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{050FE3ED-0FE8-49A6-AA03-77A6E043530B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{050FE3ED-0FE8-49A6-AA03-77A6E043530B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{050FE3ED-0FE8-49A6-AA03-77A6E043530B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{050FE3ED-0FE8-49A6-AA03-77A6E043530B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{39BA6E6A-2B78-4679-9041-7A0EC4BBAB85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{39BA6E6A-2B78-4679-9041-7A0EC4BBAB85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39BA6E6A-2B78-4679-9041-7A0EC4BBAB85}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -189,6 +180,9 @@ Global
 		{C4D6391B-0329-482F-89C4-9A6E320F1A2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4D6391B-0329-482F-89C4-9A6E320F1A2A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F6C863DB-2486-47DC-A41B-B1DB089C1DCA} = {742E2BC6-D5BA-486D-9E09-D8B295663873}
 		{F9F8F2EA-D6CB-45B9-8B57-06C32ACBED4E} = {742E2BC6-D5BA-486D-9E09-D8B295663873}
@@ -203,7 +197,6 @@ Global
 		{6F31774C-422C-4484-B698-822166185770} = {742E2BC6-D5BA-486D-9E09-D8B295663873}
 		{FDFEE0EB-AC15-4034-9927-BAE69D10AF76} = {742E2BC6-D5BA-486D-9E09-D8B295663873}
 		{16309C88-5DE9-4434-A850-38C33F87F8BE} = {742E2BC6-D5BA-486D-9E09-D8B295663873}
-		{050FE3ED-0FE8-49A6-AA03-77A6E043530B} = {742E2BC6-D5BA-486D-9E09-D8B295663873}
 		{39BA6E6A-2B78-4679-9041-7A0EC4BBAB85} = {742E2BC6-D5BA-486D-9E09-D8B295663873}
 		{A9857C16-A44A-477D-8E0B-5970CFF12EFA} = {742E2BC6-D5BA-486D-9E09-D8B295663873}
 		{B6270B03-D52C-4181-958C-7ECD7B6DF0E4} = {742E2BC6-D5BA-486D-9E09-D8B295663873}

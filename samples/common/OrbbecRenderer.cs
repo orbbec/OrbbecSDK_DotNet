@@ -85,7 +85,7 @@ namespace Samples.Common
                 in vec2 TexCoord;
                 uniform sampler2D tex;
                 void main() {
-                    FragColor = texture2D(tex, TexCoord);
+                    FragColor = texture(tex, TexCoord);
                 }
                 ";
 
