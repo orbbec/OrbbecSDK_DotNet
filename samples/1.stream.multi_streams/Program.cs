@@ -6,6 +6,7 @@ namespace Samples.MultiStreams
     class Program
     {
         private static volatile bool _isRunning = true;
+        private static volatile bool _supportIMU = false;
 
         static void Main(string[] args)
         {
@@ -32,25 +33,25 @@ namespace Samples.MultiStreams
 
                 foreach (var sensorType in availableTypes)
                 {
-                    var format = sensorType switch
+                    if (sensorType == SensorType.OB_SENSOR_COLOR)
                     {
-                        SensorType.OB_SENSOR_COLOR => Format.OB_FORMAT_RGB,
-                        SensorType.OB_SENSOR_DEPTH => Format.OB_FORMAT_Y16,
-                        SensorType.OB_SENSOR_IR or SensorType.OB_SENSOR_IR_LEFT
-                            or SensorType.OB_SENSOR_IR_RIGHT => Format.OB_FORMAT_Y8,
-                        _ => Format.OB_FORMAT_UNKNOWN
-                    };
-                    config.EnableVideoStream(sensorType, 0, 0, 0, format);
+                        try
+                        {
+                            config.EnableVideoStream(sensorType, 1280, 0, 0, Format.OB_FORMAT_RGB);
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Camera does not support requested resolution 1280xAuto. Using default resolution.");
+                            config.EnableStream(sensorType);
+                        }
+                    }
+                    else
+                    {
+                        config.EnableStream(sensorType);
+                    }
                     Console.WriteLine($"Enabled stream for: {sensorType}");
                 }
                 pipe.Start(config);
-
-                imuPipeline = new Pipeline(device);
-                using var imuConfig = new Config();
-
-                imuConfig.EnableAccelStream();
-                imuConfig.EnableGyroStream();
-                imuPipeline.Start(imuConfig);
 
                 var textureIndices = new Dictionary<SensorType, int>();
                 foreach (var sensorType in availableTypes)
@@ -65,7 +66,17 @@ namespace Samples.MultiStreams
                 };
 
                 _ = Task.Run(() => StartStream(pipe, renderer, textureIndices));
-                _ = Task.Run(() => StartIMU(imuPipeline));
+
+                if (_supportIMU)
+                {
+                    imuPipeline = new Pipeline(device);
+                    using var imuConfig = new Config();
+
+                    imuConfig.EnableAccelStream();
+                    imuConfig.EnableGyroStream();
+                    imuPipeline.Start(imuConfig);
+                    _ = Task.Run(() => StartIMU(imuPipeline));
+                }
 
                 renderer.Run();
             }
@@ -75,8 +86,11 @@ namespace Samples.MultiStreams
             }
             finally
             {
+                _isRunning = false;
                 pipe?.Stop();
                 imuPipeline?.Stop();
+                imuPipeline?.Dispose();
+                pipe?.Dispose();
                 device?.Dispose();
                 Console.WriteLine("MultiStreams sample exited.");
             }
@@ -94,8 +108,10 @@ namespace Samples.MultiStreams
                 {
                     var sensorType = sensorList.SensorType((uint)i);
                     if (sensorType == SensorType.OB_SENSOR_ACCEL || sensorType == SensorType.OB_SENSOR_GYRO)
+                    {
+                        _supportIMU = true;
                         continue;
-
+                    }
                     availableTypes.Add(sensorType);
                 }
             }
@@ -125,6 +141,7 @@ namespace Samples.MultiStreams
                             SensorType.OB_SENSOR_IR => FrameType.OB_FRAME_IR,
                             SensorType.OB_SENSOR_IR_LEFT => FrameType.OB_FRAME_IR_LEFT,
                             SensorType.OB_SENSOR_IR_RIGHT => FrameType.OB_FRAME_IR_RIGHT,
+                            SensorType.OB_SENSOR_CONFIDENCE => FrameType.OB_FRAME_CONFIDENCE,
                             _ => FrameType.OB_FRAME_UNKNOWN
                         };
 
@@ -132,10 +149,24 @@ namespace Samples.MultiStreams
 
                         if (frame != null)
                         {
-                            using var vf = frame.As<VideoFrame>();
-                            byte[] data = new byte[vf.GetDataSize()];
-                            vf.CopyData(ref data);
-                            renderer.UpdateVideoFrame(textureIndex, (int)vf.GetWidth(), (int)vf.GetHeight(), vf.GetFormat(), data);
+                            if (frameType == FrameType.OB_FRAME_CONFIDENCE)
+                            {
+                                var depthFrame = frameSet.GetFrame(FrameType.OB_FRAME_DEPTH)?.As<VideoFrame>();
+                                if (depthFrame == null)
+                                {
+                                    continue;
+                                }
+                                byte[] data = new byte[frame.GetDataSize()];
+                                frame.CopyData(ref data);
+                                renderer.UpdateVideoFrame(textureIndex, (int)depthFrame.GetWidth(), (int)depthFrame.GetHeight(), Format.OB_FORMAT_Y8, data);
+                            }
+                            else
+                            {
+                                using var vf = frame.As<VideoFrame>();
+                                byte[] data = new byte[vf.GetDataSize()];
+                                vf.CopyData(ref data);
+                                renderer.UpdateVideoFrame(textureIndex, (int)vf.GetWidth(), (int)vf.GetHeight(), vf.GetFormat(), data);
+                            }
                         }
                     }
                 }

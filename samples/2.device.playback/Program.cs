@@ -13,6 +13,9 @@ namespace Samples.Playback
             Console.Clear();
             Console.WriteLine("Playback - Starting...");
 
+            bool result = GetRosbagPath(out string filePath);
+            if (!result) return;
+
             using var renderer = new OrbbecRenderer(title: "Playback");
 
             Console.CancelKeyPress += (s, e) =>
@@ -20,9 +23,6 @@ namespace Samples.Playback
                 e.Cancel = true;
                 renderer.Close();
             };
-
-            bool result = GetRosbagPath(out string filePath);
-            if (!result) return;
 
             PlaybackDevice? playback = null;
             Pipeline? pipe = null;
@@ -54,19 +54,27 @@ namespace Samples.Playback
                         continue;
                     }
 
-                    var format = sensorType switch
+                    if (sensorType == SensorType.OB_SENSOR_COLOR)
                     {
-                        SensorType.OB_SENSOR_COLOR => Format.OB_FORMAT_RGB,
-                        SensorType.OB_SENSOR_DEPTH => Format.OB_FORMAT_Y16,
-                        SensorType.OB_SENSOR_IR or SensorType.OB_SENSOR_IR_LEFT
-                            or SensorType.OB_SENSOR_IR_RIGHT => Format.OB_FORMAT_Y8,
-                        _ => Format.OB_FORMAT_UNKNOWN
-                    };
-                    config.EnableVideoStream(sensorType, 0, 0, 0, format);
+                        try
+                        {
+                            config.EnableVideoStream(sensorType, 0, 0, 0, Format.OB_FORMAT_RGB);
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Camera does not support requested resolution 1280xAuto. Using default resolution.");
+                            config.EnableStream(sensorType);
+                        }
+                    }
+                    else
+                    {
+                        config.EnableStream(sensorType);
+                    }
+                    Console.WriteLine($"Enabled stream for: {sensorType}");
                 }
                 pipe.Start(config);
 
-                Dictionary<SensorType, int> textureIndices = [];
+                var textureIndices = new Dictionary<SensorType, int>();
                 for (uint i = 0; i < sensorList.SensorCount(); ++i)
                 {
                     var sensorType = sensorList.SensorType(i);
@@ -93,6 +101,8 @@ namespace Samples.Playback
             {
                 pipe?.Stop();
                 imuPipeline?.Stop();
+                imuPipeline?.Dispose();
+                pipe?.Dispose();
                 playback?.Dispose();
                 Console.WriteLine("Playback sample exited.");
             }
@@ -177,6 +187,7 @@ namespace Samples.Playback
                             SensorType.OB_SENSOR_IR => FrameType.OB_FRAME_IR,
                             SensorType.OB_SENSOR_IR_LEFT => FrameType.OB_FRAME_IR_LEFT,
                             SensorType.OB_SENSOR_IR_RIGHT => FrameType.OB_FRAME_IR_RIGHT,
+                            SensorType.OB_SENSOR_CONFIDENCE => FrameType.OB_FRAME_CONFIDENCE,
                             _ => FrameType.OB_FRAME_UNKNOWN
                         };
 
@@ -184,10 +195,24 @@ namespace Samples.Playback
 
                         if (frame != null)
                         {
-                            using var vf = frame.As<VideoFrame>();
-                            byte[] data = new byte[vf.GetDataSize()];
-                            vf.CopyData(ref data);
-                            renderer.UpdateVideoFrame(textureIndex, (int)vf.GetWidth(), (int)vf.GetHeight(), vf.GetFormat(), data);
+                            if (frameType == FrameType.OB_FRAME_CONFIDENCE)
+                            {
+                                var depthFrame = frameSet.GetFrame(FrameType.OB_FRAME_DEPTH)?.As<VideoFrame>();
+                                if (depthFrame == null)
+                                {
+                                    continue;
+                                }
+                                byte[] data = new byte[frame.GetDataSize()];
+                                frame.CopyData(ref data);
+                                renderer.UpdateVideoFrame(textureIndex, (int)depthFrame.GetWidth(), (int)depthFrame.GetHeight(), Format.OB_FORMAT_Y8, data);
+                            }
+                            else
+                            {
+                                using var vf = frame.As<VideoFrame>();
+                                byte[] data = new byte[vf.GetDataSize()];
+                                vf.CopyData(ref data);
+                                renderer.UpdateVideoFrame(textureIndex, (int)vf.GetWidth(), (int)vf.GetHeight(), vf.GetFormat(), data);
+                            }
                         }
                     }
                 }

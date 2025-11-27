@@ -31,7 +31,7 @@ namespace Samples.Infrared
 
                 foreach (var sensorType in availableIrTypes)
                 {
-                    config.EnableVideoStream(sensorType, 0, 0, 0, Format.OB_FORMAT_Y8);
+                    config.EnableStream(sensorType);
                     Console.WriteLine($"Enabled stream for: {sensorType}");
                 }
                 pipe.Start(config);
@@ -58,6 +58,7 @@ namespace Samples.Infrared
             finally
             {
                 pipe?.Stop();
+                pipe?.Dispose();
                 device?.Dispose();
                 Console.WriteLine("Infrared sample exited.");
             }
