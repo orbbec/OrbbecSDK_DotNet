@@ -87,6 +87,8 @@ namespace Samples.Playback
                 {
                     Console.WriteLine("Window closing, stopping...");
                     _isRunning = false;
+                    _isExited = false;
+                    playback.SetPlaybackStatusChangeCallback(null);
                 };
 
                 _ = Task.Run(() => StartStream(pipe, renderer, textureIndices));
