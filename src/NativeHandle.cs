@@ -92,7 +92,6 @@ namespace Orbbec
             }
 
             Release();
-            _disposed = true; 
         }
 
         ~NativeHandle()

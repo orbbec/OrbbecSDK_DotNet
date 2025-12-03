@@ -70,16 +70,16 @@ namespace Samples.HWD2CAlign
             uint depthSpCount = depthStreamProfiles.ProfileCount();
             for (int i = 0; i < colorSpCount; i++)
             {
-                var colorProfile = coloStreamProfiles.GetProfile(i);
+                using var colorProfile = coloStreamProfiles.GetProfile(i);
                 using var colorVsp = colorProfile.As<VideoStreamProfile>();
 
                 for (int j = 0; j < depthSpCount; j++)
                 {
-                    var depthProfile = depthStreamProfiles.GetProfile(j);
+                    using var depthProfile = depthStreamProfiles.GetProfile(j);
                     using var depthVsp = depthProfile.As<VideoStreamProfile>();
 
                     // make sure the color and depth stream have the same fps, due to some models may not support different fps
-                    if (colorVsp.GetFPS() != depthVsp.GetFPS() || colorVsp.GetFormat() == Format.OB_FORMAT_MJPG)
+                    if (colorVsp.GetFPS() != depthVsp.GetFPS() || colorVsp.GetFormat() != Format.OB_FORMAT_RGB || colorVsp.GetFPS() == 90)
                     {
                         continue;
                     }
@@ -107,7 +107,7 @@ namespace Samples.HWD2CAlign
                 return false;
 
             // Iterate through the supported depth stream profiles and check if there is a match with the given depth stream profile
-            var depthVsp = depthStreamProfile.As<VideoStreamProfile>();
+            using var depthVsp = depthStreamProfile.As<VideoStreamProfile>();
             int count = (int)hwD2CSupportedDepthStreamProfiles.ProfileCount();
             for (int i = 0; i < count; i++)
             {
@@ -204,18 +204,17 @@ namespace Samples.HWD2CAlign
         {
             try
             {
-                int colorW = (int)colorFrame.GetWidth();
-                int colorH = (int)colorFrame.GetHeight();
+                int width = (int)colorFrame.GetWidth();
+                int height = (int)colorFrame.GetHeight();
+                int dataSize = (int)colorFrame.GetDataSize();
                 byte[] colorData = new byte[colorFrame.GetDataSize()];
                 colorFrame.CopyData(ref colorData);
 
-                int depthW = (int)depthFrame.GetWidth();
-                int depthH = (int)depthFrame.GetHeight();
                 byte[] depthDataRaw = new byte[depthFrame.GetDataSize()];
                 depthFrame.CopyData(ref depthDataRaw);
-                byte[] depthData = ImageUtils.Y16ToRgb(depthW, depthH, depthDataRaw);
+                byte[] depthData = ImageUtils.Y16ToRgb(width, height, depthDataRaw);
 
-                d2cData = ImageUtils.DepthAlignToColor(colorW, colorH, colorData, depthW, depthH, depthData, _alpha);
+                d2cData = ImageUtils.DepthAlignToColor(colorData, depthData, _alpha);
             }
             catch (Exception ex)
             {

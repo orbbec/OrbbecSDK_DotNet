@@ -12,6 +12,12 @@ namespace Orbbec
             _handle = new NativeHandle(handle, Delete);
         }
 
+        internal StreamProfile(NativeHandle handle)
+        {
+            _handle = handle;
+            _handle.Retain();
+        }
+
         internal NativeHandle GetNativeHandle()
         {
             return _handle;
@@ -26,14 +32,13 @@ namespace Orbbec
                 case StreamType.OB_STREAM_IR_RIGHT:
                 case StreamType.OB_STREAM_COLOR:
                 case StreamType.OB_STREAM_DEPTH:
-                    _handle.Retain();
-                    return new VideoStreamProfile(_handle.Ptr) as T;
+                    return new VideoStreamProfile(_handle) as T;
                 case StreamType.OB_STREAM_ACCEL:
                     _handle.Retain();
                     return new AccelStreamProfile(_handle.Ptr) as T;
                 case StreamType.OB_STREAM_GYRO:
                     _handle.Retain();
-                    return new GyroStreamProfile(_handle.Ptr) as T;   
+                    return new GyroStreamProfile(_handle.Ptr) as T;
             }
             return null;
         }
@@ -163,6 +168,10 @@ namespace Orbbec
     {
         internal VideoStreamProfile(IntPtr handle) : base(handle)
         {   
+        }
+
+        internal VideoStreamProfile(NativeHandle handle) : base(handle)
+        {
         }
 
         public static VideoStreamProfile Create(StreamType streamType, Format format, UInt32 width, UInt32 height, UInt32 fps)

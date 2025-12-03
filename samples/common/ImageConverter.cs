@@ -67,7 +67,7 @@ namespace Samples.Common
         public static byte[] DepthAlignToColor(int colorW, int colorH, ReadOnlySpan<byte> colorData,
             int depthW, int depthH, ReadOnlySpan<byte> depthData, float alpha)
         {
-            if (colorData == null || depthData == null)
+            if (colorData.Length == 0 || depthData.Length == 0)
                 throw new ArgumentException("Data is null");
 
             if (alpha <= 0)
@@ -113,6 +113,27 @@ namespace Samples.Common
                 }
             }
 
+            return output;
+        }
+
+        public static byte[] DepthAlignToColor(ReadOnlySpan<byte> colorData, ReadOnlySpan<byte> depthData, float alpha)
+        {
+            if (colorData.Length == 0 || depthData.Length == 0)
+                throw new ArgumentException("Data is null");
+
+            alpha = Math.Clamp(alpha, 0f, 1f);
+            if (alpha <= 0f) return colorData.ToArray();
+            if (alpha >= 1f) return depthData.ToArray();
+
+            byte[] output = new byte[colorData.Length];
+            colorData.CopyTo(output);
+            float ialpha = 1f - alpha;
+            for (int i = 0; i < output.Length; i++)
+            {
+                byte d = depthData[i];
+                if (d != 0)
+                    output[i] = (byte)(output[i] * ialpha + d * alpha);
+            }
             return output;
         }
     }
