@@ -434,6 +434,22 @@ namespace Orbbec
         //bool ob_device_preset_list_has_preset(ob_device_preset_list *preset_list, const char *preset_name, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_preset_list_has_preset")]
         public static extern bool ob_device_preset_list_has_preset(IntPtr presetList, String presetName, ref IntPtr error);
+
+        //ob_preset_resolution_config_list *ob_preset_resolution_config_list *ob_device_get_available_preset_resolution_config_list(ob_device *device, ob_error **error);
+        [DllImport(obsdk, EntryPoint = "ob_device_get_available_preset_resolution_config_list")]
+        public static extern IntPtr ob_device_get_available_preset_resolution_config_list(IntPtr presetResolutionConfigList, ref IntPtr error);
+
+        //uint32_t ob_device_preset_resolution_config_get_count(ob_preset_resolution_config_list *ob_preset_resolution_config_list, ob_error **error);
+        [DllImport(obsdk, EntryPoint = "ob_device_preset_resolution_config_get_count")]
+        public static extern UInt32 ob_device_preset_resolution_config_get_count(IntPtr presetList, ref IntPtr error);
+
+        //ob_preset_resolution_ratio_config ob_device_preset_resolution_config_list_get_item(const ob_preset_resolution_config_list *ob_preset_resolution_config_list, uint32_t index, ob_error **error);
+        [DllImport(obsdk, EntryPoint = "ob_device_preset_resolution_config_list_get_item")]
+        public static extern void ob_device_preset_resolution_config_list_get_item(out OBPresetResolutionConfig presetResolutionConfig, IntPtr presetResolutionConfigList, UInt32 index, ref IntPtr error);
+
+        //void ob_delete_preset_resolution_config_list(ob_preset_resolution_config_list *ob_preset_resolution_config_list, ob_error **error);
+        [DllImport(obsdk, EntryPoint = "ob_delete_preset_resolution_config_list")]
+        public static extern void ob_delete_preset_resolution_config_list(IntPtr presetResolutionConfigList, ref IntPtr error);
         #endregion
 
         #region MultipleDevice

@@ -518,6 +518,21 @@ namespace Orbbec
     }
 
     /**
+    * \if English
+    * @brief Preset resolution and decimation configuration.
+    * \else
+    * @brief 预设分辨率与下采样参数配置。
+    * \endif
+    */
+    public struct OBPresetResolutionConfig
+    {
+        public UInt16 width;                  ///< width
+        public UInt16 height;                 ///< height
+        public int irDecimationFactor;     ///< ir decimation factor
+        public int depthDecimationFactor;  ///< depth decimation factor
+    }
+
+    /**
     * @brief calibration parameters
     */
     public struct CalibrationParam 

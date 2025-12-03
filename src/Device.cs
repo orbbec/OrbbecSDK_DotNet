@@ -552,6 +552,40 @@ namespace Orbbec
 
         /**
         * \if English
+        * @brief Get the available preset-resolution configuration list of the device.
+        *
+        * This API returns the preset resolution configurations supported by the device.
+        * Only specific devices or specific operating modes provide this capability.
+        * If the device does not implement the preset-resolution manager component, this
+        * function will throw an exception (OB_EXCEPTION_TYPE_INVALID_VALUE).
+        *
+        * The preset resolution configuration can include width, height, and optional
+        * depth/IR decimation factors. Users must select a configuration according to
+        * the actual sensor type and current operating mode.
+        *
+        * @return PresetResolutionConfigList list of available preset-resolution configurations.
+        * \else
+        * @brief 获取设备支持的预设分辨率配置列表
+        *
+        * 该接口返回设备所支持的预设分辨率配置列表。只有部分设备或特定工作模式才提供此能力
+        * 若设备未实现预设分辨率管理组件，则会抛出异常(OB_EXCEPTION_TYPE_INVALID_VALUE)
+        *
+        * 预设配置可能包含宽度、高度以及可选的深度/IR 下采样因子。用户需要根据实际的传感器类型和当前工作模式
+        * 选择合适的配置
+        *
+        * @return PresetResolutionConfigList 可用的预设分辨率配置列表
+        * \endif
+        */
+        public PresetResolutionConfigList GetAvailablePresetResolutionConfigList()
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_device_get_available_preset_resolution_config_list(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+            return new PresetResolutionConfigList(handle);
+        }
+
+        /**
+        * \if English
         * @brief Get the original parameter list of camera calibration saved in the device. The parameters in the list do not correspond to the current
         * open-current configuration. You need to select the parameters according to the actual situation, and may need to do scaling, mirroring and other
         * processing. Non-professional users are recommended to use the Pipeline::getCameraParam() interface.
