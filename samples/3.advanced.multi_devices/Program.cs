@@ -38,9 +38,16 @@ namespace Samples.MultiDevices
                 foreach (var (i, pipe) in _pipes)
                 {
                     using var config = new Config();
-                    config.EnableVideoStream(StreamType.OB_STREAM_COLOR, 0, 0, 0, Format.OB_FORMAT_RGB);
-                    config.EnableVideoStream(StreamType.OB_STREAM_DEPTH, 0, 0, 0, Format.OB_FORMAT_Y16);
-
+                    try
+                    {
+                        config.EnableVideoStream(SensorType.OB_SENSOR_COLOR, 1280 ,0,0,Format.OB_FORMAT_RGB);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Camera does not support requested resolution 1280xAuto. Using default resolution.");
+                        config.EnableStream(SensorType.OB_SENSOR_COLOR);
+                    }
+                    config.EnableStream(SensorType.OB_SENSOR_DEPTH);
                     pipe.Start(config);
                 }
 
