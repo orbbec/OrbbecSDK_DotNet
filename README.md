@@ -1,31 +1,48 @@
-# Orbbec SDK C# Wrapper
+# Orbbec SDK DotNet Wrapper
 
-This is a wrapper for the Orbbec SDK for C#. It provides a simple and easy-to-use interface for accessing the Orbbec camera and performing various operations such as capturing depth images, color images, and performing point cloud generation.
+This is a wrapper for the Orbbec SDK for DotNet. It supports .NET 5 and later versions, and is compatible with Windows and Linux platforms. 
 
-The v2-main branch, C# Wrapper is based the open source version of [Orbbec SDK v2](https://github.com/orbbec/OrbbecSDK_v2). The C# wrapper for the open-source [Orbbec SDK v2](https://github.com/orbbec/OrbbecSDK_v2) is versioned as v2.x.x, while the C# wrapper for the [Orbbec SDK v1](https://github.com/orbbec/OrbbecSDK) is versioned as v1.x.x.
+It provides a simple and easy-to-use interface for accessing the Orbbec camera and performing various operations such as capturing depth images, color images, and performing point cloud generation.
+
+The v2-main branch is based the open source version of [Orbbec SDK v2](https://github.com/orbbec/OrbbecSDK_v2). 
+
+
+**If you need to use .NET Framework, please use [this repository](https://github.com/orbbec/OrbbecSDK_CSharp). However, .NET Framework is maintained for bug fixes only, and no new features will be added. We recommend using Orbbec SDK DotNet Wrapper instead**
 
 # Support Platforms
-- Windows: Windows 10 (x64)
+
+- Windows: Windows 10 (x64), tested with .NET 8
+
+- Linux: Tested on Ubuntu 20.04, 22.04, and 24.04, with .NET 8
+
+
 
 # Platform support
 
-| **Products List** | **Minimal Firmware Version** |
-|-------------------|------------------------------|
-| Gemini 435Le        | 1.2.04                       |
-| Gemini 335Le        | 1.5.31                       |
-| Gemini 330        | 1.2.20                       |
-| Gemini 330L       | 1.2.20                       |
-| Gemini 335        | 1.2.20                       |
-| Gemini 335L       | 1.2.20                       |
-| Gemini 336        | 1.2.20                       |
-| Gemini 336L       | 1.2.20                       |
-| Femto Bolt        | 1.1.2                  |
-| Femto Mega        | 1.3.0                  |
+
+| **Products List** | **Minimal Firmware Version** | **Recommended FW Version**    |
+|-------------------|------------------------------|-------------------------------|
+| Gemini 435Le        | 1.2.4                     |        1.3.2                   |
+| Gemini 335Le        | 1.5.31                     |        1.6.00                 |
+| Gemini 330        | 1.2.20                       |        1.6.00                 |
+| Gemini 330L       | 1.2.20                       |       1.6.00                  |
+| Gemini 335        | 1.2.20                       |       1.6.00                  |
+| Gemini 335L       | 1.2.20                       |        1.6.00                 |
+| Gemini 336        | 1.2.20                       |       1.6.00                        |
+| Gemini 336L       | 1.2.20                       |        1.6.00                       |
+| Gemini 335Lg      | 1.3.46                       |        1.6.00                       |
+| Femto Bolt        | 1.1.2                  |              1.1.2                       |
+| Femto Mega        | 1.3.0                  |              1.3.1                       |
 
 
 # Environment Setup
 
 ## windows
+
+- First, download and install .NET
+```
+https://dotnet.microsoft.com/en-us/download/dotnet/8.0
+```
 
 For windows, you need to register the metadata associated with frames (this includes things like timestamps and other information about the video frame).
 
@@ -33,12 +50,21 @@ For windows, you need to register the metadata associated with frames (this incl
 
 *Notes: If the metadata is not registered, the device timestamp will be abnormal, thereby affecting the SDK’s internal frame synchronization functionality.*
 
+
+## Linux
+
+```
+sudo apt update
+sudo apt install -y dotnet-sdk-8.0
+```
+
 # Documentation
 
 For compilation and API reference, please refer to [UserGuide](https://orbbec.github.io/OrbbecSDK_CSharp/index.html) documentation.
 
 # License
-This project is licensed under the Apache License 2.0.
+
+This project is licensed under the MIT License.
 
                                                                                
 
