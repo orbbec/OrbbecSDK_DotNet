@@ -17,7 +17,7 @@ The v2-main branch is based the open source version of [Orbbec SDK v2](https://g
 
 
 
-# Platform support
+# Supported Devices
 
 
 | **Products List** | **Minimal Firmware Version** | **Recommended FW Version**    |
