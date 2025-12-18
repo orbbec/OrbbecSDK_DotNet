@@ -20,19 +20,19 @@ The v2-main branch is based the open source version of [Orbbec SDK v2](https://g
 # Supported Devices
 
 
-| **Products List** | **Minimal Firmware Version** | **Recommended FW Version**    |
-|-------------------|------------------------------|-------------------------------|
-| Gemini 435Le        | 1.2.4                     |        1.3.2                   |
-| Gemini 335Le        | 1.5.31                     |        1.6.00                 |
-| Gemini 330        | 1.2.20                       |        1.6.00                 |
-| Gemini 330L       | 1.2.20                       |       1.6.00                  |
-| Gemini 335        | 1.2.20                       |       1.6.00                  |
+| **Products List** | **Minimal Firmware Version** | **Recommended FW Version**    |   Notes      |
+|-------------------|------------------------------|-------------------------------|-------------|
+| Gemini 435Le        | 1.2.4                     |        1.3.2                   |              |
+| Gemini 335Le        | 1.5.31                     |        1.6.00                 |              |
+| Gemini 330        | 1.2.20                       |        1.6.00                 |              |
+| Gemini 330L       | 1.2.20                       |       1.6.00                  |              |
+| Gemini 335        | 1.2.20                       |       1.6.00                  |              |
 | Gemini 335L       | 1.2.20                       |        1.6.00                 |
-| Gemini 336        | 1.2.20                       |       1.6.00                        |
-| Gemini 336L       | 1.2.20                       |        1.6.00                       |
-| Gemini 335Lg      | 1.3.46                       |        1.6.00                       |
-| Femto Bolt        | 1.1.2                  |              1.1.2                       |
-| Femto Mega        | 1.3.0                  |              1.3.1                       |
+| Gemini 336        | 1.2.20                       |       1.6.00                        |        |
+| Gemini 336L       | 1.2.20                       |        1.6.00                       |       |
+| Gemini 335Lg      | 1.3.46                       |        1.6.00                       |       |
+| Femto Bolt        | 1.1.2                  |              1.1.2                       |TODO: Linux is currently not supported due to issues with the depth engine.      |
+| Femto Mega        | 1.3.0                  |              1.3.1                       |        |
 
 
 # Environment Setup
