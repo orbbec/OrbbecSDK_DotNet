@@ -57,5 +57,4 @@ using (var frames = pipeline.WaitForFrames(100))
 }  
 ```
 
-The complete sample code can be found in The complete sample code can be found in /OrbbecSDK_CSharp/samples/
-3.advanced.hdr
+The complete sample code can be found in /orbbecsdk_dotnet/samples/3.advanced.hdr

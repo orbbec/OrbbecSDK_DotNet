@@ -1,37 +1,179 @@
-# Windows C# SDK Compilation and Installation
+# OrbbecSDK DotNet Wrapper Compilation
 
-Here, it is assumed that you have installed Cmake correctly. If you have not installed Cmake,you can refer to the Cmake official website for installation.
+This document describes how to set up the development environment and compile the Orbbec OrbbecSDK DotNet Wrapper on supported platforms.
 
-2.1  Open Cmake, set the source code path, and set the “build” folder as the path for generating binary files, as shown in the following figure.
+## Environment
 
-2.2 First, click Configure, then select x64 in the dialog box that appears, and finally click Finish.
+This section outlines the required development environment, including supported operating systems, compilers, and .NET versions needed to build the OrbbecSDK DotNet Wrapper.
 
-![compile-1.png](../image/compile-1.png)
+### Compilation Platform Requirements
 
-2.3 Click “Generate”, as shown below:
+- Windows: Visual Studio 2022 and above
+- Linux: gcc 7.5.0 and above
 
-![compile-2.png](../image/compile-2.png)
+### .NET Version
 
-2.4 Use the file explorer to directly start the Visual Studio project in the build directory, as shown in the following figure:
+- .NET 8.0 and above
 
-![compile-3.png](../image/compile-3.png)
+> **Note**  
+> All build and run examples in this document use **.NET 8.0** as the reference version.  
+> On **Windows**, building projects targeting **.NET 8.0 or above** requires  
+> **Visual Studio 2022 or later**.
 
-2.5 Open the project, as shown below, First, select Release, then choose ALL BUILD to compile, and finally select INSTALL.
+## Linux OrbbecSDK DotNet Wrapper Compilation
 
-![compile-4.png](../image/compile-4.png)
+This section provides a comprehensive guide to installing, compiling, and running the Orbbec SDK for C#, covering all necessary steps for setup.
 
-2.6 The compiled sample is located in the build/install/bin directory. 
+- Contents:
 
-![compile-5.png](../image/compile-5.png)
+  - Install Dependencies
+  - Build the Project
+  - Run the Examples
+  - Optional: Generate the Project Using a Script
 
-2.7 Click on 0.basic.quick_start.exe, and the running result is as follows
+Clone the repository to get the latest version:
 
-![compile-6.png](../image/compile-6.png)
+```basha
+git clone https://github.com/orbbec/orbbecsdk_dotnet.git
+cd orbbecsdk_dotnet
+git checkout v2-main
+```
 
-2.8 You can also use a script to generate the project project file as follows,The name of the script is build.bat, put it in the same directory as CMakeLists.txt.
+### Install Dependencies (Ubuntu)
+
+Install the necessary .NET development packages
+
+```bash
+sudo apt-get install dotnet-sdk-8.0
+```
+
+### Build the Project
+
+Build the project:
+
+```bash
+cd orbbecsdk_dotnet
+dotnet restore
+dotnet build
+```
+> **Note**  
+> By default, `dotnet build` compiles the project in **Debug** configuration.
+> To build the **Release** version, specify the configuration explicitly:
+
+```bash
+dotnet build -c Release
+```
+
+
+### Run the Examples
+
+Run the examples:
+
+```bash
+cd orbbecsdk_dotnet
+cd ./samples/1.stream.color/bin/Debug/net8.0/
+dotnet ./Samples.Color.dll
+```
+
+### Optional: Generate the Project Using a Script
+
+You can also generate the project files using a script.
+Use the `build_samples.sh` script.
 
 ![compile-7.png](../image/compile-7.png)
 
-Double click build.bat will create a new build folder, the generated project files will be placed in the build folder, so that you can avoid the project files and source code together!
+A new build directory will be created automatically, and all generated project files
+will be placed inside this directory.
+
+This approach keeps generated files separate from the source code.
 
 ![compile-8.png](../image/compile-8.png)
+
+## Windows OrbbecSDK DotNet Wrapper Compilation
+
+This section provides a comprehensive guide to installing, compiling, and running the Orbbec SDK for C#, covering all necessary steps for setup.
+
+- Contents:
+
+  - Install Dependencies (Ubuntu)
+  - Build the Project and Run the Examples
+
+Clone the repository to get the latest version:
+
+```bash
+git clone https://github.com/orbbec/orbbecsdk_dotnet.git
+cd orbbecsdk_dotnet
+git checkout v2-main
+```
+
+### Install Dependencies
+
+Install the necessary .NET development packages
+
+- Download the official installer from Microsoft:
+  https://dotnet.microsoft.com/en-us/download/dotnet/8.0
+- Run the installer and follow the on-screen instructions.
+- After installation, verify that .NET is installed correctly by running:
+
+```powershell
+dotnet --version
+```
+
+### Build the Project
+
+#### Step 1: Open the Visual Studio Project
+
+Use the file explorer to directly start the Visual Studio project in the build directory, as shown in the following figure:
+
+![compile-1.png](../image/compile-1.png)
+
+#### Step 2: Build the Project in Release Mode
+
+After opening the project in Visual Studio:
+
+- Select **Release** configuration from the toolbar.
+- In the **Solution Explorer**, right-click **OrbbecSharp** and select **Rebuild**.
+- Then, right-click **samples** and select **Rebuild**.
+
+![compile-2.png](../image/compile-2.png)
+
+![compile-3.png](../image/compile-3.png)
+
+![compile-4.png](../image/compile-4.png)
+
+
+#### Step 3: Locate the Compiled Samples
+
+**Each sample** is now built into **its own output directory**.
+For example, the `color` sample executable can be found at:
+```text
+orbbecsdk_dotnet/samples/1.stream.color/bin/Release/net8.0/
+```
+
+![compile-5.png](../image/compile-5.png)
+
+#### Step 4: Run a Sample
+
+Click on **Samples.Color.exe**, and the running result is as follows
+
+![compile-6.png](../image/compile-6.png)
+
+## Build Executable Binaries(Windows/Linux)
+
+Use the following command to publish the project and generate executable binaries:
+
+### Linux
+
+```bash
+cd orbbecsdk_dotnet
+dotnet publish -c Release -r linux-x64 -p:DebugType=none -p:PublishSingleFile=true  
+```
+
+### Windows
+
+```powershell
+cd orbbecsdk_dotnet
+dotnet publish -c Release -r win-x64 -p:DebugType=none -p:PublishSingleFile=true  
+```
+> **Note**
+> The published executable can be found in /orbbecsdk_dotnet/bin/.

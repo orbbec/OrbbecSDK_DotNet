@@ -1,13 +1,13 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2.1. Windows C# SDK Compilation and Installation &mdash; OrbbecSDK v2 C# Wrapper User&#39;s Guide  documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+  <title>2.1. OrbbecSDK DotNet Wrapper Compilation &mdash; OrbbecSDK DotNet Wrapper User&#39;s Guide  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=a2eacb60" />
 
@@ -15,9 +15,9 @@
     <link rel="shortcut icon" href="../../_static/orbbec_footerlogo_3d_world.svg"/>
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=b3ba4146"></script>
-      <script src="../../_static/doctools.js?v=888ff710"></script>
-      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -34,7 +34,7 @@
           
           
           <a href="../../index.html" class="icon icon-home">
-            OrbbecSDK v2 C# Wrapper User's Guide
+            OrbbecSDK DotNet Wrapper User's Guide
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -52,7 +52,37 @@
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="installation.html">2. Installation</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">2.1. Windows C# SDK Compilation and Installation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.1. OrbbecSDK DotNet Wrapper Compilation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#environment">2.1.1. Environment</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#compilation-platform-requirements">2.1.1.1. Compilation Platform Requirements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#net-version">2.1.1.2. .NET Version</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#linux-orbbecsdk-dotnet-wrapper-compilation">2.1.2. Linux OrbbecSDK DotNet Wrapper Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#install-dependencies-ubuntu">2.1.2.1. Install Dependencies (Ubuntu)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#build-the-project">2.1.2.2. Build the Project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#run-the-examples">2.1.2.3. Run the Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#optional-generate-the-project-using-a-script">2.1.2.4. Optional: Generate the Project Using a Script</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#windows-orbbecsdk-dotnet-wrapper-compilation">2.1.3. Windows OrbbecSDK DotNet Wrapper Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#install-dependencies">2.1.3.1. Install Dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">2.1.3.2. Build the Project</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#step-1-open-the-visual-studio-project">2.1.3.2.1. Step 1: Open the Visual Studio Project</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#step-2-build-the-project-in-release-mode">2.1.3.2.2. Step 2: Build the Project in Release Mode</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#step-3-locate-the-compiled-samples">2.1.3.2.3. Step 3: Locate the Compiled Samples</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#step-4-run-a-sample">2.1.3.2.4. Step 4: Run a Sample</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#build-executable-binaries-windows-linux">2.1.4. Build Executable Binaries(Windows/Linux)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#linux">2.1.4.1. Linux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#windows">2.1.4.2. Windows</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../4_Application_Guide/Application_Guide.html">3. Application Guide</a><ul>
@@ -73,11 +103,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../4_Application_Guide/Camera_configuration.html#obtain-the-camera-intrinsic-and-extrinsic-parameters">3.3.2. Obtain the Camera Intrinsic and Extrinsic Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../4_Application_Guide/Camera_configuration.html#open-device">3.3.3. Open Device</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../4_Application_Guide/Camera_configuration.html#device-reboot">3.3.4. Device Reboot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../4_Application_Guide/Camera_configuration.html#laser-switch">3.3.5. Laser Switch</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../4_Application_Guide/Camera_configuration.html#ldp-switch">3.3.6. LDP Switch</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../4_Application_Guide/Camera_configuration.html#obtain-ldp-protection-measurements">3.3.7. Obtain LDP Protection Measurements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../4_Application_Guide/Camera_configuration.html#obtain-ldp-protection-status">3.3.8. Obtain LDP Protection Status</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../4_Application_Guide/Camera_configuration.html#device-time-synchronization">3.3.9. Device Time Synchronization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../4_Application_Guide/Camera_configuration.html#obtain-the-ip-config">3.3.5. Obtain the IP Config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../4_Application_Guide/Camera_configuration.html#obtain-local-network-configuration">3.3.6. Obtain Local Network Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../4_Application_Guide/Camera_configuration.html#force-ip-configuration">3.3.7. Force IP Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../4_Application_Guide/Camera_configuration.html#laser-switch">3.3.8. Laser Switch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../4_Application_Guide/Camera_configuration.html#ldp-switch">3.3.9. LDP Switch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../4_Application_Guide/Camera_configuration.html#obtain-ldp-protection-measurements">3.3.10. Obtain LDP Protection Measurements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../4_Application_Guide/Camera_configuration.html#obtain-ldp-protection-status">3.3.11. Obtain LDP Protection Status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../4_Application_Guide/Camera_configuration.html#device-time-synchronization">3.3.12. Device Time Synchronization</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../4_Application_Guide/Depth_Settings.html">3.4. Depth Settings</a><ul>
@@ -145,7 +178,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">OrbbecSDK v2 C# Wrapper User's Guide</a>
+          <a href="../../index.html">OrbbecSDK DotNet Wrapper User's Guide</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -154,7 +187,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="installation.html"><span class="section-number">2. </span>Installation</a></li>
-      <li class="breadcrumb-item active"><span class="section-number">2.1. </span>Windows C# SDK Compilation and Installation</li>
+      <li class="breadcrumb-item active"><span class="section-number">2.1. </span>OrbbecSDK DotNet Wrapper Compilation</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/source/2_installation/Compilation.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -164,26 +197,178 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="windows-c-sdk-compilation-and-installation">
-<h1><span class="section-number">2.1. </span>Windows C# SDK Compilation and Installation<a class="headerlink" href="#windows-c-sdk-compilation-and-installation" title="Permalink to this heading"></a></h1>
-<p>Here, it is assumed that you have installed Cmake correctly. If you have not installed Cmake,you can refer to the Cmake official website for installation.</p>
-<p>2.1  Open Cmake, set the source code path, and set the “build” folder as the path for generating binary files, as shown in the following figure.</p>
-<p>2.2 First, click Configure, then select x64 in the dialog box that appears, and finally click Finish.</p>
-<p><img alt="compile-1.png" src="../../_images/compile-1.png" /></p>
-<p>2.3 Click “Generate”, as shown below:</p>
-<p><img alt="compile-2.png" src="../../_images/compile-2.png" /></p>
-<p>2.4 Use the file explorer to directly start the Visual Studio project in the build directory, as shown in the following figure:</p>
-<p><img alt="compile-3.png" src="../../_images/compile-3.png" /></p>
-<p>2.5 Open the project, as shown below, First, select Release, then choose ALL BUILD to compile, and finally select INSTALL.</p>
-<p><img alt="compile-4.png" src="../../_images/compile-4.png" /></p>
-<p>2.6 The compiled sample is located in the build/install/bin directory.</p>
-<p><img alt="compile-5.png" src="../../_images/compile-5.png" /></p>
-<p>2.7 Click on 0.basic.quick_start.exe, and the running result is as follows</p>
-<p><img alt="compile-6.png" src="../../_images/compile-6.png" /></p>
-<p>2.8 You can also use a script to generate the project project file as follows,The name of the script is build.bat, put it in the same directory as CMakeLists.txt.</p>
+  <section id="orbbecsdk-dotnet-wrapper-compilation">
+<h1><span class="section-number">2.1. </span>OrbbecSDK DotNet Wrapper Compilation<a class="headerlink" href="#orbbecsdk-dotnet-wrapper-compilation" title="Link to this heading"></a></h1>
+<p>This document describes how to set up the development environment and compile the Orbbec OrbbecSDK DotNet Wrapper on supported platforms.</p>
+<section id="environment">
+<h2><span class="section-number">2.1.1. </span>Environment<a class="headerlink" href="#environment" title="Link to this heading"></a></h2>
+<p>This section outlines the required development environment, including supported operating systems, compilers, and .NET versions needed to build the OrbbecSDK DotNet Wrapper.</p>
+<section id="compilation-platform-requirements">
+<h3><span class="section-number">2.1.1.1. </span>Compilation Platform Requirements<a class="headerlink" href="#compilation-platform-requirements" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Windows: Visual Studio 2022 and above</p></li>
+<li><p>Linux: gcc 7.5.0 and above</p></li>
+</ul>
+</section>
+<section id="net-version">
+<h3><span class="section-number">2.1.1.2. </span>.NET Version<a class="headerlink" href="#net-version" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>.NET 8.0 and above</p></li>
+</ul>
+<blockquote>
+<div><p><strong>Note</strong><br />All build and run examples in this document use <strong>.NET 8.0</strong> as the reference version.<br />On <strong>Windows</strong>, building projects targeting <strong>.NET 8.0 or above</strong> requires<br /><strong>Visual Studio 2022 or later</strong>.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="linux-orbbecsdk-dotnet-wrapper-compilation">
+<h2><span class="section-number">2.1.2. </span>Linux OrbbecSDK DotNet Wrapper Compilation<a class="headerlink" href="#linux-orbbecsdk-dotnet-wrapper-compilation" title="Link to this heading"></a></h2>
+<p>This section provides a comprehensive guide to installing, compiling, and running the Orbbec SDK for C#, covering all necessary steps for setup.</p>
+<ul class="simple">
+<li><p>Contents:</p>
+<ul>
+<li><p>Install Dependencies</p></li>
+<li><p>Build the Project</p></li>
+<li><p>Run the Examples</p></li>
+<li><p>Optional: Generate the Project Using a Script</p></li>
+</ul>
+</li>
+</ul>
+<p>Clone the repository to get the latest version:</p>
+<div class="highlight-basha notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/orbbec/orbbecsdk_dotnet.git
+cd orbbecsdk_dotnet
+git checkout v2-main
+</pre></div>
+</div>
+<section id="install-dependencies-ubuntu">
+<h3><span class="section-number">2.1.2.1. </span>Install Dependencies (Ubuntu)<a class="headerlink" href="#install-dependencies-ubuntu" title="Link to this heading"></a></h3>
+<p>Install the necessary .NET development packages</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>dotnet-sdk-8.0
+</pre></div>
+</div>
+</section>
+<section id="build-the-project">
+<h3><span class="section-number">2.1.2.2. </span>Build the Project<a class="headerlink" href="#build-the-project" title="Link to this heading"></a></h3>
+<p>Build the project:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>orbbecsdk_dotnet
+dotnet<span class="w"> </span>restore
+dotnet<span class="w"> </span>build
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Note</strong><br />By default, <code class="docutils literal notranslate"><span class="pre">dotnet</span> <span class="pre">build</span></code> compiles the project in <strong>Debug</strong> configuration.
+To build the <strong>Release</strong> version, specify the configuration explicitly:</p>
+</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dotnet<span class="w"> </span>build<span class="w"> </span>-c<span class="w"> </span>Release
+</pre></div>
+</div>
+</section>
+<section id="run-the-examples">
+<h3><span class="section-number">2.1.2.3. </span>Run the Examples<a class="headerlink" href="#run-the-examples" title="Link to this heading"></a></h3>
+<p>Run the examples:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>orbbecsdk_dotnet
+<span class="nb">cd</span><span class="w"> </span>./samples/1.stream.color/bin/Debug/net8.0/
+dotnet<span class="w"> </span>./Samples.Color.dll
+</pre></div>
+</div>
+</section>
+<section id="optional-generate-the-project-using-a-script">
+<h3><span class="section-number">2.1.2.4. </span>Optional: Generate the Project Using a Script<a class="headerlink" href="#optional-generate-the-project-using-a-script" title="Link to this heading"></a></h3>
+<p>You can also generate the project files using a script.
+Use the <code class="docutils literal notranslate"><span class="pre">build_samples.sh</span></code> script.</p>
 <p><img alt="compile-7.png" src="../../_images/compile-7.png" /></p>
-<p>Double click build.bat will create a new build folder, the generated project files will be placed in the build folder, so that you can avoid the project files and source code together!</p>
+<p>A new build directory will be created automatically, and all generated project files
+will be placed inside this directory.</p>
+<p>This approach keeps generated files separate from the source code.</p>
 <p><img alt="compile-8.png" src="../../_images/compile-8.png" /></p>
+</section>
+</section>
+<section id="windows-orbbecsdk-dotnet-wrapper-compilation">
+<h2><span class="section-number">2.1.3. </span>Windows OrbbecSDK DotNet Wrapper Compilation<a class="headerlink" href="#windows-orbbecsdk-dotnet-wrapper-compilation" title="Link to this heading"></a></h2>
+<p>This section provides a comprehensive guide to installing, compiling, and running the Orbbec SDK for C#, covering all necessary steps for setup.</p>
+<ul class="simple">
+<li><p>Contents:</p>
+<ul>
+<li><p>Install Dependencies (Ubuntu)</p></li>
+<li><p>Build the Project and Run the Examples</p></li>
+</ul>
+</li>
+</ul>
+<p>Clone the repository to get the latest version:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/orbbec/orbbecsdk_dotnet.git
+<span class="nb">cd</span><span class="w"> </span>orbbecsdk_dotnet
+git<span class="w"> </span>checkout<span class="w"> </span>v2-main
+</pre></div>
+</div>
+<section id="install-dependencies">
+<h3><span class="section-number">2.1.3.1. </span>Install Dependencies<a class="headerlink" href="#install-dependencies" title="Link to this heading"></a></h3>
+<p>Install the necessary .NET development packages</p>
+<ul class="simple">
+<li><p>Download the official installer from Microsoft:
+https://dotnet.microsoft.com/en-us/download/dotnet/8.0</p></li>
+<li><p>Run the installer and follow the on-screen instructions.</p></li>
+<li><p>After installation, verify that .NET is installed correctly by running:</p></li>
+</ul>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">dotnet</span> <span class="p">-</span><span class="n">-version</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h3><span class="section-number">2.1.3.2. </span>Build the Project<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<section id="step-1-open-the-visual-studio-project">
+<h4><span class="section-number">2.1.3.2.1. </span>Step 1: Open the Visual Studio Project<a class="headerlink" href="#step-1-open-the-visual-studio-project" title="Link to this heading"></a></h4>
+<p>Use the file explorer to directly start the Visual Studio project in the build directory, as shown in the following figure:</p>
+<p><img alt="compile-1.png" src="../../_images/compile-1.png" /></p>
+</section>
+<section id="step-2-build-the-project-in-release-mode">
+<h4><span class="section-number">2.1.3.2.2. </span>Step 2: Build the Project in Release Mode<a class="headerlink" href="#step-2-build-the-project-in-release-mode" title="Link to this heading"></a></h4>
+<p>After opening the project in Visual Studio:</p>
+<ul class="simple">
+<li><p>Select <strong>Release</strong> configuration from the toolbar.</p></li>
+<li><p>In the <strong>Solution Explorer</strong>, right-click <strong>OrbbecSharp</strong> and select <strong>Rebuild</strong>.</p></li>
+<li><p>Then, right-click <strong>samples</strong> and select <strong>Rebuild</strong>.</p></li>
+</ul>
+<p><img alt="compile-2.png" src="../../_images/compile-2.png" /></p>
+<p><img alt="compile-3.png" src="../../_images/compile-3.png" /></p>
+<p><img alt="compile-4.png" src="../../_images/compile-4.png" /></p>
+</section>
+<section id="step-3-locate-the-compiled-samples">
+<h4><span class="section-number">2.1.3.2.3. </span>Step 3: Locate the Compiled Samples<a class="headerlink" href="#step-3-locate-the-compiled-samples" title="Link to this heading"></a></h4>
+<p><strong>Each sample</strong> is now built into <strong>its own output directory</strong>.
+For example, the <code class="docutils literal notranslate"><span class="pre">color</span></code> sample executable can be found at:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>orbbecsdk_dotnet/samples/1.stream.color/bin/Release/net8.0/
+</pre></div>
+</div>
+<p><img alt="compile-5.png" src="../../_images/compile-5.png" /></p>
+</section>
+<section id="step-4-run-a-sample">
+<h4><span class="section-number">2.1.3.2.4. </span>Step 4: Run a Sample<a class="headerlink" href="#step-4-run-a-sample" title="Link to this heading"></a></h4>
+<p>Click on <strong>Samples.Color.exe</strong>, and the running result is as follows</p>
+<p><img alt="compile-6.png" src="../../_images/compile-6.png" /></p>
+</section>
+</section>
+</section>
+<section id="build-executable-binaries-windows-linux">
+<h2><span class="section-number">2.1.4. </span>Build Executable Binaries(Windows/Linux)<a class="headerlink" href="#build-executable-binaries-windows-linux" title="Link to this heading"></a></h2>
+<p>Use the following command to publish the project and generate executable binaries:</p>
+<section id="linux">
+<h3><span class="section-number">2.1.4.1. </span>Linux<a class="headerlink" href="#linux" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>orbbecsdk_dotnet
+dotnet<span class="w"> </span>publish<span class="w"> </span>-c<span class="w"> </span>Release<span class="w"> </span>-r<span class="w"> </span>linux-x64<span class="w"> </span>-p:DebugType<span class="o">=</span>none<span class="w"> </span>-p:PublishSingleFile<span class="o">=</span><span class="nb">true</span><span class="w">  </span>
+</pre></div>
+</div>
+</section>
+<section id="windows">
+<h3><span class="section-number">2.1.4.2. </span>Windows<a class="headerlink" href="#windows" title="Link to this heading"></a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">cd </span><span class="n">orbbecsdk_dotnet</span>
+<span class="n">dotnet</span> <span class="n">publish</span> <span class="n">-c</span> <span class="n">Release</span> <span class="n">-r</span> <span class="n">win-x64</span> <span class="n">-p</span><span class="p">:</span><span class="n">DebugType</span><span class="p">=</span><span class="n">none</span> <span class="n">-p</span><span class="p">:</span><span class="n">PublishSingleFile</span><span class="p">=</span><span class="n">true</span>  
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Note</strong>
+The published executable can be found in /orbbecsdk_dotnet/bin/.</p>
+</div></blockquote>
+</section>
+</section>
 </section>
 
 
@@ -198,7 +383,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, ORBBEC INC. www.orbbec.com..
-      <span class="lastupdated">Last updated on 2025-01-19 19:51:51.
+      <span class="lastupdated">Last updated on 2025-12-18 20:04:53.
       </span></p>
   </div>
 

@@ -83,10 +83,62 @@ Device device = pipeline.GetDevice();
 ```c#
 Context context = new Context();
 DeviceList deviceList = context.QueryDeviceList();
-// get device
+// Get device
 Device device = deviceList.GetDevice(0);
-// reboot device
+// Reboot device
 device.Reboot();
+```
+
+### Obtain the IP Config
+
+```c#
+Context context = new Context();
+DeviceList deviceList = context.QueryDeviceList();
+// Get deviceinfo
+Device device = deviceList.GetDevice(0);
+DeviceInfo deviceInfo = device.GetDeviceInfo();
+
+// Get device ip address
+string ipAddress = deviceInfo.IPAddress();
+string subnetMask = deviceInfo.GetSubnetMask();
+string gateway = deviceInfo.GetGateway();
+```
+
+### Obtain Local Network Configuration
+
+```c#
+Context context = new Context();
+DeviceList deviceList = context.QueryDeviceList();
+
+// Get local network configuration
+string localIp = deviceList.GetLocalIp(0);
+byte localSubnetLength = deviceList.GetLocalSubnetLength(0);
+string localGateway = deviceList.GetLocalGateway(0);
+```
+
+### Force IP Configuration 
+
+Force the device to use the specified IP settings. The configuration is temporary and will be lost after the device is powered off.
+
+```c#
+// Force temporary IP settings (not saved after power off)
+Context context = new Context();
+DeviceList deviceList = context.QueryDeviceList();
+Device device = deviceList.GetDevice(0);
+DeviceInfo deviceInfo = device.GetDeviceInfo();
+
+// Get device uid
+string uid = deviceInfo.Uid();
+
+// Configure the device IP address parameters
+DeviceIpAddrConfig deviceIpAddrConfig = new DeviceIpAddrConfig();
+deviceIpAddrConfig.dhcp = 0;
+deviceIpAddrConfig.address = new byte[] { 192, 168, 1, 120 };
+deviceIpAddrConfig.mask = new byte[] { 255, 255, 255, 0 };
+deviceIpAddrConfig.gateway = new byte[] { 192, 168, 1, 1 };
+
+// Force the IP configuration to the device (temporary setting)
+bool deviceStatus = Context.ForceIpConfig(uid, deviceIpAddrConfig);
 ```
 
 ### Laser Switch

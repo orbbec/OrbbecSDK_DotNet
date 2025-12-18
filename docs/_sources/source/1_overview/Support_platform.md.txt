@@ -1,3 +1,5 @@
 ## Support Platforms
 
-Windows: Windows 10 (x64)
+- Windows: Windows 10 (x64), tested with .NET 8
+
+- Linux: Tested on Ubuntu 20.04, 22.04, and 24.04, with .NET 8

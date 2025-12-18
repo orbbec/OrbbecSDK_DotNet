@@ -22,7 +22,7 @@ filter.selectSequenceId(1);
 processedFrame = filter.Process(processedFrame).As<DepthFrame>();
 ```
 
-The complete sample code can be found in /OrbbecSDK_CSharp/samples/4.post.processing.SequenceIdFilter
+The complete sample code can be found in /orbbecsdk_dotnet/samples/4.post.processing.SequenceIdFilter
 
 ### DecimationFilter
 
@@ -45,7 +45,7 @@ filter.setScaleValue(2);
 processedFrame = filter.Process(processedFrame).As<DepthFrame>();
 ```
 
-The complete sample code can be found in /OrbbecSDK_CSharp/samples/4.post.processing.DecimationFilter
+The complete sample code can be found in /orbbecsdk_dotnet/samples/4.post.processing.DecimationFilter
 
 ### ThresholdFilter
 
@@ -68,7 +68,7 @@ filter.setValueRange(500,1000);
 processedFrame = filter.Process(processedFrame).As<DepthFrame>();
 ```
 
-The complete sample code can be found in /OrbbecSDK_CSharp/samples/4.post.processing.ThresholdFilter
+The complete sample code can be found in /orbbecsdk_dotnet/samples/4.post.processing.ThresholdFilter
 
 ### SpatialAdvancedFilter
 
@@ -100,7 +100,7 @@ filter.setFilterParams(in filterParams);
 processedFrame = filter.Process(processedFrame).As<DepthFrame>();
 ```
 
-The complete sample code can be found in /OrbbecSDK_CSharp/samples/4.post.processing.SpatialAdvancedFilter,The SpatialAdvancedFilter algorithm depends on the extensions library ,as shown
+The complete sample code can be found in /orbbecsdk_dotnet/samples/4.post.processing.SpatialAdvancedFilter/bin/Debug/net8.0, the SpatialAdvancedFilter algorithm depends on the extensions library ,as shown
 ![compile-10.png](../image/compile-10.png)
 
 ### HoleFillingFilter
@@ -129,7 +129,7 @@ filter.setFilterMode(mode);
 processedFrame = filter.Process(processedFrame).As<DepthFrame>();
 ```
 
-The complete sample code can be found in /OrbbecSDK_CSharp/samples/4.post.processing.HoleFillingFilter,The HoleFillingFilter algorithm depends on the extensions library ,The extension library is the same as SpatialAdvancedFilter.
+The complete sample code can be found in /orbbecsdk_dotnet/samples/4.post.processing.HoleFillingFilter, the HoleFillingFilter algorithm depends on the extensions library, the extension library is the same as SpatialAdvancedFilter.
 
 ### TemporalFilter
 
@@ -157,7 +157,7 @@ filter.setWeight(0.4f);
 processedFrame = filter.Process(processedFrame).As<DepthFrame>();
 ```
 
-The complete sample code can be found in /OrbbecSDK_CSharp/samples/4.post.processing.TemporalFilter,The TemporalFilter algorithm depends on the extensions library ,The extension library is the same as SpatialAdvancedFilter.
+The complete sample code can be found in /orbbecsdk_dotnet/samples/4.post.processing.TemporalFilter, the TemporalFilter algorithm depends on the extensions library, the extension library is the same as SpatialAdvancedFilter.
 
 ### DisparityTransform
 
@@ -182,7 +182,7 @@ var processedFrame = depthFrame;
 processedFrame = filter.Process(processedFrame).As<DepthFrame>();
 ```
 
-The complete sample code can be found in /OrbbecSDK_CSharp/samples/4.post.processing.DisparityTransform,The DisparityTransform algorithm depends on the extensions library,The extension library is the same as SpatialAdvancedFilter.
+The complete sample code can be found in /orbbecsdk_dotnet/samples/4.post.processing.DisparityTransform, the DisparityTransform algorithm depends on the extensions library, the extension library is the same as SpatialAdvancedFilter.
 
 ### FilterFactory
 
@@ -335,4 +335,4 @@ if (tokens.Length == 3)
 }
 ```
 
-The complete sample code can be found in /OrbbecSDK_CSharp/samples/3.advanced.post_processing
+The complete sample code can be found in /orbbecsdk_dotnet/samples/3.advanced.post_processing

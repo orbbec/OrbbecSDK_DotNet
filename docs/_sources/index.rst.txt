@@ -1,11 +1,11 @@
-.. [奥比中光]OOrbbec SDK C# wrapper v2 User Guide 应用文档.用户手册
+.. [奥比中光]OrbbecSDK DotNet Wrapper User Guide 应用文档.用户手册
 .. 这一页是目录树
 ..     :titlesonly:
 
 
 
 
-OrbbecSDK v2 C# Wrapper User's Guide
+OrbbecSDK DotNet Wrapper User's Guide
 ======================================================
 
 
