@@ -1,6 +1,6 @@
 # Orbbec SDK DotNet Wrapper
 
-This is a wrapper for the Orbbec SDK for DotNet. It supports .NET 5 and later versions, and is compatible with Windows and Linux platforms. 
+This is a wrapper for the Orbbec SDK for DotNet. It supports .NET 8.0 and later versions, and is compatible with Windows and Linux platforms. 
 
 It provides a simple and easy-to-use interface for accessing the Orbbec camera and performing various operations such as capturing depth images, color images, and performing point cloud generation.
 
@@ -37,13 +37,11 @@ The v2-main branch is based the open source version of [Orbbec SDK v2](https://g
 
 # Environment Setup
 
+Please refer to [this document](https://orbbec.github.io/OrbbecSDK_DotNet/source/2_installation/Compilation.html#orbbecsdk-dotnet-wrapper-compilation) for compilation instructions.
+
+
+
 ## windows
-
-- First, download and install .NET
-```
-https://dotnet.microsoft.com/en-us/download/dotnet/8.0
-```
-
 For windows, you need to register the metadata associated with frames (this includes things like timestamps and other information about the video frame).
 
 - Metadata registration follow this:[/scripts/obsensor_metadata_win10.md](scripts/obsensor_metadata_win10.md)
@@ -53,14 +51,23 @@ For windows, you need to register the metadata associated with frames (this incl
 
 ## Linux
 
+For Linux, we have provided a script to help you set up the environment. You can run the script as follows:
+
+```bash
+cd scripts
+  sudo chmod +x ./install_udev_rules.sh
+  sudo ./install_udev_rules.sh
+  sudo udevadm control --reload && sudo udevadm trigger
 ```
-sudo apt update
-sudo apt install -y dotnet-sdk-8.0
-```
+
+*Notes: If this script is not executed, open the device will fail due to permission issues. You need to run the sample with sudo (administrator privileges).*
+
+
+
 
 # Documentation
 
-For compilation and API reference, please refer to [UserGuide](https://orbbec.github.io/OrbbecSDK_CSharp/index.html) documentation.
+For compilation and API reference, please refer to [UserGuide](https://orbbec.github.io/OrbbecSDK_DotNet/index.html) documentation.
 
 # License
 
