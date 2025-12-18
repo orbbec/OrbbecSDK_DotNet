@@ -1319,11 +1319,11 @@ namespace Orbbec
     {
         public UInt16 dhcp;        ///< dhcp 动态ip配置开关; 0:关; 1: 开
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        public uint[] address;  ///< ip地址(大端模式, 如192.168.1.1，则address[0]==192)
+        public byte[] address;  ///< ip地址(大端模式, 如192.168.1.1，则address[0]==192)
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        public uint[] mask;     ///< 子网掩码(大端模式)
+        public byte[] mask;     ///< 子网掩码(大端模式)
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        public uint[] gateway;  ///< 网关(大端模式)
+        public byte[] gateway;  ///< 网关(大端模式)
     }
 
     /**
