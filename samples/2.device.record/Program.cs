@@ -7,6 +7,8 @@ namespace Samples.Record
     {
         private static volatile bool _isRunning = true;
         private static volatile bool _isPaused = false;
+        private static bool IsAstraMiniDevice(string pid) =>
+            pid == "0x069D" || pid == "0x065B" || pid == "0x065E";
 
         static void Main(string[] args)
         {
@@ -67,6 +69,14 @@ namespace Samples.Record
                     {
                         config.EnableStream(sensorType);
                         continue;
+                    }
+
+                    if (sensorType == SensorType.OB_SENSOR_IR)
+                    {
+                        if (IsAstraMiniDevice(device.GetDeviceInfo().Pid()))
+                        {
+                            continue;
+                        }
                     }
 
                     if (sensorType == SensorType.OB_SENSOR_COLOR)

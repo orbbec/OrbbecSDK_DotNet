@@ -7,6 +7,8 @@ namespace Samples.MultiStreams
     {
         private static volatile bool _isRunning = true;
         private static volatile bool _supportIMU = false;
+        private static bool IsAstraMiniDevice(string pid) =>
+            pid == "0x069D" || pid == "0x065B" || pid == "0x065E";
 
         static void Main(string[] args)
         {
@@ -33,6 +35,14 @@ namespace Samples.MultiStreams
 
                 foreach (var sensorType in availableTypes)
                 {
+                    if(sensorType == SensorType.OB_SENSOR_IR)
+                    {
+                        if (IsAstraMiniDevice(device.GetDeviceInfo().Pid()))
+                        {
+                            continue;
+                        }
+                    }
+
                     if (sensorType == SensorType.OB_SENSOR_COLOR)
                     {
                         try

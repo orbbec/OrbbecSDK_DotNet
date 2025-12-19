@@ -31,7 +31,7 @@ namespace Samples.QuickStart
                 Console.WriteLine($"Color Profile: {colorProfile.GetWidth()}x{colorProfile.GetHeight()}@{colorProfile.GetFormat()}");
 
                 using var depthProfileList = pipe.GetStreamProfileList(SensorType.OB_SENSOR_DEPTH);
-                using var depthProfile = depthProfileList.GetVideoStreamProfile(0, 0, Format.OB_FORMAT_Y16, 0);
+                using var depthProfile = depthProfileList.GetVideoStreamProfile(0, 0, Format.OB_FORMAT_UNKNOWN, 0);
                 Console.WriteLine($"Depth Profile: {depthProfile.GetWidth()}x{depthProfile.GetHeight()}@{depthProfile.GetFormat()}");
 
                 config.EnableStream(colorProfile);

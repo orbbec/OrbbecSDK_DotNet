@@ -29,6 +29,8 @@ namespace Samples.HDR
 
                 if (!device.IsPropertySupported(PropertyId.OB_STRUCT_DEPTH_HDR_CONFIG, PermissionType.OB_PERMISSION_READ_WRITE))
                 {
+                    device?.Dispose();
+                    device = null;
                     Console.WriteLine("Current default device does not support HDR merge");
                     return;
                 }

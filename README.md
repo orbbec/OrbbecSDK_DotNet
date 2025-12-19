@@ -7,7 +7,7 @@ It provides a simple and easy-to-use interface for accessing the Orbbec camera a
 The v2-main branch is based the open source version of [Orbbec SDK v2](https://github.com/orbbec/OrbbecSDK_v2). 
 
 
-**If you need to use .NET Framework, please use [this repository](https://github.com/orbbec/OrbbecSDK_CSharp). However, .NET Framework is maintained for bug fixes only, and no new features will be added. We recommend using Orbbec SDK DotNet Wrapper instead**
+**If you need to use .NET Framework, please use [this repository](https://github.com/orbbec/OrbbecSDK_CSharp). However, .NET Framework is maintained for bug fixes only, and no new features will be added. We recommend using Orbbec SDK DotNet Wrapper instead.**
 
 # Support Platforms
 
@@ -27,12 +27,14 @@ The v2-main branch is based the open source version of [Orbbec SDK v2](https://g
 | Gemini 330        | 1.2.20                       |        1.6.00                 |              |
 | Gemini 330L       | 1.2.20                       |       1.6.00                  |              |
 | Gemini 335        | 1.2.20                       |       1.6.00                  |              |
-| Gemini 335L       | 1.2.20                       |        1.6.00                 |
+| Gemini 335L       | 1.2.20                       |        1.6.00                 |              |
 | Gemini 336        | 1.2.20                       |       1.6.00                        |        |
 | Gemini 336L       | 1.2.20                       |        1.6.00                       |       |
 | Gemini 335Lg      | 1.3.46                       |        1.6.00                       |       |
 | Femto Bolt        | 1.1.2                  |              1.1.2                       |TODO: Linux is currently not supported due to issues with the depth engine.      |
 | Femto Mega        | 1.3.0                  |              1.3.1                       |        |
+| Astra Mini Pro        | 2.0.03                  |         2.0.03                       |       |
+| Astra Mini S Pro        | 2.0.03                  |       2.0.03                       |       |
 
 
 # Environment Setup

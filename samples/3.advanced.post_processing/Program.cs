@@ -33,7 +33,7 @@ namespace Samples.PostProcessing
                 PrintFiltersInfo(filterList);
 
                 using var config = new Config();
-                config.EnableVideoStream(StreamType.OB_STREAM_DEPTH, 0, 0, 0, Format.OB_FORMAT_Y16);
+                config.EnableVideoStream(StreamType.OB_STREAM_DEPTH, 0, 0, 0, Format.OB_FORMAT_UNKNOWN);
 
                 pipe.Start(config);
 
