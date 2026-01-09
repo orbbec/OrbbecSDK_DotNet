@@ -8,8 +8,12 @@ This section outlines the required development environment, including supported 
 
 ### Compilation Platform Requirements
 
-- Windows: Visual Studio 2022 and above
-- Linux: gcc 7.5.0 and above
+- Windows: 
+  - Architecture: x64
+  - Toolchain: Visual Studio 2022 and above
+- Linux(x64/arm64): 
+  - Architecture: x64(amd64), arm64(aarch64)
+  - Toolchain: gcc 7.5.0 and above
 
 ### .NET Version
 
@@ -52,8 +56,7 @@ sudo apt-get install dotnet-sdk-8.0
 Build the project:
 
 ```bash
-cd orbbecsdk_dotnet
-dotnet restore
+cd orbbecsdk_dotnet/samples/1.stream.color
 dotnet build
 ```
 > **Note**  
@@ -97,6 +100,7 @@ This section provides a comprehensive guide to installing, compiling, and runnin
 
   - Install Dependencies (Ubuntu)
   - Build the Project and Run the Examples
+  - Optional: Generate the Project Using a Script
 
 Clone the repository to get the latest version:
 
@@ -119,7 +123,7 @@ Install the necessary .NET development packages
 dotnet --version
 ```
 
-### Build the Project
+### Build the Project and Run the Examples
 
 #### Step 1: Open the Visual Studio Project
 
@@ -158,15 +162,36 @@ Click on **Samples.Color.exe**, and the running result is as follows
 
 ![compile-6.png](../image/compile-6.png)
 
+### Optional: Generate the Project Using a Script
+
+You can also generate the project files using a script.
+Use the `build_samples.ps1` script.
+
+![compile-12.png](../image/compile-12.png)
+
+A new build directory will be created automatically, and all generated project files
+will be placed inside this directory.
+
+This approach keeps generated files separate from the source code.
+
+![compile-13.png](../image/compile-13.png)
+
 ## Build Executable Binaries(Windows/Linux)
 
 Use the following command to publish the project and generate executable binaries:
 
-### Linux
+### Linux x64
 
 ```bash
 cd orbbecsdk_dotnet
 dotnet publish -c Release -r linux-x64 -p:DebugType=none -p:PublishSingleFile=true  
+```
+
+### Linux ARM64
+
+```bash
+cd orbbecsdk_dotnet
+dotnet publish -c Release -r linux-arm64 -p:DebugType=none -p:PublishSingleFile=true  
 ```
 
 ### Windows

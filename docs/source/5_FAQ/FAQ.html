@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1.2. Support Platforms &mdash; OrbbecSDK DotNet Wrapper User&#39;s Guide  documentation</title>
+  <title>FAQ &mdash; OrbbecSDK DotNet Wrapper User&#39;s Guide  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=a2eacb60" />
@@ -20,9 +20,7 @@
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="1.3. Support Hardware Products" href="Support_Hardware_Products.html" />
-    <link rel="prev" title="1.1. Introduction" href="Introduction.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,11 +42,11 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="overview.html">1. Overview</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="Introduction.html">1.1. Introduction</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">1.2. Support Platforms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Support_Hardware_Products.html">1.3. Support Hardware Products</a></li>
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../1_overview/overview.html">1. Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_overview/Introduction.html">1.1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_overview/Support_platform.html">1.2. Support Platforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_overview/Support_Hardware_Products.html">1.3. Support Hardware Products</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../2_installation/installation.html">2. Installation</a><ul>
@@ -188,10 +186,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="overview.html"><span class="section-number">1. </span>Overview</a></li>
-      <li class="breadcrumb-item active"><span class="section-number">1.2. </span>Support Platforms</li>
+      <li class="breadcrumb-item active">FAQ</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/source/1_overview/Support_platform.md.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/source/5_FAQ/FAQ.md.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -199,22 +196,74 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="support-platforms">
-<h1><span class="section-number">1.2. </span>Support Platforms<a class="headerlink" href="#support-platforms" title="Link to this heading"></a></h1>
-<ul class="simple">
-<li><p>Windows: Windows 10 (x64), tested with .NET 8</p></li>
-<li><p>Linux x64: Tested on Ubuntu 20.04, 22.04, and 24.04, with .NET 8</p></li>
-<li><p>Linux ARM64: Tested on NVIDIA Jetson Orin Nano,with .NET 8</p></li>
-</ul>
+  <section id="faq">
+<h1>FAQ<a class="headerlink" href="#faq" title="Link to this heading"></a></h1>
+<p>1、Why do I get the following error when running <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">examples/depth_viewer.py</span></code> on Jetson Nano?</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>illegal<span class="w"> </span>instruction<span class="w"> </span><span class="o">(</span>core<span class="w"> </span>dumped<span class="o">)</span>
+</pre></div>
+</div>
+<p>Answer: Check your OpenCV installation. If you encounter the same error when running</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+</pre></div>
+</div>
+<p>export OPENBLAS_CORETYPE=ARMV8 (or whatever the actual hardware is) before launching python should hopefully get around
+this. For example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">OPENBLAS_CORETYPE</span><span class="o">=</span>ARMV8<span class="w"> </span>python
+</pre></div>
+</div>
+<p>If you would like to make this export permanent, you should open your .bashrc file by typing on the terminal:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nano<span class="w"> </span>~/.bashrc
+</pre></div>
+</div>
+<p>and add the following line at the end of the file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">OPENBLAS_CORETYPE</span><span class="o">=</span>ARMV8
+</pre></div>
+</div>
+<p>Refer to <a class="reference external" href="https://stackoverflow.com/questions/65631801/illegal-instructioncore-dumped-error-on-jetson-nano">this post</a>
+for more information on how to resolve the issue.</p>
+<p>2、 Why do I get the following error when running <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">examples/depth_viewer.py</span></code>?</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span> msg:failed to open usb device!  error: OB_USB_STATUS_ACCESS
+  - type:St13runtime_error
+[2023-07-04 17:09:19.891859][warning][117523][EnumeratorLibusb.cpp:342] failed to create usb device at index: 1, url:2-1.4.1-6
+[2023-07-04 17:09:20.391989][error][117523][DeviceLibusb.cpp:109] failed to open usb device!  error: OB_USB_STATUS_ACCESS
+[2023-07-04 17:09:20.392032][warning][117523][EnumeratorLibusb.cpp:342] Execute failure! A std::exception has occurred!
+  - where:342#createUsbDevice
+  - msg:failed to open usb device!  error: OB_USB_STATUS_ACCESS
+  - type:St13runtime_error
+[2023-07-04 17:09:20.392057][warning][117523][EnumeratorLibusb.cpp:342] failed to create usb device at index: 1, url:2-1.4.1-6
+[2023-07-04 17:09:20.392072][warning][117523][ObException.hpp:40] usbEnumerator createUsbDevice failed!
+Traceback (most recent call last):
+  File &quot;depth_viewer.py&quot;, line 73, in &lt;module&gt;
+    main()
+  File &quot;depth_viewer.py&quot;, line 34, in main
+    device: Device = device_list.get_device_by_index(0)
+pyorbbecsdk.OBError: usbEnumerator createUsbDevice failed!
+[2023-07-04 17:09:20.403747][info][117523][Context.cpp:81] Context destroyed
+</pre></div>
+</div>
+<p>Answer: The current device does not have permission to access the device， check the PID of the current device</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>lsusb<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>2bc5
+</pre></div>
+</div>
+<p>Your output should look like this</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Bus 002 Device 007: ID 2bc5:your_pid_here
+</pre></div>
+</div>
+<p>Edit<code class="docutils literal notranslate"><span class="pre">/etc/udev/rules.d/99-obsensor-libusb.rules</span></code>，add the following line</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">SUBSYSTEM</span><span class="o">==</span><span class="s2">&quot;usb&quot;</span>,<span class="w"> </span>ATTR<span class="o">{</span>idProduct<span class="o">}==</span><span class="s2">&quot;your_pid_here&quot;</span>,<span class="w"> </span>ATTR<span class="o">{</span>idVendor<span class="o">}==</span><span class="s2">&quot;2bc5&quot;</span>,<span class="w"> </span>MODE:<span class="o">=</span><span class="s2">&quot;0666&quot;</span>,<span class="w"> </span>OWNER:<span class="o">=</span><span class="s2">&quot;root&quot;</span><span class="w">  </span>GROUP:<span class="o">=</span><span class="s2">&quot;video&quot;</span>,<span class="w"> </span><span class="nv">SYMLINK</span><span class="o">+=</span><span class="s2">&quot;you_device_name_here&quot;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">you_device_name_here</span></code> is the name of the device you want to create, for example <code class="docutils literal notranslate"><span class="pre">Astra</span></code>.</p>
+<p>Then restart the udev service</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>udevadm<span class="w"> </span>control<span class="w"> </span>--reload-rules<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>service<span class="w"> </span>udev<span class="w"> </span>restart<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>udevadm<span class="w"> </span>trigger
+</pre></div>
+</div>
 </section>
 
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Introduction.html" class="btn btn-neutral float-left" title="1.1. Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="Support_Hardware_Products.html" class="btn btn-neutral float-right" title="1.3. Support Hardware Products" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

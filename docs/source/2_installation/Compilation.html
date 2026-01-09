@@ -67,18 +67,20 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#windows-orbbecsdk-dotnet-wrapper-compilation">2.1.3. Windows OrbbecSDK DotNet Wrapper Compilation</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#install-dependencies">2.1.3.1. Install Dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id1">2.1.3.2. Build the Project</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#build-the-project-and-run-the-examples">2.1.3.2. Build the Project and Run the Examples</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="#step-1-open-the-visual-studio-project">2.1.3.2.1. Step 1: Open the Visual Studio Project</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#step-2-build-the-project-in-release-mode">2.1.3.2.2. Step 2: Build the Project in Release Mode</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#step-3-locate-the-compiled-samples">2.1.3.2.3. Step 3: Locate the Compiled Samples</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#step-4-run-a-sample">2.1.3.2.4. Step 4: Run a Sample</a></li>
 </ul>
 </li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">2.1.3.3. Optional: Generate the Project Using a Script</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#build-executable-binaries-windows-linux">2.1.4. Build Executable Binaries(Windows/Linux)</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#linux">2.1.4.1. Linux</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#windows">2.1.4.2. Windows</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#linux-x64">2.1.4.1. Linux x64</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#linux-arm64">2.1.4.2. Linux ARM64</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#windows">2.1.4.3. Windows</a></li>
 </ul>
 </li>
 </ul>
@@ -206,8 +208,18 @@
 <section id="compilation-platform-requirements">
 <h3><span class="section-number">2.1.1.1. </span>Compilation Platform Requirements<a class="headerlink" href="#compilation-platform-requirements" title="Link to this heading"></a></h3>
 <ul class="simple">
-<li><p>Windows: Visual Studio 2022 and above</p></li>
-<li><p>Linux: gcc 7.5.0 and above</p></li>
+<li><p>Windows:</p>
+<ul>
+<li><p>Architecture: x64</p></li>
+<li><p>Toolchain: Visual Studio 2022 and above</p></li>
+</ul>
+</li>
+<li><p>Linux(x64/arm64):</p>
+<ul>
+<li><p>Architecture: x64(amd64), arm64(aarch64)</p></li>
+<li><p>Toolchain: gcc 7.5.0 and above</p></li>
+</ul>
+</li>
 </ul>
 </section>
 <section id="net-version">
@@ -249,8 +261,7 @@ git checkout v2-main
 <section id="build-the-project">
 <h3><span class="section-number">2.1.2.2. </span>Build the Project<a class="headerlink" href="#build-the-project" title="Link to this heading"></a></h3>
 <p>Build the project:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>orbbecsdk_dotnet
-dotnet<span class="w"> </span>restore
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>orbbecsdk_dotnet/samples/1.stream.color
 dotnet<span class="w"> </span>build
 </pre></div>
 </div>
@@ -290,6 +301,7 @@ will be placed inside this directory.</p>
 <ul>
 <li><p>Install Dependencies (Ubuntu)</p></li>
 <li><p>Build the Project and Run the Examples</p></li>
+<li><p>Optional: Generate the Project Using a Script</p></li>
 </ul>
 </li>
 </ul>
@@ -312,8 +324,8 @@ https://dotnet.microsoft.com/en-us/download/dotnet/8.0</p></li>
 </pre></div>
 </div>
 </section>
-<section id="id1">
-<h3><span class="section-number">2.1.3.2. </span>Build the Project<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<section id="build-the-project-and-run-the-examples">
+<h3><span class="section-number">2.1.3.2. </span>Build the Project and Run the Examples<a class="headerlink" href="#build-the-project-and-run-the-examples" title="Link to this heading"></a></h3>
 <section id="step-1-open-the-visual-studio-project">
 <h4><span class="section-number">2.1.3.2.1. </span>Step 1: Open the Visual Studio Project<a class="headerlink" href="#step-1-open-the-visual-studio-project" title="Link to this heading"></a></h4>
 <p>Use the file explorer to directly start the Visual Studio project in the build directory, as shown in the following figure:</p>
@@ -346,19 +358,36 @@ For example, the <code class="docutils literal notranslate"><span class="pre">co
 <p><img alt="compile-6.png" src="../../_images/compile-6.png" /></p>
 </section>
 </section>
+<section id="id1">
+<h3><span class="section-number">2.1.3.3. </span>Optional: Generate the Project Using a Script<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p>You can also generate the project files using a script.
+Use the <code class="docutils literal notranslate"><span class="pre">build_samples.ps1</span></code> script.</p>
+<p><img alt="compile-12.png" src="../../_images/compile-12.png" /></p>
+<p>A new build directory will be created automatically, and all generated project files
+will be placed inside this directory.</p>
+<p>This approach keeps generated files separate from the source code.</p>
+<p><img alt="compile-13.png" src="../../_images/compile-13.png" /></p>
+</section>
 </section>
 <section id="build-executable-binaries-windows-linux">
 <h2><span class="section-number">2.1.4. </span>Build Executable Binaries(Windows/Linux)<a class="headerlink" href="#build-executable-binaries-windows-linux" title="Link to this heading"></a></h2>
 <p>Use the following command to publish the project and generate executable binaries:</p>
-<section id="linux">
-<h3><span class="section-number">2.1.4.1. </span>Linux<a class="headerlink" href="#linux" title="Link to this heading"></a></h3>
+<section id="linux-x64">
+<h3><span class="section-number">2.1.4.1. </span>Linux x64<a class="headerlink" href="#linux-x64" title="Link to this heading"></a></h3>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>orbbecsdk_dotnet
 dotnet<span class="w"> </span>publish<span class="w"> </span>-c<span class="w"> </span>Release<span class="w"> </span>-r<span class="w"> </span>linux-x64<span class="w"> </span>-p:DebugType<span class="o">=</span>none<span class="w"> </span>-p:PublishSingleFile<span class="o">=</span><span class="nb">true</span><span class="w">  </span>
 </pre></div>
 </div>
 </section>
+<section id="linux-arm64">
+<h3><span class="section-number">2.1.4.2. </span>Linux ARM64<a class="headerlink" href="#linux-arm64" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>orbbecsdk_dotnet
+dotnet<span class="w"> </span>publish<span class="w"> </span>-c<span class="w"> </span>Release<span class="w"> </span>-r<span class="w"> </span>linux-arm64<span class="w"> </span>-p:DebugType<span class="o">=</span>none<span class="w"> </span>-p:PublishSingleFile<span class="o">=</span><span class="nb">true</span><span class="w">  </span>
+</pre></div>
+</div>
+</section>
 <section id="windows">
-<h3><span class="section-number">2.1.4.2. </span>Windows<a class="headerlink" href="#windows" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.1.4.3. </span>Windows<a class="headerlink" href="#windows" title="Link to this heading"></a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">cd </span><span class="n">orbbecsdk_dotnet</span>
 <span class="n">dotnet</span> <span class="n">publish</span> <span class="n">-c</span> <span class="n">Release</span> <span class="n">-r</span> <span class="n">win-x64</span> <span class="n">-p</span><span class="p">:</span><span class="n">DebugType</span><span class="p">=</span><span class="n">none</span> <span class="n">-p</span><span class="p">:</span><span class="n">PublishSingleFile</span><span class="p">=</span><span class="n">true</span>  
 </pre></div>
@@ -383,7 +412,7 @@ The published executable can be found in /orbbecsdk_dotnet/bin/.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, ORBBEC INC. www.orbbec.com..
-      <span class="lastupdated">Last updated on 2025-12-18 20:04:53.
+      <span class="lastupdated">Last updated on 2026-01-09 14:35:10.
       </span></p>
   </div>
 
