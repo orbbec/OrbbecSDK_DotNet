@@ -13,7 +13,9 @@ The v2-main branch is based the open source version of [Orbbec SDK v2](https://g
 
 - Windows: Windows 10 (x64), tested with .NET 8
 
-- Linux: Tested on Ubuntu 20.04, 22.04, and 24.04, with .NET 8
+- Linux x64: Tested on Ubuntu 20.04, 22.04, and 24.04, with .NET 8
+
+- Linux ARM64: Tested on NVIDIA Jetson Orin Nano,with .NET 8
 
 
 
@@ -64,6 +66,34 @@ cd scripts
 
 *Notes: If this script is not executed, open the device will fail due to permission issues. You need to run the sample with sudo (administrator privileges).*
 
+
+
+
+# How to Use build_sample Script
+To make dotnet wrapper more user-friendly, We provide scripts to publish the project and generate executable binaries .
+
+## Windows
+```powershell
+cd /path/to/orbbecsdk_dotnet
+
+./build_samples.ps1
+
+cd ./bin/Release/win-x64
+
+./Samples.Color.exe
+```
+
+## Linux
+```bash
+cd /path/to/orbbecsdk_dotnet
+
+./build_samples.sh
+
+cd ./bin/Release/linux-x64
+
+./Samples.Color
+```
+![Color Example](image/compile-7.png)
 
 
 

@@ -14,16 +14,16 @@ namespace Samples.Common
         private int _program;
         private int _vao;
         private int _vbo;
-        private readonly List<VideoTexture> _videoTextures = [];
+        private readonly List<VideoTexture> _videoTextures = new List<VideoTexture>{};
         private readonly object _textureLock = new();
 
-        private static readonly float[] _vertices =
-        [
+        private static readonly float[] _vertices = new float[]
+        {
             -1f, 1f, 0f, 0f,
             -1f, -1f, 0f, 1f,
             1f, -1f, 1f, 1f,
             1f, 1f, 1f, 0f,
-        ];
+        };
 
         public OrbbecRenderer(int width = 1280, int height = 720, string title = "")
             : base(GameWindowSettings.Default,

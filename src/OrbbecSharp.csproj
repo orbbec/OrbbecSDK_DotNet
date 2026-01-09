@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win-x64;linux-x64;linux-arm64</RuntimeIdentifiers>
     <Version>2.5.2</Version>
   </PropertyGroup>
 
@@ -12,13 +12,22 @@
     <OrbbecSDKPath>../OrbbecSDK/lib</OrbbecSDKPath>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="$(OrbbecSDKPath)/win_x64/**/*" Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))">
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
+  <Content Include="$(OrbbecSDKPath)/win_x64/**/*">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+  </Content>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
+    <Content Include="$(OrbbecSDKPath)/linux_x64/**/*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Content>
+  </ItemGroup>
 
-    <Content Include="$(OrbbecSDKPath)/linux_x64/**/*" Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))">
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm64'">
+    <Content Include="$(OrbbecSDKPath)/linux_arm64/**/*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Content>

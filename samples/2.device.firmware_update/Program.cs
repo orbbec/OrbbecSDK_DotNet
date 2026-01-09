@@ -5,7 +5,7 @@ namespace Samples.FirmwareUpdate
     class Program
     {
         private static bool _shouldExit = false;
-        private static readonly List<Device> devices = [];
+        private static readonly List<Device> devices = new List<Device>{};
 
         static void Main(string[] args)
         {

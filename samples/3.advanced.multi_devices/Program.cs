@@ -6,7 +6,7 @@ namespace Samples.MultiDevices
     class Program
     {
         private static volatile bool _isRunning = true;
-        private static readonly Dictionary<uint, Pipeline> _pipes = [];
+        private static readonly Dictionary<uint, Pipeline> _pipes = new Dictionary<uint, Pipeline>{};
 
         static void Main(string[] args)
         {
