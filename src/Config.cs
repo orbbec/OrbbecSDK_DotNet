@@ -321,6 +321,50 @@ namespace Orbbec
             NativeException.HandleError(error);
         }
 
+        /**
+         * \if English
+         * @brief Enable a LiDAR stream to be used in the pipeline.
+         *
+         * This function allows users to enable a LiDAR stream with customizable parameters.
+         * If no parameters are specified, the stream will be enabled with default settings.
+         *
+         * @param scanRate The scan rate of the LiDAR (default is OB_LIDAR_SCAN_ANY, which selects the default scan rate).
+         * @param format The stream format (default is OB_FORMAT_ANY, which selects the default format).
+         * \else
+         * @brief 启用pipeline中使用的LiDAR流
+         *
+         * 此功能允许用户启用具有可自定义参数的LiDAR流
+         * 如果未指定参数，则将使用默认设置启用流
+         *
+         * @param scanRate LiDAR的扫描速率（默认为OB_LIDAR_SCAN_ANY，用于选择默认扫描速率）
+         * @param format 流格式（默认值为OB_FORMAT_ANY，用于选择默认格式）
+         */
+        public void EnableLiDARStream(LiDARScanRate scanRate = LiDARScanRate.OB_LIDAR_SCAN_UNKNOWN, Format format = Format.OB_FORMAT_ANY)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_config_enable_lidar_stream(_handle.Ptr, scanRate, format, ref error);
+            NativeException.HandleError(error);
+        }
+
+        /**
+        * \if English
+        * @brief Get the enabled stream profile list
+        *
+        * @return StreamProfileList returns the enabled stream profile list
+        * \else
+        * @brief 获取已启用的流配置列表
+        *
+        * @return StreamProfileList 返回已启用的流配置列表
+        * \endif
+        */
+        public StreamProfileList GetEnabledStreamProfileList()
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_config_get_enabled_stream_profile_list(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+            return new StreamProfileList(handle);
+        }
+
         internal void Delete(IntPtr handle)
         {
             IntPtr error = IntPtr.Zero;

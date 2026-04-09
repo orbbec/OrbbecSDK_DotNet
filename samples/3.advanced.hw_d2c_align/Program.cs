@@ -23,12 +23,13 @@ namespace Samples.HWD2CAlign
             };
 
             Pipeline? pipe = null;
+            Config? config = null;
             try
             {
                 pipe = new Pipeline();
                 pipe.EnableFrameSync();
 
-                using var config = CreateHwD2CAlignConfig(pipe);
+                config = CreateHwD2CAlignConfig(pipe);
                 if (config == null)
                 {
                     Console.WriteLine("Current device does not support hardware depth-to-color alignment.");
@@ -56,6 +57,7 @@ namespace Samples.HWD2CAlign
             finally
             {
                 pipe?.Stop();
+                config?.Dispose();
                 Console.WriteLine("HW D2C Align sample exited.");
             }
         }
@@ -204,21 +206,25 @@ namespace Samples.HWD2CAlign
         {
             try
             {
-                int width = (int)colorFrame.GetWidth();
-                int height = (int)colorFrame.GetHeight();
-                int dataSize = (int)colorFrame.GetDataSize();
+                int colorWidth = (int)colorFrame.GetWidth();
+                int colorHeight = (int)colorFrame.GetHeight();
                 byte[] colorData = new byte[colorFrame.GetDataSize()];
                 colorFrame.CopyData(ref colorData);
 
+                // Use depth frame's own dimensions for Y16ToRgb conversion
+                int depthWidth = (int)depthFrame.GetWidth();
+                int depthHeight = (int)depthFrame.GetHeight();
                 byte[] depthDataRaw = new byte[depthFrame.GetDataSize()];
                 depthFrame.CopyData(ref depthDataRaw);
-                byte[] depthData = ImageUtils.Y16ToRgb(width, height, depthDataRaw);
+                byte[] depthData = ImageUtils.Y16ToRgb(depthWidth, depthHeight, depthDataRaw);
 
-                d2cData = ImageUtils.DepthAlignToColor(colorData, depthData, _alpha);
+                // Call the overload that handles different sizes
+                d2cData = ImageUtils.DepthAlignToColor(colorWidth, colorHeight, colorData,
+                    depthWidth, depthHeight, depthData, _alpha);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Start stream error: {ex.Message}");
+                Console.WriteLine($"DepthOverlayColorProcess error: {ex.Message}");
             }
         }
     }

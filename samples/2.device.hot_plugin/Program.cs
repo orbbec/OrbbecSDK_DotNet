@@ -14,7 +14,7 @@ namespace Samples.HotPlugin
             Console.CancelKeyPress += (s, e) =>
             {
                 e.Cancel = true;
-                _shouldExit = false;
+                _shouldExit = true;
             };
 
             Context? ctx = null;
@@ -90,7 +90,7 @@ namespace Samples.HotPlugin
         {
             for (int i = 0; i < deviceList.DeviceCount(); ++i)
             {
-                var device = deviceList.GetDevice((uint)i);
+                using var device = deviceList.GetDevice((uint)i);
                 device.Reboot();
             }
         }

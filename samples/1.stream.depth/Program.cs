@@ -21,16 +21,15 @@ namespace Samples.Depth
             };
 
             Pipeline? pipe = null;
+            Config? config = null;
             try
             {
                 pipe = new Pipeline();
-                using var config = new Config();
+                config = new Config();
 
-                using var depthProfileList = pipe.GetStreamProfileList(SensorType.OB_SENSOR_DEPTH);
-                using var depthProfile = depthProfileList.GetVideoStreamProfile(0, 0, Format.OB_FORMAT_UNKNOWN, 0);
-                Console.WriteLine($"Depth Profile: {depthProfile.GetWidth()}x{depthProfile.GetHeight()}@{depthProfile.GetFormat()}");
+                // Enable default depth stream
+                config.EnableVideoStream(StreamType.OB_STREAM_DEPTH);
 
-                config.EnableStream(depthProfile);
                 pipe.Start(config);
 
                 int depthTextureIndex = renderer.AddVideoFrame();
@@ -51,6 +50,7 @@ namespace Samples.Depth
             finally
             {
                 pipe?.Stop();
+                config?.Dispose();
                 Console.WriteLine("Depth sample exited.");
             }
         }
@@ -64,15 +64,34 @@ namespace Samples.Depth
                     using var frameSet = pipeline.WaitForFrames(100);
                     if (frameSet == null) continue;
 
-                    using var depthFrame = frameSet.GetDepthFrame();
+                    var depthFrame = frameSet.GetDepthFrame();
+                    if (depthFrame == null) continue;
 
-                    if (depthFrame != null)
+                    // for Y16 format depth frame, print the distance of the center pixel every 30 frames
+                    if (depthFrame.GetIndex() % 30 == 0 && depthFrame.GetFormat() == Format.OB_FORMAT_Y16)
                     {
-                        byte[] data = new byte[depthFrame.GetDataSize()];
-                        depthFrame.CopyData(ref data);
-                        renderer.UpdateVideoFrame(depthTextureIndex, (int)depthFrame.GetWidth(),
-                            (int)depthFrame.GetHeight(), depthFrame.GetFormat(), data);
+                        uint width = depthFrame.GetWidth();
+                        uint height = depthFrame.GetHeight();
+                        float scale = depthFrame.GetValueScale();
+
+                        byte[] depthData = new byte[depthFrame.GetDataSize()];
+                        depthFrame.CopyData(ref depthData);
+
+                        // Get center pixel value (16-bit)
+                        int centerIndex = (int)(width * height / 2 + width / 2);
+                        ushort centerValue = BitConverter.ToUInt16(depthData, centerIndex * 2);
+
+                        // pixel value multiplied by scale is the actual distance value in millimeters
+                        float centerDistance = centerValue * scale;
+
+                        // attention: if the distance is 0, it means that the depth camera cannot detect the object (may be out of detection range)
+                        Console.WriteLine($"Facing an object at a distance of {centerDistance:F3} mm.");
                     }
+
+                    byte[] data = new byte[depthFrame.GetDataSize()];
+                    depthFrame.CopyData(ref data);
+                    renderer.UpdateVideoFrame(depthTextureIndex, (int)depthFrame.GetWidth(),
+                        (int)depthFrame.GetHeight(), depthFrame.GetFormat(), data);
                 }
             }
             catch (Exception ex)

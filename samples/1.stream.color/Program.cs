@@ -26,11 +26,8 @@ namespace Samples.Color
                 pipe = new Pipeline();
                 using var config = new Config();
 
-                using var colorProfileList = pipe.GetStreamProfileList(SensorType.OB_SENSOR_COLOR);
-                using var colorProfile = colorProfileList.GetVideoStreamProfile(0, 0, Format.OB_FORMAT_RGB, 0);
-                Console.WriteLine($"Color Profile: {colorProfile.GetWidth()}x{colorProfile.GetHeight()}@{colorProfile.GetFormat()}");
-                
-                config.EnableStream(colorProfile);
+                // Use default configuration, automatically select best format (supports MJPG)
+                config.EnableStream(SensorType.OB_SENSOR_COLOR);
                 pipe.Start(config);
 
                 int colorTextureIndex = renderer.AddVideoFrame();
@@ -70,8 +67,9 @@ namespace Samples.Color
                     {
                         byte[] data = new byte[colorFrame.GetDataSize()];
                         colorFrame.CopyData(ref data);
+                        // Pass the original frame to support formats requiring Filter conversion like MJPG
                         renderer.UpdateVideoFrame(colorTextureIndex, (int)colorFrame.GetWidth(),
-                            (int)colorFrame.GetHeight(), colorFrame.GetFormat(), data);
+                            (int)colorFrame.GetHeight(), colorFrame.GetFormat(), data, colorFrame);
                     }
                 }
             }

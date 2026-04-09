@@ -19,6 +19,32 @@ class Program
         try
         {
             pipe = new Pipeline();
+            using var device = pipe.GetDevice();
+
+            // Check if device has both accel and gyro sensors
+            using var sensorList = device.GetSensorList();
+            bool hasAccel = false;
+            bool hasGyro = false;
+            for (uint i = 0; i < sensorList.SensorCount(); i++)
+            {
+                var sensorType = sensorList.SensorType(i);
+                if (sensorType == SensorType.OB_SENSOR_ACCEL)
+                    hasAccel = true;
+                if (sensorType == SensorType.OB_SENSOR_GYRO)
+                    hasGyro = true;
+            }
+
+            if (!hasAccel || !hasGyro)
+            {
+                Console.WriteLine("Device does not have both Accel and Gyro sensors!");
+                Console.WriteLine($"  Accel: {hasAccel}");
+                Console.WriteLine($"  Gyro: {hasGyro}");
+                Console.WriteLine("\nPress any key to exit...");
+                Console.ReadKey();
+                return;
+            }
+
+            Console.WriteLine("Device has both Accel and Gyro sensors, starting IMU stream...");
 
             using var config = new Config();
             config.EnableAccelStream();

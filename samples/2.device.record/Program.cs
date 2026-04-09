@@ -7,8 +7,8 @@ namespace Samples.Record
     {
         private static volatile bool _isRunning = true;
         private static volatile bool _isPaused = false;
-        private static bool IsAstraMiniDevice(string pid) =>
-            pid == "0x069D" || pid == "0x065B" || pid == "0x065E";
+        private static readonly Dictionary<FrameType, ulong> _frameCountMap = new();
+        private static readonly object _lock = new();
 
         static void Main(string[] args)
         {
@@ -44,9 +44,13 @@ namespace Samples.Record
                     return;
                 }
 
-                ctx.EnableDeviceClockSync(0);
-
                 device = deviceList.GetDevice(0);
+                var devInfo = device.GetDeviceInfo();
+                var pidStr = devInfo.Pid();
+                var vid = devInfo.Vid();
+                // Parse pid from hex string (format: "0x1234")
+                var pid = Convert.ToInt32(pidStr.Replace("0x", ""), 16);
+
                 try
                 {
                     device.TimerSyncWithHost();
@@ -58,7 +62,6 @@ namespace Samples.Record
 
                 pipe = new Pipeline(device);
                 using var config = new Config();
-                using var recordDevice = new RecordDevice(device, filePath);
 
                 var textureIndices = new Dictionary<SensorType, int>();
                 using var sensorList = device.GetSensorList();
@@ -71,34 +74,20 @@ namespace Samples.Record
                         continue;
                     }
 
-                    if (sensorType == SensorType.OB_SENSOR_IR)
+                    // Skip IR sensor for Astra Mini devices
+                    if (IsAstraMiniDevice(vid, pid) && sensorType == SensorType.OB_SENSOR_IR)
                     {
-                        if (IsAstraMiniDevice(device.GetDeviceInfo().Pid()))
-                        {
-                            continue;
-                        }
+                        continue;
                     }
 
-                    if (sensorType == SensorType.OB_SENSOR_COLOR)
-                    {
-                        try
-                        {
-                            config.EnableVideoStream(sensorType, 1280, 0, 0, Format.OB_FORMAT_RGB);
-                        }
-                        catch
-                        {
-                            Console.WriteLine("Camera does not support requested resolution 1280xAuto. Using default resolution.");
-                            config.EnableStream(sensorType);
-                        }
-                    }
-                    else
-                    {
-                        config.EnableStream(sensorType);
-                    }
+                    config.EnableStream(sensorType);
                     Console.WriteLine($"Enabled stream for: {sensorType}");
                     textureIndices.Add(sensorType, renderer.AddVideoFrame());
                 }
                 pipe.Start(config);
+
+                // Initialize recording device after pipeline starts to ensure proper frame subscription
+                using var recordDevice = new RecordDevice(device, filePath);
 
                 renderer.Closing += (e) =>
                 {
@@ -153,7 +142,7 @@ namespace Samples.Record
                     {
                         recorder.Resume();
                         _isPaused = false;
-                        Console.WriteLine("[PAUSED] Recording resumed");
+                        Console.WriteLine("[RESUMED] Recording resumed");
                     }
                 }
             }
@@ -211,6 +200,8 @@ namespace Samples.Record
                             SensorType.OB_SENSOR_IR => FrameType.OB_FRAME_IR,
                             SensorType.OB_SENSOR_IR_LEFT => FrameType.OB_FRAME_IR_LEFT,
                             SensorType.OB_SENSOR_IR_RIGHT => FrameType.OB_FRAME_IR_RIGHT,
+                            SensorType.OB_SENSOR_COLOR_LEFT => FrameType.OB_FRAME_COLOR_LEFT,
+                            SensorType.OB_SENSOR_COLOR_RIGHT => FrameType.OB_FRAME_COLOR_RIGHT,
                             SensorType.OB_SENSOR_CONFIDENCE => FrameType.OB_FRAME_CONFIDENCE,
                             _ => FrameType.OB_FRAME_UNKNOWN
                         };
@@ -219,6 +210,15 @@ namespace Samples.Record
 
                         if (frame != null)
                         {
+                            // Update frame count
+                            lock (_lock)
+                            {
+                                if (_frameCountMap.ContainsKey(frameType))
+                                    _frameCountMap[frameType]++;
+                                else
+                                    _frameCountMap[frameType] = 1;
+                            }
+
                             if (frameType == FrameType.OB_FRAME_CONFIDENCE)
                             {
                                 var depthFrame = frameSet.GetFrame(FrameType.OB_FRAME_DEPTH)?.As<VideoFrame>();
@@ -235,7 +235,8 @@ namespace Samples.Record
                                 using var vf = frame.As<VideoFrame>();
                                 byte[] data = new byte[vf.GetDataSize()];
                                 vf.CopyData(ref data);
-                                renderer.UpdateVideoFrame(textureIndex, (int)vf.GetWidth(), (int)vf.GetHeight(), vf.GetFormat(), data);
+                                // Pass the original frame to support formats requiring Filter conversion like MJPG
+                                renderer.UpdateVideoFrame(textureIndex, (int)vf.GetWidth(), (int)vf.GetHeight(), vf.GetFormat(), data, vf);
                             }
                         }
                     }
@@ -260,6 +261,12 @@ namespace Samples.Record
             Console.WriteLine($"  {typeStr}.z = {obFloat3d.z}{unit}");
             Console.WriteLine("}");
             Console.WriteLine();
+        }
+
+        static bool IsAstraMiniDevice(int vid, int pid)
+        {
+            // OB_DEVICE_VID = 0x2bc5
+            return vid == 0x2bc5 && (pid == 0x069d || pid == 0x065b || pid == 0x065e);
         }
     }
 }

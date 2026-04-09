@@ -1094,4 +1094,191 @@ namespace Orbbec
         }
     }
 
+    /**
+    * \if English
+    * @brief Spatial fast filter class
+    * \else
+    * @brief 空间快速滤波器类
+    * \endif
+    */
+    public class SpatialFastFilter : Filter
+    {
+        public SpatialFastFilter(string activationKey = "")
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_create_private_filter("SpatialFastFilter", activationKey, ref error);
+            NativeException.HandleError(error);
+            _handle = new NativeHandle(handle, Delete);
+            Init();
+        }
+
+        public IntPropertyRange GetRadiusRange()
+        {
+            foreach (var item in _configSchemaList)
+            {
+                if (Marshal.PtrToStringAnsi(item.name).Equals("radius"))
+                {
+                    return GetPropertyRange<IntPropertyRange>("radius", cur => new IntPropertyRange
+                    {
+                        cur = (int)cur,
+                        def = (int)item.def,
+                        max = (int)item.max,
+                        min = (int)item.min,
+                        step = (int)item.step
+                    });
+                }
+            }
+            return new IntPropertyRange();
+        }
+
+        public void SetRadius(int radius)
+        {
+            SetConfigValue("radius", radius);
+        }
+    }
+
+    /**
+    * \if English
+    * @brief Spatial moderate filter class
+    * \else
+    * @brief 空间中等滤波器类
+    * \endif
+    */
+    public class SpatialModerateFilter : Filter
+    {
+        public SpatialModerateFilter(string activationKey = "")
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_create_private_filter("SpatialModerateFilter", activationKey, ref error);
+            NativeException.HandleError(error);
+            _handle = new NativeHandle(handle, Delete);
+            Init();
+        }
+
+        public IntPropertyRange GetMagnitudeRange()
+        {
+            foreach (var item in _configSchemaList)
+            {
+                if (Marshal.PtrToStringAnsi(item.name).Equals("magnitude"))
+                {
+                    return GetPropertyRange<IntPropertyRange>("magnitude", cur => new IntPropertyRange
+                    {
+                        cur = (int)cur,
+                        def = (int)item.def,
+                        max = (int)item.max,
+                        min = (int)item.min,
+                        step = (int)item.step
+                    });
+                }
+            }
+            return new IntPropertyRange();
+        }
+
+        public IntPropertyRange GetRadiusRange()
+        {
+            foreach (var item in _configSchemaList)
+            {
+                if (Marshal.PtrToStringAnsi(item.name).Equals("radius"))
+                {
+                    return GetPropertyRange<IntPropertyRange>("radius", cur => new IntPropertyRange
+                    {
+                        cur = (int)cur,
+                        def = (int)item.def,
+                        max = (int)item.max,
+                        min = (int)item.min,
+                        step = (int)item.step
+                    });
+                }
+            }
+            return new IntPropertyRange();
+        }
+
+        public void SetMagnitude(int magnitude)
+        {
+            SetConfigValue("magnitude", magnitude);
+        }
+
+        public void SetRadius(int radius)
+        {
+            SetConfigValue("radius", radius);
+        }
+    }
+
+    /**
+    * \if English
+    * @brief False positive filter class
+    * \else
+    * @brief 假阳性滤波器类
+    * \endif
+    */
+    public class FalsePositiveFilter : Filter
+    {
+        public FalsePositiveFilter(string activationKey = "")
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_create_private_filter("FalsePositiveFilter", activationKey, ref error);
+            NativeException.HandleError(error);
+            _handle = new NativeHandle(handle, Delete);
+            Init();
+        }
+    }
+
+    /**
+    * \if English
+    * @brief Filter list class
+    * \else
+    * @brief 滤波器列表类
+    * \endif
+    */
+    public class FilterList : IDisposable
+    {
+        private NativeHandle _handle;
+
+        internal FilterList(IntPtr handle)
+        {
+            _handle = new NativeHandle(handle, Delete);
+        }
+
+        /**
+        * \if English
+        * @brief Get the number of filters
+        * \else
+        * @brief 获取滤波器数量
+        * \endif
+        */
+        public UInt32 GetCount()
+        {
+            IntPtr error = IntPtr.Zero;
+            UInt32 count = obNative.ob_filter_list_get_count(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+            return count;
+        }
+
+        /**
+        * \if English
+        * @brief Get filter at specified index
+        * \else
+        * @brief 获取指定索引的滤波器
+        * \endif
+        */
+        public Filter GetFilter(UInt32 index)
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_filter_list_get_filter(_handle.Ptr, index, ref error);
+            NativeException.HandleError(error);
+            return new Filter(handle);
+        }
+
+        internal void Delete(IntPtr handle)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_delete_filter_list(handle, ref error);
+            NativeException.HandleError(error);
+        }
+
+        public void Dispose()
+        {
+            _handle.Dispose();
+        }
+    }
 }

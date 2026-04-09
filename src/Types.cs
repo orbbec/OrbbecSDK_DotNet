@@ -71,6 +71,7 @@ namespace Orbbec
         OB_EXCEPTION_TYPE_IO,                      /**< SDK access IO exception error */
         OB_EXCEPTION_TYPE_MEMORY,                  /**< SDK access and use memory errors, which means that the frame fails to allocate memory */
         OB_EXCEPTION_TYPE_UNSUPPORTED_OPERATION,   /**< Unsupported operation type error by SDK or RGBD device */
+        OB_EXCEPTION_TYPE_ACCESS_DENIED,           /**< Device access denied */
     }
 
     /**
@@ -82,17 +83,20 @@ namespace Orbbec
      */
     public enum SensorType
     {
-        OB_SENSOR_UNKNOWN    = 0, /**< Unknown type sensor */
-        OB_SENSOR_IR         = 1, /**< IR */
-        OB_SENSOR_COLOR      = 2, /**< Color */
-        OB_SENSOR_DEPTH      = 3, /**< Depth */
-        OB_SENSOR_ACCEL      = 4, /**< Accel */
-        OB_SENSOR_GYRO       = 5, /**< Gyro */
-        OB_SENSOR_IR_LEFT    = 6, /**< left IR for stereo camera*/
-        OB_SENSOR_IR_RIGHT   = 7, /**< Right IR for stereo camera*/
-        OB_SENSOR_RAW_PHASE  = 8, /**< Raw Phase */
-        OB_SENSOR_CONFIDENCE = 9, /**< Confidence */
-        OB_SENSOR_TYPE_COUNT,     /**The total number of sensor types, is not a valid sensor type */
+        OB_SENSOR_UNKNOWN     = 0,  /**< Unknown type sensor */
+        OB_SENSOR_IR          = 1,  /**< IR */
+        OB_SENSOR_COLOR       = 2,  /**< Color */
+        OB_SENSOR_DEPTH       = 3,  /**< Depth */
+        OB_SENSOR_ACCEL       = 4,  /**< Accel */
+        OB_SENSOR_GYRO        = 5,  /**< Gyro */
+        OB_SENSOR_IR_LEFT     = 6,  /**< left IR for stereo camera*/
+        OB_SENSOR_IR_RIGHT    = 7,  /**< Right IR for stereo camera*/
+        OB_SENSOR_RAW_PHASE   = 8,  /**< Raw Phase */
+        OB_SENSOR_CONFIDENCE  = 9,  /**< Confidence */
+        OB_SENSOR_LIDAR       = 10, /**< LiDAR */
+        OB_SENSOR_COLOR_LEFT  = 11, /**< Left Color */
+        OB_SENSOR_COLOR_RIGHT = 12, /**< Right Color */
+        OB_SENSOR_TYPE_COUNT,       /**The total number of sensor types, is not a valid sensor type */
     }
 
     /**
@@ -104,18 +108,21 @@ namespace Orbbec
     */
     public enum StreamType
     {
-        OB_STREAM_UNKNOWN   = -1, /**< Unknown type stream */
-        OB_STREAM_VIDEO     = 0,  /**< Video stream (infrared, color, depth streams are all video streams) */
-        OB_STREAM_IR        = 1,  /**< IR stream */
-        OB_STREAM_COLOR     = 2,  /**< color stream */
-        OB_STREAM_DEPTH     = 3,  /**< depth stream */
-        OB_STREAM_ACCEL     = 4,  /**< Accelerometer data stream */
-        OB_STREAM_GYRO      = 5,  /**< Gyroscope data stream */
-        OB_STREAM_IR_LEFT   = 6,  /**< Left IR stream */
-        OB_STREAM_IR_RIGHT  = 7,  /**< Right IR stream */
-        OB_STREAM_RAW_PHASE = 8,  /**< RawPhase Stream */
-        OB_STREAM_CONFIDENCE = 9, /**< Confidence Stream*/
-        OB_SENSOR_TYPE_COUNT,     /**The total number of sensor types, is not a valid sensor type */
+        OB_STREAM_UNKNOWN     = -1, /**< Unknown type stream */
+        OB_STREAM_VIDEO       = 0,  /**< Video stream (infrared, color, depth streams are all video streams) */
+        OB_STREAM_IR          = 1,  /**< IR stream */
+        OB_STREAM_COLOR       = 2,  /**< color stream */
+        OB_STREAM_DEPTH       = 3,  /**< depth stream */
+        OB_STREAM_ACCEL       = 4,  /**< Accelerometer data stream */
+        OB_STREAM_GYRO        = 5,  /**< Gyroscope data stream */
+        OB_STREAM_IR_LEFT     = 6,  /**< Left IR stream */
+        OB_STREAM_IR_RIGHT    = 7,  /**< Right IR stream */
+        OB_STREAM_RAW_PHASE   = 8,  /**< RawPhase Stream */
+        OB_STREAM_CONFIDENCE  = 9,  /**< Confidence Stream*/
+        OB_STREAM_LIDAR       = 10, /**< LiDAR Stream for LiDAR device*/
+        OB_STREAM_COLOR_LEFT  = 11, /**< Left Color stream */
+        OB_STREAM_COLOR_RIGHT = 12, /**< Right Color stream */
+        OB_STREAM_TYPE_COUNT,       /**The total number of stream type, is not a valid stream type */
     }
 
     /**
@@ -127,20 +134,23 @@ namespace Orbbec
      */
     public enum FrameType
     {
-        OB_FRAME_UNKNOWN    = -1, /**< Unknown frame type */
-        OB_FRAME_VIDEO      = 0,  /**< Video frame */
-        OB_FRAME_IR         = 1,  /**< IR frame */
-        OB_FRAME_COLOR      = 2,  /**< Color frame */
-        OB_FRAME_DEPTH      = 3,  /**< Depth frame */
-        OB_FRAME_ACCEL      = 4,  /**< Accelerometer data frame */
-        OB_FRAME_SET        = 5,  /**< Frame collection (internally contains a variety of data frames) */
-        OB_FRAME_POINTS     = 6,  /**< Point cloud frame */
-        OB_FRAME_GYRO       = 7,  /**< Gyroscope data frame */
-        OB_FRAME_IR_LEFT    = 8,  /**< Left IR frame for stereo camera */
-        OB_FRAME_IR_RIGHT   = 9,  /**< Right IR frame for stereo camera */
-        OB_FRAME_RAW_PHASE  = 10, /**< Raw Phase frame*/
-        OB_FRAME_CONFIDENCE = 11, /**< Confidence frame*/
-        OB_FRAME_TYPE_COUNT,      /**< The total number of frame types, is not a valid frame type */
+        OB_FRAME_UNKNOWN      = -1, /**< Unknown frame type */
+        OB_FRAME_VIDEO        = 0,  /**< Video frame */
+        OB_FRAME_IR           = 1,  /**< IR frame */
+        OB_FRAME_COLOR        = 2,  /**< Color frame */
+        OB_FRAME_DEPTH        = 3,  /**< Depth frame */
+        OB_FRAME_ACCEL        = 4,  /**< Accelerometer data frame */
+        OB_FRAME_SET          = 5,  /**< Frame collection (internally contains a variety of data frames) */
+        OB_FRAME_POINTS       = 6,  /**< Point cloud frame */
+        OB_FRAME_GYRO         = 7,  /**< Gyroscope data frame */
+        OB_FRAME_IR_LEFT      = 8,  /**< Left IR frame for stereo camera */
+        OB_FRAME_IR_RIGHT     = 9,  /**< Right IR frame for stereo camera */
+        OB_FRAME_RAW_PHASE    = 10, /**< Raw Phase frame*/
+        OB_FRAME_CONFIDENCE   = 11, /**< Confidence frame*/
+        OB_FRAME_LIDAR_POINTS = 12, /**< LiDAR point3d cloud frame*/
+        OB_FRAME_COLOR_LEFT   = 13, /**< Left Color frame */
+        OB_FRAME_COLOR_RIGHT  = 14, /**< Right Color frame */
+        OB_FRAME_TYPE_COUNT,        /**< The total number of frame types, is not a valid frame type */
     }
 
     public enum PixelType
@@ -231,6 +241,10 @@ namespace Orbbec
         OB_FORMAT_BYR2       = 32, /**< byr2 format */
         OB_FORMAT_RW16       = 33, /**< RAW16 format */
         OB_FORMAT_Y12C4      = 34, /**< Y12C4 format */
+        OB_FORMAT_LIDAR_POINT        = 35, /**< XYZ 3D coordinate point format with LiDAR information, @ref OBLiDARPoint */
+        OB_FORMAT_LIDAR_SPHERE_POINT = 36, /**< Spherical coordinate point format with LiDAR information, @ref OBLiDARSpherePoint */
+        OB_FORMAT_LIDAR_SCAN         = 37, /**< LiDAR single-line scan mode data format, @ref OBLiDARScanPoint */
+        OB_FORMAT_LIDAR_CALIBRATION  = 38, /**< LiDAR calibration mode point format */
         OB_FORMAT_ANY = OB_FORMAT_UNKNOWN
     }
 
@@ -243,6 +257,7 @@ namespace Orbbec
     */
     public enum UpgradeState
     {
+        STAT_DONE_REBOOT_AND_REUPDATE = 7,   /**< update completed and device requires manual reboot and a second update*/
         STAT_DONE_WITH_DUPLICATES = 6,   /**< update completed, but some files were duplicated and ignored */
         STAT_VERIFY_SUCCESS       = 5,   /**< Image file verifify success */
         STAT_FILE_TRANSFER        = 4,   /**< file transfer */
@@ -261,6 +276,8 @@ namespace Orbbec
         ERR_MISMATCH              = -9,  /**< Mismatch firmware error */
         ERR_UNSUPPORT_DEV         = -10, /**< Unsupported device error */
         ERR_INVALID_COUNT         = -11, /**< invalid firmware/preset count */
+        ERR_FILE_READ             = -12, /**< Read image file error */
+        ERR_TRANSFER              = -13, /**< Transfer failed */
     }
 
     /**
@@ -311,6 +328,7 @@ namespace Orbbec
     * @brief 数据块结构体，用于数据分块传输
     * \endif
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct DataChunk
     {
         public IntPtr data;    ///< \if English current block data pointer \else 当前块数据指针 \endif
@@ -326,6 +344,7 @@ namespace Orbbec
     * @brief 整形范围的结构体
     * \endif
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct IntPropertyRange
     {
         public Int32 cur;   ///< \if English current value \else 当前值 \endif
@@ -342,6 +361,7 @@ namespace Orbbec
     * @brief 浮点型范围的结构体
     * \endif
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct FloatPropertyRange
     {
         public float cur;   ///< \if English current value \else 当前值 \endif
@@ -354,7 +374,8 @@ namespace Orbbec
     /**
     * @brief Structure for float range
     */
-    public struct UInt16PropertyRange 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct UInt16PropertyRange
     {
         public ushort cur;   ///< Current value
         public ushort max;   ///< Maximum value
@@ -366,7 +387,8 @@ namespace Orbbec
     /**
     * @brief Structure for float range
     */
-    public struct UInt8PropertyRange 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct UInt8PropertyRange
     {
         public byte cur;   ///< Current value
         public byte max;   ///< Maximum value
@@ -382,6 +404,7 @@ namespace Orbbec
      * @brief 布尔型范围的结构体
      * \endif
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct BoolPropertyRange
     {
         [MarshalAs(UnmanagedType.I1)]
@@ -403,6 +426,7 @@ namespace Orbbec
      * @brief 相机内参
      * \endif
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct CameraIntrinsic
     {
         public float fx;      ///< \if English focal length in x direction \else x方向焦距 \endif
@@ -416,6 +440,7 @@ namespace Orbbec
     /**
     * @brief Structure for accelerometer intrinsic parameters
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct AccelIntrinsic
     {
         public double noiseDensity;          ///< In-run bias instability
@@ -434,6 +459,7 @@ namespace Orbbec
     /**
     * @brief Structure for gyroscope intrinsic parameters
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct GyroIntrinsic{
         public double noiseDensity;          ///< In-run bias instability
         public double randomWalk;            ///< random walk
@@ -453,6 +479,7 @@ namespace Orbbec
      * @brief 畸变参数
      * \endif
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct CameraDistortion
     {
         public float k1;    ///< \if English Radial distortion factor 1 \else 径向畸变系数1 \endif
@@ -484,6 +511,7 @@ namespace Orbbec
      * @brief 旋转/变换矩阵
      * \endif
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct D2CTransform
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
@@ -492,6 +520,7 @@ namespace Orbbec
         public float[] trans;   ///< \if English transformation matrix \else 变化矩阵 \endif
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Extrinsic
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
@@ -507,14 +536,15 @@ namespace Orbbec
      * @brief 相机参数
      * \endif
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct CameraParam
     {
-        public CameraIntrinsic depthIntrinsic;   ///< \if English Depth camera internal parameters \else 深度相机内参 \endif    
-        public CameraIntrinsic rgbIntrinsic;     ///< \if English Color camera internal parameters \else 彩色相机内参 \endif    
-        public CameraDistortion depthDistortion;  ///< \if English Depth camera distortion parameters \else 深度相机畸变参数 \endif   
-        public CameraDistortion rgbDistortion;    ///< \if English Color camera distortion parameters 1 \else 彩色相机畸变参数 \endif   
-        public D2CTransform transform;        ///< \if English rotation/transformation matrix \else 旋转/变换矩阵 \endif   
-        public bool isMirrored;       ///< \if English Whether the image frame corresponding to this group of parameters is mirrored \else 本组参数对应的图像帧是否被镜像 \endif   
+        public CameraIntrinsic depthIntrinsic;   ///< \if English Depth camera internal parameters \else 深度相机内参 \endif
+        public CameraIntrinsic rgbIntrinsic;     ///< \if English Color camera internal parameters \else 彩色相机内参 \endif
+        public CameraDistortion depthDistortion;  ///< \if English Depth camera distortion parameters \else 深度相机畸变参数 \endif
+        public CameraDistortion rgbDistortion;    ///< \if English Color camera distortion parameters 1 \else 彩色相机畸变参数 \endif
+        public D2CTransform transform;        ///< \if English rotation/transformation matrix \else 旋转/变换矩阵 \endif
+        public bool isMirrored;       ///< \if English Whether the image frame corresponding to this group of parameters is mirrored \else 本组参数对应的图像帧是否被镜像 \endif
     }
 
     /**
@@ -524,6 +554,7 @@ namespace Orbbec
     * @brief 预设分辨率与下采样参数配置。
     * \endif
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct OBPresetResolutionConfig
     {
         public UInt16 width;                  ///< width
@@ -535,7 +566,8 @@ namespace Orbbec
     /**
     * @brief calibration parameters
     */
-    public struct CalibrationParam 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct CalibrationParam
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
         public CameraIntrinsic[]  intrinsics;            ///< Sensor internal parameters
@@ -549,6 +581,7 @@ namespace Orbbec
     /**
     * @brief Configuration for depth margin filter
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct OBMarginFilterConfig
     {
         public int      margin_x_th;       ///< Horizontal threshold settings
@@ -563,6 +596,7 @@ namespace Orbbec
     /**
     * @brief Configuration for mgc filter
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct MGCFilterConfig
     {
         public UInt32 width;
@@ -610,6 +644,7 @@ namespace Orbbec
      * @brief 矩形
      * \endif
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Rect
     {
         public UInt32 x;       ///< \if English origin coordinate x \else 原点坐标x \endif
@@ -757,6 +792,7 @@ namespace Orbbec
     /**
      * @brief Data structures for accelerometers
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct AccelValue
     {
         public float x;  ///< X-direction component
@@ -767,6 +803,7 @@ namespace Orbbec
     /**
      * @brief Data structures for gyroscope
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct GyroValue
     {
         public float x;  ///< X-direction component
@@ -774,6 +811,7 @@ namespace Orbbec
         public float z;  ///< Z-direction component
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Float3D
     {
         public float x;  ///< X-direction component
@@ -788,6 +826,7 @@ namespace Orbbec
      * @brief 获取设备的温度参数（单位：摄氏度）
      * \endif
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct DeviceTemperature
     {
         public float cpuTemp;         ///< CPU temperature
@@ -929,36 +968,40 @@ namespace Orbbec
      * @brief SDK中3D点结构体
      * \endif
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Point
     {
         public float x;  ///< X coordinate
         public float y;  ///< Y coordinate
-        public float z;  ///< Z coordinate   
+        public float z;  ///< Z coordinate
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Point3f
     {
         public float x;  ///< X coordinate
         public float y;  ///< Y coordinate
-        public float z;  ///< Z coordinate   
+        public float z;  ///< Z coordinate
     }
 
     /**
     * @brief 2D point structure in the SDK
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Point2f
     {
         public float x;  ///< X coordinate
         public float y;  ///< Y coordinate
-    } 
+    }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct XYTables
     {
         public IntPtr xTable;  ///< table used to compute X coordinate
         public IntPtr yTable;  ///< table used to compute Y coordinate
         public int    width;   ///< width of x and y tables
         public int    height;  ///< height of x and y tables
-    } 
+    }
 
     /**
      * \if English
@@ -967,6 +1010,7 @@ namespace Orbbec
      * @brief 带有颜色信息的3D点结构体
      * \endif
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ColorPoint
     {
         public float x;  ///< X coordinate
@@ -977,6 +1021,69 @@ namespace Orbbec
         public float b;  ///< Blue channel component
     }
 
+    /**
+     * \if English
+     * @brief LiDAR scan point structure
+     * \else
+     * @brief LiDAR 扫描点结构体
+     * \endif
+     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct LiDARScanPoint
+    {
+        public float angle;      ///< angle, unit: degrees
+        public float distance;   ///< distance, unit: mm
+        public ushort intensity; ///< intensity, 0~2000
+    }
+
+    /**
+     * \if English
+     * @brief LiDAR 3D point structure
+     * \else
+     * @brief LiDAR 3D点结构体
+     * \endif
+     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct LiDARPoint
+    {
+        public float x;             ///< X coordinate, unit mm
+        public float y;             ///< Y coordinate, unit mm
+        public float z;             ///< Z coordinate, unit mm
+        public byte reflectivity;  ///< reflectivity
+        public byte tag;            ///< point state
+    }
+
+    /**
+     * \if English
+     * @brief LiDAR spherical coordinate point structure
+     * \else
+     * @brief LiDAR 球面坐标点结构体
+     * \endif
+     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct LiDARSpherePoint
+    {
+        public float theta;    ///< theta angle, unit: degrees
+        public float phi;      ///< phi angle, unit: degrees
+        public float distance; ///< distance, unit: mm
+        public ushort intensity; ///< intensity, 0~2000
+    }
+
+    /**
+     * \if English
+     * @brief Hardware decimation configuration
+     * \else
+     * @brief 硬件降采样配置
+     * \endif
+     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct HardwareDecimationConfig
+    {
+        public uint originWidth;   ///< Origin width
+        public uint originHeight;  ///< Origin height
+        public uint factor;        ///< Decimation factor
+    }
+
     public enum CompressionMode
     {
         OB_COMPRESSION_LOSSLESS = 0, /**< Lossless compression mode */
@@ -985,6 +1092,7 @@ namespace Orbbec
 
     
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct CompressionParams
     {
         /**
@@ -1002,6 +1110,7 @@ namespace Orbbec
     */
     
     
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TofExposureThresholdControl
     {
         public Int32 upper;  ///< \if English Upper threshold, unit: ms \else 阈值上限， 单位：ms \endif
@@ -1099,6 +1208,7 @@ namespace Orbbec
     * @brief 单机内不同 Sensor 的同步 及 多机间同步 配置
     * \endif
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct DeviceSyncConfig
     {
         /**
@@ -1214,6 +1324,7 @@ namespace Orbbec
     * \endif
     *
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct DepthWorkMode {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public byte[] checksum;  ///< \if English Checksum of work mode \else 相机深度模式对应哈希二进制数组 \endif
@@ -1225,12 +1336,13 @@ namespace Orbbec
     /**
     * @brief SequenceId fliter list item
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct SequenceIdItem
     {
         public int  sequenceSelectId;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
         public char[] name;
-    } 
+    }
 
     /**
     * @brief Hole fillig mode
@@ -1242,6 +1354,7 @@ namespace Orbbec
         OB_HOLE_FILL_FAREST  = 2,  // FILL_FAREST
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct SpatialAdvancedFilterParams
     {
         public byte magnitude;  // magnitude
@@ -1257,6 +1370,7 @@ namespace Orbbec
         OB_MGC_FILTER = 3,
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct EdgeNoiseRemovalFilterParams
     {
         public EdgeNoiseRemovalType type;
@@ -1275,6 +1389,7 @@ namespace Orbbec
         OB_NR_OVERALL = 1,  // NON_SPLIT
     } 
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct NoiseRemovalFilterParams
     {
         public UInt16              max_size;
@@ -1287,6 +1402,7 @@ namespace Orbbec
     * @brief 控制命令协议版本号
     *
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ProtocolVersion {
         public byte major;  ///< 主版本号
         public byte minor;  ///< 次版本号
@@ -1315,6 +1431,7 @@ namespace Orbbec
      * @brief 网络设备的IP地址配置（ipv4）
      *
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct DeviceIpAddrConfig
     {
         public UInt16 dhcp;        ///< dhcp 动态ip配置开关; 0:关; 1: 开
@@ -1544,6 +1661,7 @@ namespace Orbbec
     /**
     * @brief The synchronization configuration of the device.
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct MultiDeviceSyncConfig{
         /**
         * @brief The sync mode of the device.
@@ -1608,6 +1726,7 @@ namespace Orbbec
     * @brief The timestamp reset configuration of the device.
     *
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct DeviceTimestampResetConfig{
         /**
         * @brief Whether to enable the timestamp reset function.
@@ -1635,6 +1754,7 @@ namespace Orbbec
     /**
     * @brief Baseline calibration parameters
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct BaselineCalibrationParam{
         /**
         * @brief Baseline length
@@ -1666,11 +1786,12 @@ namespace Orbbec
         public UInt32 gain_1;         ///< Gain 1
         public UInt32 exposure_2;     ///< Exposure time 2
         public UInt32 gain_2;         ///< Gain 2
-    } 
+    }
 
     /**
     * @brief The rect of the region of interest
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct RegionOfInterest
     {
         public Int16 x0_left;
@@ -1687,6 +1808,66 @@ namespace Orbbec
         OB_FILTER_CONFIG_VALUE_TYPE_BOOLEAN = 2,
     }
 
+    /**
+     * \if English
+     * @brief LiDAR scan rate enumeration
+     * \else
+     * @brief LiDAR 扫描率枚举
+     * \endif
+     */
+    public enum LiDARScanRate
+    {
+        OB_LIDAR_SCAN_UNKNOWN = 0,
+        OB_LIDAR_SCAN_5HZ     = 1,
+        OB_LIDAR_SCAN_10HZ    = 2,
+        OB_LIDAR_SCAN_15HZ    = 3,
+        OB_LIDAR_SCAN_20HZ    = 4,
+        OB_LIDAR_SCAN_25HZ    = 5,
+        OB_LIDAR_SCAN_30HZ    = 6,
+        OB_LIDAR_SCAN_40HZ    = 7,
+    }
+
+    /**
+     * \if English
+     * @brief Device access mode enumeration
+     * \else
+     * @brief 设备访问模式枚举
+     * \endif
+     */
+    public enum DeviceAccessMode
+    {
+        OB_DEVICE_DEFAULT_ACCESS = 0,
+        OB_DEVICE_EXCLUSIVE_ACCESS = 1,
+        OB_DEVICE_SHARED_ACCESS = 2,
+    }
+
+    /**
+     * \if English
+     * @brief UVC backend type
+     * \else
+     * @brief UVC后端类型
+     * \endif
+     */
+    public enum UvcBackendType
+    {
+        OB_UVC_BACKEND_TYPE_AUTO = 0,      /**< Auto select backend */
+        OB_UVC_BACKEND_TYPE_LIBUVC = 1,    /**< Use libuvc backend */
+        OB_UVC_BACKEND_TYPE_V4L2 = 2,      /**< Use V4L2 backend (Linux only) */
+        OB_UVC_BACKEND_TYPE_MSMF = 3,      /**< Use MSMF backend (Windows only) */
+    }
+
+    /**
+     * \if English
+     * @brief Callback ID type for device changed callback
+     * \else
+     * @brief 设备变更回调ID类型
+     * \endif
+     */
+    public enum CallbackId : uint
+    {
+        INVALID_DEVICE_CHANGED_CALLBACK_ID = 0xFFFFFFFF,
+    }
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct FilterConfigSchemaItem
     {
@@ -1699,6 +1880,7 @@ namespace Orbbec
         public IntPtr desc;  ///< Description of the configuration item
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct DeviceSerialNumber
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
@@ -1708,6 +1890,7 @@ namespace Orbbec
     /**
      * @brief Disparity offset interleaving configuration
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct DispOffsetConfig
     {
         public byte enable;
@@ -1917,6 +2100,7 @@ namespace Orbbec
         OB_FRAME_METADATA_TYPE_COUNT,
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct DisparityParam
     {
         public double zpd;           // the distance to calib plane

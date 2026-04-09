@@ -30,7 +30,7 @@ namespace Samples.MultiDevices
                 uint count = deviceList.DeviceCount();
                 for (uint i = 0; i < count; ++i)
                 {
-                    var device = deviceList.GetDevice(i);
+                    using var device = deviceList.GetDevice(i);
                     var pipe = new Pipeline(device);
                     _pipes.Add(i, pipe);
                 }
@@ -38,15 +38,7 @@ namespace Samples.MultiDevices
                 foreach (var (i, pipe) in _pipes)
                 {
                     using var config = new Config();
-                    try
-                    {
-                        config.EnableVideoStream(SensorType.OB_SENSOR_COLOR, 1280 ,0,0,Format.OB_FORMAT_RGB);
-                    }
-                    catch
-                    {
-                        Console.WriteLine("Camera does not support requested resolution 1280xAuto. Using default resolution.");
-                        config.EnableStream(SensorType.OB_SENSOR_COLOR);
-                    }
+                    config.EnableStream(SensorType.OB_SENSOR_COLOR);
                     config.EnableStream(SensorType.OB_SENSOR_DEPTH);
                     pipe.Start(config);
                 }
@@ -74,6 +66,7 @@ namespace Samples.MultiDevices
                 foreach (var (_, pipe) in _pipes)
                 {
                     pipe.Stop();
+                    pipe.Dispose();
                 }
                 ctx?.Dispose();
                 Console.WriteLine("Multi Devices sample exited.");
@@ -95,23 +88,25 @@ namespace Samples.MultiDevices
                         using var colorFrame = frameset.GetColorFrame();
                         using var depthFrame = frameset.GetDepthFrame();
 
-                        if (colorFrame == null || depthFrame == null)
-                        {
-                            frameset.Dispose();
-                            continue;
-                        }
-
                         int index = (int)i * 2;
 
-                        byte[] colorData = new byte[colorFrame.GetDataSize()];
-                        colorFrame.CopyData(ref colorData);
-                        renderer.UpdateVideoFrame(index, (int)colorFrame.GetWidth(),
-                            (int)colorFrame.GetHeight(), colorFrame.GetFormat(), colorData);
+                        // Color frame: pass colorFrame to support MJPG decoding
+                        if (colorFrame != null)
+                        {
+                            byte[] colorData = new byte[colorFrame.GetDataSize()];
+                            colorFrame.CopyData(ref colorData);
+                            renderer.UpdateVideoFrame(index, (int)colorFrame.GetWidth(),
+                                (int)colorFrame.GetHeight(), colorFrame.GetFormat(), colorData, colorFrame);
+                        }
 
-                        byte[] depthData = new byte[depthFrame.GetDataSize()];
-                        depthFrame.CopyData(ref depthData);
-                        renderer.UpdateVideoFrame(index + 1, (int)depthFrame.GetWidth(),
-                            (int)depthFrame.GetHeight(), depthFrame.GetFormat(), depthData);
+                        // Depth frame: use normal UpdateVideoFrame
+                        if (depthFrame != null)
+                        {
+                            byte[] depthData = new byte[depthFrame.GetDataSize()];
+                            depthFrame.CopyData(ref depthData);
+                            renderer.UpdateVideoFrame(index + 1, (int)depthFrame.GetWidth(),
+                                (int)depthFrame.GetHeight(), depthFrame.GetFormat(), depthData);
+                        }
                     }
                 }
             }

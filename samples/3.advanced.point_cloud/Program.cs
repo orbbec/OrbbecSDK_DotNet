@@ -14,8 +14,8 @@ namespace Samples.PointCloud
             {
                 pipe = new Pipeline();
                 using var config = new Config();
-                config.EnableVideoStream(StreamType.OB_STREAM_DEPTH, 0, 0, 0, Format.OB_FORMAT_UNKNOWN);
-                config.EnableVideoStream(StreamType.OB_STREAM_COLOR, 0, 0, 0, Format.OB_FORMAT_RGB);
+                config.EnableVideoStream(StreamType.OB_STREAM_DEPTH);
+                config.EnableStream(SensorType.OB_SENSOR_COLOR);
                 config.SetFrameAggregateOutputMode(FrameAggregateOutputMode.OB_FRAME_AGGREGATE_OUTPUT_ALL_TYPE_FRAME_REQUIRE);
 
                 pipe.EnableFrameSync();

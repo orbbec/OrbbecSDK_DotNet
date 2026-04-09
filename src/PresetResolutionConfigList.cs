@@ -46,8 +46,7 @@ namespace Orbbec
         public OBPresetResolutionConfig GetPresetResolutionRatioConfig(UInt32 index)
         {
             IntPtr error = IntPtr.Zero;
-            OBPresetResolutionConfig presetResolutionConfig;
-            obNative.ob_device_preset_resolution_config_list_get_item(out presetResolutionConfig, _handle.Ptr, index, ref error);
+            OBPresetResolutionConfig presetResolutionConfig = obNative.ob_device_preset_resolution_config_list_get_item(_handle.Ptr, index, ref error);
             NativeException.HandleError(error);
             return presetResolutionConfig;
         }

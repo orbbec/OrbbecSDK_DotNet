@@ -14,6 +14,12 @@ namespace Orbbec
             _handle = new NativeHandle(handle, Delete);
         }
 
+        internal Frame(NativeHandle handle)
+        {
+            _handle = handle;
+            _handle.Retain();
+        }
+
         internal NativeHandle GetNativeHandle()
         {
             return _handle;
@@ -24,39 +30,34 @@ namespace Orbbec
             switch (GetFrameType())
             {
                 case FrameType.OB_FRAME_VIDEO:
-                    _handle.Retain();
-                    return new VideoFrame(_handle.Ptr) as T;
+                    return new VideoFrame(_handle) as T;
                 case FrameType.OB_FRAME_IR:
                 case FrameType.OB_FRAME_IR_LEFT:
                 case FrameType.OB_FRAME_IR_RIGHT:
-                    _handle.Retain();
-                    return new IRFrame(_handle.Ptr) as T;
+                    return new IRFrame(_handle) as T;
                 case FrameType.OB_FRAME_COLOR:
-                    _handle.Retain();
-                    return new ColorFrame(_handle.Ptr) as T;
+                case FrameType.OB_FRAME_COLOR_LEFT:
+                case FrameType.OB_FRAME_COLOR_RIGHT:
+                    return new ColorFrame(_handle) as T;
                 case FrameType.OB_FRAME_DEPTH:
-                    _handle.Retain();
-                    return new DepthFrame(_handle.Ptr) as T;
+                    return new DepthFrame(_handle) as T;
                 case FrameType.OB_FRAME_ACCEL:
-                    _handle.Retain();
-                    return new AccelFrame(_handle.Ptr) as T;
+                    return new AccelFrame(_handle) as T;
                 case FrameType.OB_FRAME_SET:
-                    _handle.Retain();
-                    return new Frameset(_handle.Ptr) as T;
+                    return new Frameset(_handle) as T;
                 case FrameType.OB_FRAME_POINTS:
-                    _handle.Retain();
-                    return new PointsFrame(_handle.Ptr) as T;
+                    return new PointsFrame(_handle) as T;
                 case FrameType.OB_FRAME_GYRO:
-                    _handle.Retain();
-                    return new GyroFrame(_handle.Ptr) as T;
+                    return new GyroFrame(_handle) as T;
+                case FrameType.OB_FRAME_CONFIDENCE:
+                    return new ConfidenceFrame(_handle) as T;
             }
             return null;
         }
 
         public Frame Copy()
         {
-            _handle.Retain();
-            return new Frame(_handle.Ptr);
+            return new Frame(_handle);
         }
 
         /**
@@ -152,6 +153,53 @@ namespace Orbbec
             UInt64 timestamp = obNative.ob_frame_get_timestamp_us(_handle.Ptr, ref error);
             NativeException.HandleError(error);
             return timestamp;
+        }
+
+        /**
+        * \if English
+        * @brief Get the global timestamp of the frame in microseconds.
+        * @brief The global timestamp is the time point when the frame was captured by the device, and has been converted to the host clock domain. The
+        * conversion process base on the device timestamp and can eliminate the timer drift of the device
+        *
+        * @attention The global timestamp disable by default. If global timestamp is not enabled, the function will return 0. To enable the global timestamp,
+        * please call @ref Device.EnableGlobalTimestamp() function.
+        * @attention Only some devices support getting the global timestamp. Check the device support status by @ref Device.IsGlobalTimestampSupported() function.
+        *
+        * @return UInt64 The global timestamp of the frame in microseconds.
+        * \else
+        * @brief 获取帧的全局时间戳（微秒）
+        * @brief 全局时间戳是帧被设备捕获的时间点，并已转换为主机时钟域。转换过程基于设备时间戳，可以消除设备的计时器漂移
+        *
+        * @attention 全局时间戳默认禁用。如果未启用全局时间戳，函数将返回0。要启用全局时间戳，请调用 @ref Device.EnableGlobalTimestamp() 函数。
+        * @attention 仅部分设备支持获取全局时间戳。请通过 @ref Device.IsGlobalTimestampSupported() 函数检查设备支持状态。
+        *
+        * @return UInt64 帧的全局时间戳，单位为微秒
+        * \endif
+        */
+        public UInt64 GetGlobalTimeStampUs()
+        {
+            IntPtr error = IntPtr.Zero;
+            UInt64 timestamp = obNative.ob_frame_get_global_timestamp_us(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+            return timestamp;
+        }
+
+        /**
+        * \if English
+        * @brief Set the system timestamp of the frame in microseconds
+        *
+        * @param systemTimestampUs The system timestamp to set
+        * \else
+        * @brief 设置帧的系统时间戳（微秒）
+        *
+        * @param systemTimestampUs 要设置的系统时间戳
+        * \endif
+        */
+        public void SetSystemTimestampUs(UInt64 systemTimestampUs)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_frame_set_timestamp_us(_handle.Ptr, systemTimestampUs, ref error);
+            NativeException.HandleError(error);
         }
 
         /**
@@ -294,6 +342,52 @@ namespace Orbbec
 
         /**
         * \if English
+        * @brief Get the sensor from which the frame was captured
+        *
+        * @return Sensor returns the sensor object
+        * \else
+        * @brief 获取捕获该帧的传感器
+        *
+        * @return Sensor 返回传感器对象
+        * \endif
+        */
+        public Sensor GetSensor()
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_frame_get_sensor(_handle.Ptr, ref error);
+            if (handle == IntPtr.Zero)
+            {
+                return null;
+            }
+            NativeException.HandleError(error);
+            return new Sensor(handle);
+        }
+
+        /**
+        * \if English
+        * @brief Get the device from which the frame was captured
+        *
+        * @return Device returns the device object
+        * \else
+        * @brief 获取捕获该帧的设备
+        *
+        * @return Device 返回设备对象
+        * \endif
+        */
+        public Device GetDevice()
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_frame_get_device(_handle.Ptr, ref error);
+            if (handle == IntPtr.Zero)
+            {
+                return null;
+            }
+            NativeException.HandleError(error);
+            return new Device(handle);
+        }
+
+        /**
+        * \if English
         * @brief Get the metadata of the frame
         *
         * @return Byte[] returns the metadata of the frame
@@ -394,6 +488,10 @@ namespace Orbbec
         {
         }
 
+        internal VideoFrame(NativeHandle handle) : base(handle)
+        {
+        }
+
         /**
         * \if English
         * @brief Get frame width
@@ -441,7 +539,7 @@ namespace Orbbec
         * @return uint8_t 返回像素有效位数，如果是不支持的格式，返回0
         * \endif
         */
-        byte PixelAvailableBitSize()
+        public byte PixelAvailableBitSize()
         {
             IntPtr error = IntPtr.Zero;
             return obNative.ob_video_frame_get_pixel_available_bit_size(_handle.Ptr, ref error);
@@ -483,11 +581,19 @@ namespace Orbbec
         internal ColorFrame(IntPtr handle) : base(handle)
         {
         }
+
+        internal ColorFrame(NativeHandle handle) : base(handle)
+        {
+        }
     }
 
     public class DepthFrame : VideoFrame
     {
         internal DepthFrame(IntPtr handle) : base(handle)
+        {
+        }
+
+        internal DepthFrame(NativeHandle handle) : base(handle)
         {
         }
 
@@ -511,6 +617,38 @@ namespace Orbbec
             IntPtr error = IntPtr.Zero;
             return obNative.ob_depth_frame_get_value_scale(_handle.Ptr, ref error);
         }
+
+        /**
+        * \if English
+        * @brief Get the coordinate value scale of the depth frame
+        * @note Alias for GetValueScale()
+        * \else
+        * @brief 获取深度帧的坐标值刻度
+        * @note GetValueScale() 的别名
+        * \endif
+        */
+        public float GetCoordinateValueScale()
+        {
+            return GetValueScale();
+        }
+
+        /**
+        * \if English
+        * @brief Set the value scale of the depth frame
+        *
+        * @param valueScale The value scale to set
+        * \else
+        * @brief 设置深度帧的值刻度
+        *
+        * @param valueScale 要设置的值刻度
+        * \endif
+        */
+        public void SetValueScale(float valueScale)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_depth_frame_set_value_scale(_handle.Ptr, valueScale, ref error);
+            NativeException.HandleError(error);
+        }
     }
 
     public class IRFrame : VideoFrame
@@ -518,11 +656,19 @@ namespace Orbbec
         internal IRFrame(IntPtr handle) : base(handle)
         {
         }
+
+        internal IRFrame(NativeHandle handle) : base(handle)
+        {
+        }
     }
 
     public class PointsFrame : Frame
     {
         internal PointsFrame(IntPtr handle) : base(handle)
+        {
+        }
+
+        internal PointsFrame(NativeHandle handle) : base(handle)
         {
         }
 
@@ -581,11 +727,29 @@ namespace Orbbec
             IntPtr error = IntPtr.Zero;
             return obNative.ob_point_cloud_frame_get_height(_handle.Ptr, ref error);
         }
+
+        /**
+        * \if English
+        * @brief Get the coordinate value scale of the points frame
+        * @note Alias for GetPositionValueScale()
+        * \else
+        * @brief 获取点云帧的坐标值缩放系数
+        * @note GetPositionValueScale() 的别名
+        * \endif
+        */
+        public float GetCoordinateValueScale()
+        {
+            return GetPositionValueScale();
+        }
     }
 
     public class AccelFrame : Frame
     {
         internal AccelFrame(IntPtr handle) : base(handle)
+        {
+        }
+
+        internal AccelFrame(NativeHandle handle) : base(handle)
         {
         }
 
@@ -617,6 +781,10 @@ namespace Orbbec
         {
         }
 
+        internal GyroFrame(NativeHandle handle) : base(handle)
+        {
+        }
+
         /**
         * @brief 获取陀螺仪帧数据
         * @return GyroValue 返回陀螺仪的值
@@ -642,6 +810,10 @@ namespace Orbbec
     public class Frameset : Frame
     {
         internal Frameset(IntPtr handle) : base(handle)
+        {
+        }
+
+        internal Frameset(NativeHandle handle) : base(handle)
         {
         }
 
@@ -774,10 +946,211 @@ namespace Orbbec
             return new Frame(handle);
         }
 
+        /**
+        * \if English
+        * @brief Get frame by index
+        *
+        * @param index Frame index in the FrameSet
+        * @return Frame returns the frame at the specified index
+        * \else
+        * @brief 通过索引获取帧
+        *
+        * @param index 帧在FrameSet中的索引
+        * @return Frame 返回指定索引处的帧
+        * \endif
+        */
+        public Frame GetFrameByIndex(int index)
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_frameset_get_frame_by_index(_handle.Ptr, index, ref error);
+            if (handle == IntPtr.Zero)
+            {
+                return null;
+            }
+            return new Frame(handle);
+        }
+
         public void PushFrame(Frame frame)
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_frameset_push_frame(_handle.Ptr, frame.GetNativeHandle().Ptr, ref error);
+            NativeException.HandleError(error);
+        }
+    }
+
+    /**
+    * \if English
+    * @brief Confidence frame class, inherits from VideoFrame
+    * \else
+    * @brief 置信度帧类，继承自 VideoFrame
+    * \endif
+    */
+    public class ConfidenceFrame : VideoFrame
+    {
+        internal ConfidenceFrame(IntPtr handle) : base(handle)
+        {
+        }
+
+        internal ConfidenceFrame(NativeHandle handle) : base(handle)
+        {
+        }
+    }
+
+    /**
+    * \if English
+    * @brief LiDAR point cloud frame class, inherits from Frame
+    * \else
+    * @brief LiDAR点云帧类，继承自 Frame
+    * \endif
+    */
+    public class LiDARPointsFrame : Frame
+    {
+        internal LiDARPointsFrame(IntPtr handle) : base(handle)
+        {
+        }
+
+        internal LiDARPointsFrame(NativeHandle handle) : base(handle)
+        {
+        }
+    }
+
+    /**
+    * \if English
+    * @brief Frame factory class for creating frame objects
+    * \else
+    * @brief 帧工厂类，用于创建帧对象
+    * \endif
+    */
+    public static class FrameFactory
+    {
+        /**
+        * \if English
+        * @brief Create a Frame object of a specific type with a given format and data size.
+        * \else
+        * @brief 创建特定类型的帧对象，指定格式和数据大小
+        * \endif
+        */
+        public static Frame CreateFrame(FrameType frameType, Format format, UInt32 dataSize)
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_create_frame(frameType, format, dataSize, ref error);
+            NativeException.HandleError(error);
+            return new Frame(handle);
+        }
+
+        /**
+        * \if English
+        * @brief Create a VideoFrame object of a specific type with a given format, width, height, and stride.
+        * \else
+        * @brief 创建特定类型的视频帧对象，指定格式、宽度、高度和步长
+        * \endif
+        */
+        public static VideoFrame CreateVideoFrame(FrameType frameType, Format format, UInt32 width, UInt32 height, UInt32 stride = 0)
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_create_video_frame(frameType, format, width, height, stride, ref error);
+            NativeException.HandleError(error);
+            return new VideoFrame(handle);
+        }
+
+        /**
+        * \if English
+        * @brief Create (clone) a frame object based on the specified other frame object.
+        * \else
+        * @brief 基于指定的其他帧对象创建（克隆）帧对象
+        * \endif
+        */
+        public static Frame CreateFrameFromOtherFrame(Frame otherFrame, bool shouldCopyData = true)
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_create_frame_from_other_frame(otherFrame.GetNativeHandle().Ptr, shouldCopyData, ref error);
+            NativeException.HandleError(error);
+            return new Frame(handle);
+        }
+
+        /**
+        * \if English
+        * @brief Create a Frame From Stream Profile object
+        * \else
+        * @brief 从流配置文件创建帧对象
+        * \endif
+        */
+        public static Frame CreateFrameFromStreamProfile(StreamProfile profile)
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_create_frame_from_stream_profile(profile.GetNativeHandle().Ptr, ref error);
+            NativeException.HandleError(error);
+            return new Frame(handle);
+        }
+
+        /**
+        * \if English
+        * @brief Create a frame object based on an externally created buffer.
+        * \else
+        * @brief 基于外部创建的缓冲区创建帧对象
+        * \endif
+        */
+        public static Frame CreateFrameFromBuffer(FrameType frameType, Format format, IntPtr buffer, UInt32 bufferSize, FrameDestroyCallback callback)
+        {
+            IntPtr error = IntPtr.Zero;
+            // Note: The callback is handled at native level
+            IntPtr handle = obNative.ob_create_frame_from_buffer(frameType, format, buffer, bufferSize, null, IntPtr.Zero, ref error);
+            NativeException.HandleError(error);
+            return new Frame(handle);
+        }
+
+        /**
+        * \if English
+        * @brief Create a video frame object based on an externally created buffer.
+        * \else
+        * @brief 基于外部创建的缓冲区创建视频帧对象
+        * \endif
+        */
+        public static VideoFrame CreateVideoFrameFromBuffer(FrameType frameType, Format format, UInt32 width, UInt32 height, IntPtr buffer, UInt32 bufferSize, FrameDestroyCallback callback, UInt32 stride = 0)
+        {
+            IntPtr error = IntPtr.Zero;
+            // Note: The callback is handled at native level
+            IntPtr handle = obNative.ob_create_video_frame_from_buffer(frameType, format, width, height, stride, buffer, bufferSize, null, IntPtr.Zero, ref error);
+            NativeException.HandleError(error);
+            return new VideoFrame(handle);
+        }
+
+        /**
+        * \if English
+        * @brief Create a new FrameSet object.
+        * \else
+        * @brief 创建新的帧集合对象
+        * \endif
+        */
+        public static Frameset CreateFrameSet()
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_create_frameset(ref error);
+            NativeException.HandleError(error);
+            return new Frameset(handle);
+        }
+    }
+
+    /**
+    * \if English
+    * @brief Frame helper class with utility methods
+    * \else
+    * @brief 帧辅助工具类
+    * \endif
+    */
+    public static class FrameHelper
+    {
+        /**
+        * \if English
+        * @brief Set the device timestamp of the frame in microseconds.
+        * \else
+        * @brief 设置帧的设备时间戳（微秒）
+        * \endif
+        */
+        public static void SetFrameDeviceTimestampUs(Frame frame, UInt64 deviceTimestampUs)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_frame_set_timestamp_us(frame.GetNativeHandle().Ptr, deviceTimestampUs, ref error);
             NativeException.HandleError(error);
         }
     }

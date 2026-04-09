@@ -85,7 +85,7 @@ namespace Orbbec
 
         public void Dispose()
         {
-            _handle.Dispose();
+            _handle?.Dispose();
         }
     }
 }

@@ -7,8 +7,8 @@ namespace Samples.MultiStreams
     {
         private static volatile bool _isRunning = true;
         private static volatile bool _supportIMU = false;
-        private static bool IsAstraMiniDevice(string pid) =>
-            pid == "0x069D" || pid == "0x065B" || pid == "0x065E";
+        private static bool IsAstraMiniDevice(int vid, int pid) =>
+            vid == 0x2bc5 && (pid == 0x069d || pid == 0x065b || pid == 0x065e);
 
         static void Main(string[] args)
         {
@@ -30,6 +30,11 @@ namespace Samples.MultiStreams
             {
                 pipe = new Pipeline();
                 device = pipe.GetDevice();
+                var deviceInfo = device.GetDeviceInfo();
+                var pidStr = deviceInfo.Pid();
+                var vid = deviceInfo.Vid();
+                // Parse hex string like "0x1001"
+                var pid = Convert.ToInt32(pidStr.Replace("0x", ""), 16);
                 var availableTypes = GetAvailableTypes(device);
                 using var config = new Config();
 
@@ -37,28 +42,13 @@ namespace Samples.MultiStreams
                 {
                     if(sensorType == SensorType.OB_SENSOR_IR)
                     {
-                        if (IsAstraMiniDevice(device.GetDeviceInfo().Pid()))
+                        if (IsAstraMiniDevice(vid, pid))
                         {
                             continue;
                         }
                     }
-
-                    if (sensorType == SensorType.OB_SENSOR_COLOR)
-                    {
-                        try
-                        {
-                            config.EnableVideoStream(sensorType, 1280, 0, 0, Format.OB_FORMAT_RGB);
-                        }
-                        catch
-                        {
-                            Console.WriteLine("Camera does not support requested resolution 1280xAuto. Using default resolution.");
-                            config.EnableStream(sensorType);
-                        }
-                    }
-                    else
-                    {
-                        config.EnableStream(sensorType);
-                    }
+                    // Use default configuration, automatically select best format (supports MJPG)
+                    config.EnableStream(sensorType);
                     Console.WriteLine($"Enabled stream for: {sensorType}");
                 }
                 pipe.Start(config);
@@ -151,6 +141,8 @@ namespace Samples.MultiStreams
                             SensorType.OB_SENSOR_IR => FrameType.OB_FRAME_IR,
                             SensorType.OB_SENSOR_IR_LEFT => FrameType.OB_FRAME_IR_LEFT,
                             SensorType.OB_SENSOR_IR_RIGHT => FrameType.OB_FRAME_IR_RIGHT,
+                            SensorType.OB_SENSOR_COLOR_LEFT => FrameType.OB_FRAME_COLOR_LEFT,
+                            SensorType.OB_SENSOR_COLOR_RIGHT => FrameType.OB_FRAME_COLOR_RIGHT,
                             SensorType.OB_SENSOR_CONFIDENCE => FrameType.OB_FRAME_CONFIDENCE,
                             _ => FrameType.OB_FRAME_UNKNOWN
                         };
@@ -175,7 +167,8 @@ namespace Samples.MultiStreams
                                 using var vf = frame.As<VideoFrame>();
                                 byte[] data = new byte[vf.GetDataSize()];
                                 vf.CopyData(ref data);
-                                renderer.UpdateVideoFrame(textureIndex, (int)vf.GetWidth(), (int)vf.GetHeight(), vf.GetFormat(), data);
+                                // Pass the original frame to support formats requiring Filter conversion like MJPG
+                                renderer.UpdateVideoFrame(textureIndex, (int)vf.GetWidth(), (int)vf.GetHeight(), vf.GetFormat(), data, vf);
                             }
                         }
                     }

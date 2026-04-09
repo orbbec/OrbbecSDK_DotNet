@@ -791,6 +791,42 @@ namespace Orbbec
             NativeException.HandleError(error);
         }
 
+        /**
+        * \if English
+        * @brief Write customer data to device
+        * @param data The data to write
+        * @param dataSize The size of data (max 65532 bytes)
+        * \else
+        * @brief 写入客户数据到设备
+        * @param data 要写入的数据
+        * @param dataSize 数据大小（最大65532字节）
+        * \endif
+        */
+        public void WriteCustomerData(IntPtr data, UInt32 dataSize)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_device_write_customer_data(_handle.Ptr, data, dataSize, ref error);
+            NativeException.HandleError(error);
+        }
+
+        /**
+        * \if English
+        * @brief Read customer data from device
+        * @param data Buffer to store the data
+        * @param dataSize Size of the buffer (will be updated with actual size read)
+        * \else
+        * @brief 从设备读取客户数据
+        * @param data 存储数据的缓冲区
+        * @param dataSize 缓冲区大小（将被更新为实际读取大小）
+        * \endif
+        */
+        public void ReadCustomerData(IntPtr data, ref UInt32 dataSize)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_device_read_customer_data(_handle.Ptr, data, ref dataSize, ref error);
+            NativeException.HandleError(error);
+        }
+
         public bool IsExtensionInfoExist(String infoKey)
         {
             IntPtr error = IntPtr.Zero;
@@ -879,6 +915,29 @@ namespace Orbbec
             IntPtr ptr = obNative.ob_device_get_available_preset_list(_handle.Ptr, ref error);
             NativeException.HandleError(error);
             return new PresetList(ptr);
+        }
+
+        public bool IsFrameInterleaveSupported()
+        {
+            IntPtr error = IntPtr.Zero;
+            bool result = obNative.ob_device_is_frame_interleave_supported(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+            return result;
+        }
+
+        public FrameInterleaveList GetAvailableFrameInterleaveList()
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr ptr = obNative.ob_device_get_available_frame_interleave_list(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+            return new FrameInterleaveList(ptr);
+        }
+
+        public void LoadFrameInterleave(String frameInterleaveName)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_device_load_frame_interleave(_handle.Ptr, frameInterleaveName, ref error);
+            NativeException.HandleError(error);
         }
 
         public void Dispose()

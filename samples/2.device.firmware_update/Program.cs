@@ -56,6 +56,7 @@ namespace Samples.FirmwareUpdate
                         devices[deviceIndex].DeviceUpgrade(firmwarePath, (state, message, percent) =>
                         {
                             FirmwareUpdateCallback(firstCall, state, message, percent);
+                            firstCall = false;
                         }, false);
                     }
                     catch (Exception e)

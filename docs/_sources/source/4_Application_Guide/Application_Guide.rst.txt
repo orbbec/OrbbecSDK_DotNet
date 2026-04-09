@@ -21,4 +21,5 @@ This guide provides instructions on how to utilize the C# Bind SDK to initialize
     Color_Parameter_Settings.md
     Post_Processing_Filter.md
     HDR_Merge.md
+    Software_Trigger.md
 

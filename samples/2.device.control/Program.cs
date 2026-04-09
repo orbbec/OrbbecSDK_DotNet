@@ -38,17 +38,19 @@ namespace Samples.Control
                                      $"pid: 0x{deviceInfo.Pid():X4}" +
                                      $"uid: 0x{deviceInfo.Uid()}");
 
-                    Console.WriteLine("Input \"?\" to get all properties, \"exit\" to exit and reselect device.");
+                    Console.WriteLine("Input \"?\" to get all properties, \"exit\" to exit and reselect device, \"quit\" to exit program.");
 
                     var propertyList = GetPropertyList(device);
+                    Console.WriteLine(propertyList.Count());
                     propertyList.Sort((a, b) => a.id.CompareTo(b.id));
 
                     bool isSelectProperty = true;
                     while (isSelectProperty && !_shouldExit)
                     {
-                        if (!Console.KeyAvailable) continue;
-
+                        Console.Write("Select property (or 'exit' to go back): ");
                         string? choice = Console.ReadLine();
+                        if (_shouldExit) break;
+
                         if (string.IsNullOrWhiteSpace(choice))
                             continue;
 
@@ -62,6 +64,14 @@ namespace Samples.Control
                             if (controlParts[0] == "exit")
                             {
                                 isSelectProperty = false;
+                                break;
+                            }
+
+                            if (controlParts[0] == "quit")
+                            {
+                                isSelectProperty = false;
+                                isSelectDevice = false;
+                                _shouldExit = true;
                                 break;
                             }
 

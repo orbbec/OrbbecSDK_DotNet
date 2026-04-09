@@ -31,14 +31,17 @@ namespace Orbbec
                 case StreamType.OB_STREAM_IR_LEFT:
                 case StreamType.OB_STREAM_IR_RIGHT:
                 case StreamType.OB_STREAM_COLOR:
+                case StreamType.OB_STREAM_COLOR_LEFT:
+                case StreamType.OB_STREAM_COLOR_RIGHT:
                 case StreamType.OB_STREAM_DEPTH:
+                case StreamType.OB_STREAM_CONFIDENCE:
                     return new VideoStreamProfile(_handle) as T;
                 case StreamType.OB_STREAM_ACCEL:
-                    _handle.Retain();
-                    return new AccelStreamProfile(_handle.Ptr) as T;
+                    return new AccelStreamProfile(_handle) as T;
                 case StreamType.OB_STREAM_GYRO:
-                    _handle.Retain();
-                    return new GyroStreamProfile(_handle.Ptr) as T;
+                    return new GyroStreamProfile(_handle) as T;
+                case StreamType.OB_STREAM_LIDAR:
+                    return new LiDARStreamProfile(_handle) as T;
             }
             return null;
         }
@@ -104,6 +107,26 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_stream_profile_set_extrinsic_to(_handle.Ptr, targetProfile.GetNativeHandle().Ptr, extrinsic, ref error);
+            NativeException.HandleError(error);
+        }
+
+        /**
+        * \if English
+        * @brief Set the extrinsic parameters from current stream profile to the given target stream type.
+        *
+        * @param targetStreamType Target stream type.
+        * @param extrinsic The extrinsic parameters.
+        * \else
+        * @brief 设置从当前流配置文件到给定目标流类型的外参。
+        *
+        * @param targetStreamType 目标流类型。
+        * @param extrinsic 外参。
+        * \endif
+        */
+        public void BindExtrinsicTo(StreamType targetStreamType, Extrinsic extrinsic)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_stream_profile_set_extrinsic_to_type(_handle.Ptr, targetStreamType, extrinsic, ref error);
             NativeException.HandleError(error);
         }
 
@@ -284,12 +307,37 @@ namespace Orbbec
             NativeException.HandleError(error);
             return distortion;
         }
+
+        /**
+        * \if English
+        * @brief Get the decimation configuration of the stream.
+        *        Includes original resolution and scale factor.
+        *
+        * @return HardwareDecimationConfig returns the decimation configuration.
+        * \else
+        * @brief 获取流的抽取配置。
+        *        包括原始分辨率和缩放因子。
+        *
+        * @return HardwareDecimationConfig 返回抽取配置。
+        * \endif
+        */
+        public HardwareDecimationConfig GetDecimationConfig()
+        {
+            IntPtr error = IntPtr.Zero;
+            HardwareDecimationConfig config = obNative.ob_video_stream_profile_get_decimation_config(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+            return config;
+        }
     }
 
     public class AccelStreamProfile : StreamProfile
     {
         internal AccelStreamProfile(IntPtr handle) : base(handle)
-        {   
+        {
+        }
+
+        internal AccelStreamProfile(NativeHandle handle) : base(handle)
+        {
         }
 
         public static AccelStreamProfile Create(AccelFullScaleRange fullScaleRange, AccelSampleRate sampleRate)
@@ -349,7 +397,11 @@ namespace Orbbec
     public class GyroStreamProfile : StreamProfile
     {
         internal GyroStreamProfile(IntPtr handle) : base(handle)
-        {   
+        {
+        }
+
+        internal GyroStreamProfile(NativeHandle handle) : base(handle)
+        {
         }
 
         public static GyroStreamProfile Create(GyroFullScaleRange fullScaleRange, GyroSampleRate sampleRate)
@@ -403,6 +455,102 @@ namespace Orbbec
             IntPtr error = IntPtr.Zero;
             obNative.ob_gyro_stream_set_intrinsic(_handle.Ptr, intrinsic, ref error);
             NativeException.HandleError(error);
+        }
+    }
+
+    /**
+    * \if English
+    * @brief LiDAR stream profile class
+    * \else
+    * @brief LiDAR流配置文件类
+    * \endif
+    */
+    public class LiDARStreamProfile : StreamProfile
+    {
+        internal LiDARStreamProfile(IntPtr handle) : base(handle)
+        {
+        }
+
+        internal LiDARStreamProfile(NativeHandle handle) : base(handle)
+        {
+        }
+
+        public static LiDARStreamProfile Create(LiDARScanRate scanRate, Format format)
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_create_lidar_stream_profile(scanRate, format, ref error);
+            NativeException.HandleError(error);
+            return new LiDARStreamProfile(handle);
+        }
+
+        /**
+        * \if English
+        * @brief Get LiDAR scan rate
+        *
+        * @return LiDARScanRate returns the scan rate
+        * \else
+        * @brief 获取LiDAR扫描速率
+        *
+        * @return LiDARScanRate 返回扫描速率
+        * \endif
+        */
+        public LiDARScanRate GetScanRate()
+        {
+            IntPtr error = IntPtr.Zero;
+            LiDARScanRate rate = obNative.ob_lidar_stream_profile_get_scan_rate(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+            return rate;
+        }
+    }
+
+    /**
+    * \if English
+    * @brief Stream profile factory class for creating stream profile objects
+    * \else
+    * @brief 流配置文件工厂类，用于创建流配置文件对象
+    * \endif
+    */
+    public static class StreamProfileFactory
+    {
+        /**
+        * \if English
+        * @brief Create a stream profile from native handle based on stream type
+        * \else
+        * @brief 根据流类型从原生句柄创建流配置文件
+        * \endif
+        */
+        public static StreamProfile Create(IntPtr handle)
+        {
+            if (handle == IntPtr.Zero)
+            {
+                return null;
+            }
+
+            // Get stream type to determine which class to instantiate
+            IntPtr error = IntPtr.Zero;
+            StreamType type = obNative.ob_stream_profile_get_type(handle, ref error);
+            NativeException.HandleError(error);
+
+            switch (type)
+            {
+                case StreamType.OB_STREAM_IR:
+                case StreamType.OB_STREAM_IR_LEFT:
+                case StreamType.OB_STREAM_IR_RIGHT:
+                case StreamType.OB_STREAM_DEPTH:
+                case StreamType.OB_STREAM_COLOR:
+                case StreamType.OB_STREAM_COLOR_LEFT:
+                case StreamType.OB_STREAM_COLOR_RIGHT:
+                case StreamType.OB_STREAM_CONFIDENCE:
+                    return new VideoStreamProfile(handle);
+                case StreamType.OB_STREAM_ACCEL:
+                    return new AccelStreamProfile(handle);
+                case StreamType.OB_STREAM_GYRO:
+                    return new GyroStreamProfile(handle);
+                case StreamType.OB_STREAM_LIDAR:
+                    return new LiDARStreamProfile(handle);
+                default:
+                    return new StreamProfile(handle);
+            }
         }
     }
 }

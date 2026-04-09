@@ -74,6 +74,7 @@ namespace Orbbec
             NativeException.HandleError(error);
             _handle = new NativeHandle(handle, Delete);
             _nativeDeviceChangedCallback = new NativeDeviceChangedCallback(OnDeviceChanged);
+            _nativeLogCallback = new NativeLogCallback(OnLogCallback);
         }
 
         /**
@@ -270,6 +271,38 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_set_extensions_directory(directory, ref error);
+            NativeException.HandleError(error);
+        }
+
+        /**
+        * \if English
+        * @brief Free idle memory
+        * \else
+        * @brief 释放空闲内存
+        * \endif
+        */
+        public void FreeIdleMemory()
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_free_idle_memory(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+        }
+
+        /**
+        * \if English
+        * @brief Set the UVC backend type
+        *
+        * @param backendType The UVC backend type
+        * \else
+        * @brief 设置UVC后端类型
+        *
+        * @param backendType UVC后端类型
+        * \endif
+        */
+        public void SetUvcBackendType(UvcBackendType backendType)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_set_uvc_backend_type(_handle.Ptr, backendType, ref error);
             NativeException.HandleError(error);
         }
 

@@ -29,8 +29,9 @@ namespace Samples.SyncAlign
                 pipe = new Pipeline();
 
                 using var config = new Config();
+                // Consistent with C++ version: explicitly specify color format as RGB
+                config.EnableVideoStream(StreamType.OB_STREAM_DEPTH, 0, 0, 0, Format.OB_FORMAT_ANY);
                 config.EnableVideoStream(StreamType.OB_STREAM_COLOR, 0, 0, 0, Format.OB_FORMAT_RGB);
-                config.EnableVideoStream(StreamType.OB_STREAM_DEPTH, 0, 0, 0, Format.OB_FORMAT_UNKNOWN);
                 config.SetFrameAggregateOutputMode(FrameAggregateOutputMode.OB_FRAME_AGGREGATE_OUTPUT_ALL_TYPE_FRAME_REQUIRE);
 
                 pipe.Start(config);
@@ -126,8 +127,9 @@ namespace Samples.SyncAlign
 
                     byte[] alignData = new byte[colorFrame.GetDataSize()];
                     SyncAlignProcess(colorFrame, depthFrame, ref alignData);
+                    // Aligned data is already in RGB format, pass colorFrame for proper handling
                     renderer.UpdateVideoFrame(syncAlignTextureIndex, (int)colorFrame.GetWidth(),
-                        (int)colorFrame.GetHeight(), Format.OB_FORMAT_RGB, alignData);
+                        (int)colorFrame.GetHeight(), Format.OB_FORMAT_RGB, alignData, colorFrame);
                 }
             }
             catch (Exception ex)
