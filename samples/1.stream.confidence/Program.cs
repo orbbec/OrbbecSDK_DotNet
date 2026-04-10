@@ -76,7 +76,7 @@ namespace Samples.Confidence
                                     (int)depthProfile.GetWidth(),
                                     (int)depthProfile.GetHeight(),
                                     (int)depthProfile.GetFPS());
-                                Console.WriteLine($"Enabled confidence stream: {depthProfile.GetWidth()}x{depthProfile.GetHeight()}@{depthProfile.GetFPS()}");
+                                Console.WriteLine($"Enabled confidence stream");
                             }
                             break;
                         }

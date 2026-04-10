@@ -1868,7 +1868,11 @@ namespace Orbbec
         INVALID_DEVICE_CHANGED_CALLBACK_ID = 0xFFFFFFFF,
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    /// <summary>
+    /// FilterConfigSchemaItem structure matching C++ OBFilterConfigSchemaItem layout.
+    /// Total size: 52 bytes on ARM64 (no padding between type and min).
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct FilterConfigSchemaItem
     {
         public IntPtr name;  ///< Name of the configuration item

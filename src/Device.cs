@@ -366,8 +366,7 @@ namespace Orbbec
         public IntPropertyRange GetIntPropertyRange (PropertyId propertyId)
         {
             IntPtr error = IntPtr.Zero;
-            IntPropertyRange range;
-            obNative.ob_device_get_int_property_range(out range, _handle.Ptr, propertyId, ref error);
+            IntPropertyRange range = obNative.ob_device_get_int_property_range(_handle.Ptr, propertyId, ref error);
             NativeException.HandleError(error);
             return range;
         }
@@ -388,8 +387,7 @@ namespace Orbbec
         public FloatPropertyRange GetFloatPropertyRange (PropertyId propertyId)
         {
             IntPtr error = IntPtr.Zero;
-            FloatPropertyRange range;
-            obNative.ob_device_get_float_property_range(out range, _handle.Ptr, propertyId, ref error);
+            FloatPropertyRange range = obNative.ob_device_get_float_property_range(_handle.Ptr, propertyId, ref error);
             NativeException.HandleError(error);
             return range;
         }
@@ -410,8 +408,7 @@ namespace Orbbec
         public BoolPropertyRange GetBoolPropertyRange(PropertyId propertyId)
         {
             IntPtr error = IntPtr.Zero;
-            BoolPropertyRange range;
-            obNative.ob_device_get_bool_property_range(out range, _handle.Ptr, propertyId, ref error);
+            BoolPropertyRange range = obNative.ob_device_get_bool_property_range(_handle.Ptr, propertyId, ref error);
             NativeException.HandleError(error);
             return range;
         }
@@ -451,8 +448,7 @@ namespace Orbbec
         public PropertyItem GetSupportedProperty(UInt32 index)
         {
             IntPtr error = IntPtr.Zero;
-            PropertyItem propertyItem;
-            obNative.ob_device_get_supported_property_item(out propertyItem, _handle.Ptr, index, ref error);
+            PropertyItem propertyItem = obNative.ob_device_get_supported_property_item(_handle.Ptr, index, ref error);
             NativeException.HandleError(error);
             return propertyItem;
         }
@@ -620,8 +616,7 @@ namespace Orbbec
         public DepthWorkMode GetCurrentDepthWorkMode()
         {
             IntPtr error = IntPtr.Zero;
-            DepthWorkMode workMode;
-            obNative.ob_device_get_current_depth_work_mode(out workMode, _handle.Ptr, ref error);
+            DepthWorkMode workMode = obNative.ob_device_get_current_depth_work_mode(_handle.Ptr, ref error);
             NativeException.HandleError(error);
             return workMode;
         }
@@ -732,8 +727,7 @@ namespace Orbbec
         public MultiDeviceSyncConfig GetMultiDeviceSyncConfig()
         {
             IntPtr error = IntPtr.Zero;
-            MultiDeviceSyncConfig config;
-            obNative.ob_device_get_multi_device_sync_config(out config, _handle.Ptr, ref error);
+            MultiDeviceSyncConfig config = obNative.ob_device_get_multi_device_sync_config(_handle.Ptr, ref error);
             NativeException.HandleError(error);
             return config;
         }

@@ -995,12 +995,17 @@ namespace Orbbec
         OB_STRUCT_PROPERTY = 3, /**< Struct property */
     }
 
+    /// <summary>
+    /// PropertyItem structure matching C++ OBPropertyItem layout on ARM64.
+    /// Total size: 24 bytes with natural alignment.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct PropertyItem
     {
-        public PropertyId id;          ///< \if English Property id \else 属性id \endif
-        public IntPtr name;        ///< \if English Property name \else 属性名字 \endif
-        public PropertyType type;        ///< \if English Property type \else 属性类型 \endif
+        public PropertyId id;          ///< \if English Property id \else 属性 id \endif
+        private int _padding;          // 4 bytes padding to align IntPtr on ARM64
+        public IntPtr name;            ///< \if English Property name \else 属性名字 \endif
+        public PropertyType type;      ///< \if English Property type \else 属性类型 \endif
         public PermissionType permission;  ///< \if English Property read and write permission \else 属性读写权限 \endif
     }
 }

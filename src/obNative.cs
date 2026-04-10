@@ -247,7 +247,7 @@ namespace Orbbec
 
         //ob_property_item ob_device_get_supported_property_item(ob_device *device, uint32_t index, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_get_supported_property_item")]
-        public static extern void ob_device_get_supported_property_item(out PropertyItem item, IntPtr device, UInt32 index, ref IntPtr error);
+        public static extern PropertyItem ob_device_get_supported_property_item(IntPtr device, UInt32 index, ref IntPtr error);
 
         //bool ob_device_is_property_supported(ob_device *device, ob_property_id property_id, ob_permission_type permission, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_is_property_supported")]
@@ -255,15 +255,15 @@ namespace Orbbec
 
         //ob_int_property_range ob_device_get_int_property_range( ob_device* device, ob_property_id property_id, ob_error** error );
         [DllImport(obsdk, EntryPoint = "ob_device_get_int_property_range")]
-        public static extern void ob_device_get_int_property_range(out IntPropertyRange range, IntPtr device, PropertyId propertyId, ref IntPtr error);
+        public static extern IntPropertyRange ob_device_get_int_property_range(IntPtr device, PropertyId propertyId, ref IntPtr error);
 
         //ob_float_property_range ob_device_get_float_property_range( ob_device* device, ob_property_id property_id, ob_error** error );
         [DllImport(obsdk, EntryPoint = "ob_device_get_float_property_range")]
-        public static extern void ob_device_get_float_property_range(out FloatPropertyRange range, IntPtr device, PropertyId propertyId, ref IntPtr error);
+        public static extern FloatPropertyRange ob_device_get_float_property_range(IntPtr device, PropertyId propertyId, ref IntPtr error);
 
         //ob_bool_property_range ob_device_get_bool_property_range( ob_device* device, ob_property_id property_id, ob_error** error );
         [DllImport(obsdk, EntryPoint = "ob_device_get_bool_property_range")]
-        public static extern void ob_device_get_bool_property_range(out BoolPropertyRange range, IntPtr device, PropertyId propertyId, ref IntPtr error);
+        public static extern BoolPropertyRange ob_device_get_bool_property_range(IntPtr device, PropertyId propertyId, ref IntPtr error);
 
         //void ob_device_update_firmware(ob_device *device, const char *path, ob_device_upgrade_callback callback, bool async, void *user_data, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_update_firmware")]
@@ -397,7 +397,7 @@ namespace Orbbec
         #region Advanced
         //ob_depth_work_mode ob_device_get_current_depth_work_mode(ob_device *device, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_get_current_depth_work_mode")]
-        public static extern void ob_device_get_current_depth_work_mode(out DepthWorkMode workMode, IntPtr device, ref IntPtr error);
+        public static extern DepthWorkMode ob_device_get_current_depth_work_mode(IntPtr device, ref IntPtr error);
 
         //char *ob_device_get_current_depth_work_mode_name(const ob_device *device, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_get_current_depth_work_mode_name")]
@@ -527,7 +527,7 @@ namespace Orbbec
 
         //ob_multi_device_sync_config ob_device_get_multi_device_sync_config(ob_device *device, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_get_multi_device_sync_config")]
-        public static extern void ob_device_get_multi_device_sync_config(out MultiDeviceSyncConfig config, IntPtr device, ref IntPtr error);
+        public static extern MultiDeviceSyncConfig ob_device_get_multi_device_sync_config(IntPtr device, ref IntPtr error);
 
         //void ob_device_trigger_capture(ob_device *device, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_device_trigger_capture")]
@@ -611,7 +611,7 @@ namespace Orbbec
 
         //ob_filter_config_schema_item ob_filter_config_schema_list_get_item(const ob_filter_config_schema_list *config_schema_list, uint32_t index, ob_error** error);
         [DllImport(obsdk, EntryPoint = "ob_filter_config_schema_list_get_item")]
-        public static extern void ob_filter_config_schema_list_get_item(out FilterConfigSchemaItem configSchemaItem, IntPtr filterConfigSchemaList, uint index, ref IntPtr error);
+        public static extern FilterConfigSchemaItem ob_filter_config_schema_list_get_item(IntPtr filterConfigSchemaList, uint index, ref IntPtr error);
 
         //void ob_delete_filter_config_schema_list(ob_filter_config_schema_list *config_schema_list, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_delete_filter_config_schema_list")]
@@ -1417,7 +1417,7 @@ namespace Orbbec
 
         //ob_extrinsic ob_stream_profile_get_extrinsic_to(ob_stream_profile *source, ob_stream_profile *target, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_stream_profile_get_extrinsic_to")]
-        public static extern void ob_stream_profile_get_extrinsic_to(out Extrinsic extrinsic, IntPtr source, IntPtr target, ref IntPtr error);
+        public static extern Extrinsic ob_stream_profile_get_extrinsic_to(IntPtr source, IntPtr target, ref IntPtr error);
 
         //ob_stream_profile *ob_create_video_stream_profile(ob_stream_type type, ob_format format, uint32_t width, uint32_t height, uint32_t fps, ob_error** error);
         [DllImport(obsdk, EntryPoint = "ob_create_video_stream_profile")]
@@ -1457,7 +1457,7 @@ namespace Orbbec
 
         //ob_camera_intrinsic ob_video_stream_profile_get_intrinsic(const ob_stream_profile *profile, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_get_intrinsic")]
-        public static extern void ob_video_stream_profile_get_intrinsic(out CameraIntrinsic intrinsic, IntPtr profile, ref IntPtr error);
+        public static extern CameraIntrinsic ob_video_stream_profile_get_intrinsic(IntPtr profile, ref IntPtr error);
 
         //void ob_video_stream_profile_set_distortion(ob_stream_profile *profile, ob_camera_distortion distortion, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_set_distortion")]
@@ -1465,7 +1465,7 @@ namespace Orbbec
 
         //ob_camera_distortion ob_video_stream_profile_get_distortion(const ob_stream_profile *profile, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_get_distortion")]
-        public static extern void ob_video_stream_profile_get_distortion(out CameraDistortion distortion, IntPtr profile, ref IntPtr error);
+        public static extern CameraDistortion ob_video_stream_profile_get_distortion(IntPtr profile, ref IntPtr error);
 
         //ob_hardware_decimation_config ob_video_stream_profile_get_decimation_config(ob_stream_profile *profile, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_get_decimation_config")]

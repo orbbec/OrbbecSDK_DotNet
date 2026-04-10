@@ -168,8 +168,7 @@ namespace Orbbec
         public Extrinsic GetExtrinsicTo(StreamProfile target)
         {
             IntPtr error = IntPtr.Zero;
-            Extrinsic extrinsic;
-            obNative.ob_stream_profile_get_extrinsic_to(out extrinsic, _handle.Ptr, target.GetNativeHandle().Ptr, ref error);
+            Extrinsic extrinsic = obNative.ob_stream_profile_get_extrinsic_to(_handle.Ptr, target.GetNativeHandle().Ptr, ref error);
             NativeException.HandleError(error);
             return extrinsic;
         }
@@ -286,8 +285,7 @@ namespace Orbbec
         public CameraIntrinsic GetIntrinsic()
         {
             IntPtr error = IntPtr.Zero;
-            CameraIntrinsic intrinsic;
-            obNative.ob_video_stream_profile_get_intrinsic(out intrinsic, _handle.Ptr, ref error);
+            CameraIntrinsic intrinsic = obNative.ob_video_stream_profile_get_intrinsic(_handle.Ptr, ref error);
             NativeException.HandleError(error);
             return intrinsic;
         }
@@ -302,8 +300,7 @@ namespace Orbbec
         public CameraDistortion GetDistortion()
         {
             IntPtr error = IntPtr.Zero;
-            CameraDistortion distortion;
-            obNative.ob_video_stream_profile_get_distortion(out distortion, _handle.Ptr, ref error);
+            CameraDistortion distortion = obNative.ob_video_stream_profile_get_distortion(_handle.Ptr, ref error);
             NativeException.HandleError(error);
             return distortion;
         }
