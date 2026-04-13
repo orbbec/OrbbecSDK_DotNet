@@ -112,7 +112,7 @@ namespace Samples.OptionalDepthPresetsUpdate
             Console.WriteLine(new string('-', 72));
             for (int i = 0; i < devices.Count; i++)
             {
-                var deviceInfo = devices[i].GetDeviceInfo();
+                using var deviceInfo = devices[i].GetDeviceInfo();
                 Console.WriteLine($"[{i}] Device: {deviceInfo.Name()} | SN: {deviceInfo.SerialNumber()} | Firmware version: {deviceInfo.FirmwareVersion()}");
             }
             Console.WriteLine(new string('-', 72));

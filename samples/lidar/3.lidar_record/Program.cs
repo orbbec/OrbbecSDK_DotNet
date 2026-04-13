@@ -176,7 +176,8 @@ namespace LiDAR.Record
 
         static bool IsLiDARDevice(Device device)
         {
-            return device.GetDeviceInfo().Name().Contains("LiDAR", StringComparison.OrdinalIgnoreCase);
+            using var info = device.GetDeviceInfo();
+            return info.Name().Contains("LiDAR", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

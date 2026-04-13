@@ -47,7 +47,7 @@ namespace Samples.Decimation
                 }
 
                 // Retrieve device info VID/PID
-                var deviceInfo = device.GetDeviceInfo();
+                using var deviceInfo = device.GetDeviceInfo();
                 var vid = deviceInfo.Vid();
                 var pidStr = deviceInfo.Pid();
                 int pid = int.Parse(pidStr.Replace("0x", ""), System.Globalization.NumberStyles.HexNumber);
@@ -71,7 +71,7 @@ namespace Samples.Decimation
 
                     if (IsIRSensor(sensorType) || sensorType == SensorType.OB_SENSOR_DEPTH)
                     {
-                        var sensor = sensorList.GetSensor(index);
+                        using var sensor = sensorList.GetSensor(index);
                         Console.WriteLine($"\n[Sensor {index}]: {sensorType}");
 
                         // User selects a profile (Resolution/FPS)

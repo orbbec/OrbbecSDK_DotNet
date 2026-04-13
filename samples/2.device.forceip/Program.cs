@@ -12,7 +12,7 @@ namespace Samples.ForceIP
             try
             {
                 using var context = new Context();
-                var deviceList = context.QueryDeviceList();
+                using var deviceList = context.QueryDeviceList();
 
                 // Get Ethernet device list
                 var ethernetDevices = new List<(uint Index, string Name, string SerialNumber, string MAC, string IP, string SubnetMask, string Gateway)>();

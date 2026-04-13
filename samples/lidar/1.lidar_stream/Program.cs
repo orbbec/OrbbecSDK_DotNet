@@ -42,17 +42,16 @@ namespace LiDAR.Stream
                 }
 
                 // Print device info (aligned with SDK)
-                var info = device.GetDeviceInfo();
+                using var info = device.GetDeviceInfo();
                 Console.WriteLine("\n------------------------------------------------------------------------");
                 Console.WriteLine($"Current Device: name: {info.Name()}, vid: 0x{info.Vid():X4}, pid: 0x{info.Pid():X4}, uid: 0x{info.Uid()}, sn: {info.SerialNumber()}");
 
-                // Try to get LiDAR IP address (aligned with SDK)
+                // Get and print LiDAR IP address (aligned with SDK - use 32 byte buffer)
                 try
                 {
-                    // Use a struct to get the IP address
-                    var ipData = new byte[4];
-                    var ipStruct = new LidarIpAddress { ipBytes = ipData };
-                    device.GetStructuredData(PropertyId.OB_RAW_DATA_LIDAR_IP_ADDRESS, ref ipStruct);
+                    byte[] ipData = new byte[32];
+                    uint dataSize = 32;
+                    device.GetStructuredData(PropertyId.OB_RAW_DATA_LIDAR_IP_ADDRESS, ipData, ref dataSize);
                     string ipStr = $"{ipData[3]}.{ipData[2]}.{ipData[1]}.{ipData[0]}";
                     Console.WriteLine($"LiDAR IP Address: {ipStr}");
                 }
@@ -105,13 +104,6 @@ namespace LiDAR.Stream
             }
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        struct LidarIpAddress
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public byte[] ipBytes;
-        }
-
         static void SelectStreams(Device device, Config config)
         {
             var selectedSensors = SelectSensors(device);
@@ -123,27 +115,57 @@ namespace LiDAR.Stream
 
             foreach (var sensor in selectedSensors)
             {
-                var profileList = sensor.GetStreamProfileList();
+                using var profileList = sensor.GetStreamProfileList();
                 if (profileList.ProfileCount() == 0)
                 {
-                    Console.WriteLine($"No stream profile found for sensor: {sensor.GetType()}");
+                    Console.WriteLine($"No stream profile found for sensor: {sensor.GetSensorType()}");
                     continue;
                 }
 
-                Console.WriteLine($"Stream profile list for sensor: {sensor.GetType()}");
+                var sensorType = sensor.GetSensorType();
+                Console.WriteLine($"Stream profile list for sensor: {sensorType}");
+                StreamProfile? selectedProfile = null;
                 for (uint i = 0; i < profileList.ProfileCount(); i++)
                 {
-                    var profile = profileList.GetProfile((int)i);
-                    Console.WriteLine($" - {i}. format: {profile.GetFormat()}");
+                    using var profile = profileList.GetProfile((int)i);
+                    var format = profile.GetFormat();
+
+                    // Print detailed profile info based on sensor type (aligned with C++ SDK)
+                    if (sensorType == SensorType.OB_SENSOR_ACCEL)
+                    {
+                        var accelProfile = profile.As<AccelStreamProfile>();
+                        var accRate = accelProfile.GetSampleRate();
+                        Console.WriteLine($" - {i}. acc rate: {accRate}");
+                    }
+                    else if (sensorType == SensorType.OB_SENSOR_GYRO)
+                    {
+                        var gyroProfile = profile.As<GyroStreamProfile>();
+                        var gyroRate = gyroProfile.GetSampleRate();
+                        Console.WriteLine($" - {i}. gyro rate: {gyroRate}");
+                    }
+                    else if (sensorType == SensorType.OB_SENSOR_LIDAR)
+                    {
+                        var lidarProfile = profile.As<LiDARStreamProfile>();
+                        var scanRate = lidarProfile.GetScanRate();
+                        Console.WriteLine($" - {i}. format: {format}, scan rate: {scanRate}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($" - {i}. format: {format}");
+                    }
                 }
 
                 Console.WriteLine("Select a stream profile to enable (input stream profile index): ");
                 int selected = GetInputOption();
                 if (selected >= 0 && selected < (int)profileList.ProfileCount())
                 {
-                    var selectedProfile = profileList.GetProfile(selected);
+                    using var profile = profileList.GetProfile(selected);
+                    selectedProfile = profile;
                     config.EnableStream(selectedProfile);
                 }
+
+                // Dispose sensor after use
+                sensor.Dispose();
             }
         }
 
@@ -154,7 +176,7 @@ namespace LiDAR.Stream
             while (true)
             {
                 Console.WriteLine("Sensor list:");
-                var sensorList = device.GetSensorList();
+                using var sensorList = device.GetSensorList();
                 for (uint i = 0; i < sensorList.SensorCount(); i++)
                 {
                     var sensorType = sensorList.SensorType(i);
@@ -303,7 +325,7 @@ namespace LiDAR.Stream
 
         static bool IsLiDARDevice(Device device)
         {
-            var info = device.GetDeviceInfo();
+            using var info = device.GetDeviceInfo();
             return info.Name().Contains("LiDAR", StringComparison.OrdinalIgnoreCase);
         }
     }

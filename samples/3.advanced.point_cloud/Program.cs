@@ -84,12 +84,11 @@ namespace Samples.PointCloud
 
             try
             {
-                Frameset? frameSet = null;
-                while (true)
+                using var frameSet = pipeline.WaitForFrames(1000);
+                if (frameSet == null)
                 {
-                    frameSet = pipeline.WaitForFrames(1000);
-                    if (frameSet != null)
-                        break;
+                    Console.WriteLine("No frame received, please try again!");
+                    return;
                 }
                 using var alignedFrameset = align.Process(frameSet);
 

@@ -44,8 +44,8 @@ namespace Samples.SaveToDisk
 
                     frameIndex++;
 
-                    var depthFrame = frameSet.GetDepthFrame();
-                    var colorFrame = frameSet.GetColorFrame();
+                    using var depthFrame = frameSet.GetDepthFrame();
+                    using var colorFrame = frameSet.GetColorFrame();
 
                     if (depthFrame != null)
                     {

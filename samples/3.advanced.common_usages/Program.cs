@@ -164,7 +164,7 @@ namespace Samples.CommonUsages
         {
             lock (_deviceLock)
             {
-                var deviceList = _context!.QueryDeviceList();
+                using var deviceList = _context!.QueryDeviceList();
                 if (deviceList.DeviceCount() < 1)
                 {
                     Console.WriteLine("No device found!");
@@ -172,7 +172,7 @@ namespace Samples.CommonUsages
                 }
 
                 _device = deviceList.GetDevice(0);
-                var deviceInfo = _device.GetDeviceInfo();
+                using var deviceInfo = _device.GetDeviceInfo();
                 Console.WriteLine($"Found device connected, SN: {deviceInfo.SerialNumber()}");
                 Console.WriteLine($"Open device success, SN: {deviceInfo.SerialNumber()}\n");
 
@@ -213,7 +213,8 @@ namespace Samples.CommonUsages
             {
                 if (_device != null)
                 {
-                    currentDevSn = _device.GetDeviceInfo().SerialNumber();
+                    using var deviceInfo = _device.GetDeviceInfo();
+                    currentDevSn = deviceInfo.SerialNumber();
                 }
             }
 
@@ -261,11 +262,11 @@ namespace Samples.CommonUsages
                 {
                     try
                     {
-                        var sensor = sensorList.GetSensor(sensorType);
-                        var profileList = sensor.GetStreamProfileList();
+                        using var sensor = sensorList.GetSensor(sensorType);
+                        using var profileList = sensor.GetStreamProfileList();
                         if (profileList.ProfileCount() > 0)
                         {
-                            var defProfile = profileList.GetProfile(0);
+                            using var defProfile = profileList.GetProfile(0);
                             var defVsProfile = defProfile.As<VideoStreamProfile>();
                             _profilesMap[sensorType] = defVsProfile;
 
@@ -551,7 +552,7 @@ namespace Samples.CommonUsages
 
                 try
                 {
-                    var deviceInfo = _device.GetDeviceInfo();
+                    using var deviceInfo = _device.GetDeviceInfo();
                     Console.WriteLine("-Device name: " + deviceInfo.Name());
                     Console.WriteLine($"-Device pid: 0x{deviceInfo.Pid():X4} vid: 0x{deviceInfo.Vid():X4} uid: {deviceInfo.Uid()}");
                     Console.WriteLine("-Firmware version: " + deviceInfo.FirmwareVersion());
@@ -1144,7 +1145,7 @@ namespace Samples.CommonUsages
                         if (_device.IsPropertySupported(PropertyId.OB_PROP_DEPTH_GAIN_INT, PermissionType.OB_PERMISSION_WRITE))
                         {
                             int value;
-                            var deviceInfo = _device.GetDeviceInfo();
+                            using var deviceInfo = _device.GetDeviceInfo();
                             int vid = (int)deviceInfo.Vid();
                             int pid = int.Parse(deviceInfo.Pid().Replace("0x", ""), System.Globalization.NumberStyles.HexNumber);
 

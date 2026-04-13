@@ -37,7 +37,7 @@ namespace Samples.Callback
 
                 // Get device from pipeline
                 var device = _pipeline.GetDevice();
-                var deviceInfo = device.GetDeviceInfo();
+                using var deviceInfo = device.GetDeviceInfo();
                 string pidStr = deviceInfo.Pid();
                 int vid = deviceInfo.Vid();
                 // Parse hex string like "0x1001"
@@ -170,24 +170,30 @@ namespace Samples.Callback
                         var colorFrame = frameset.GetColorFrame();
                         if (colorFrame != null)
                         {
-                            using var vf = colorFrame.As<VideoFrame>();
-                            if (vf != null)
+                            using (colorFrame)
                             {
-                                byte[] data = new byte[vf.GetDataSize()];
-                                vf.CopyData(ref data);
-                                // Pass the original frame to support formats requiring Filter conversion like MJPG
-                                renderer.UpdateVideoFrame(colorIndex, (int)vf.GetWidth(), (int)vf.GetHeight(),
-                                    vf.GetFormat(), data, vf);
+                                using var vf = colorFrame.As<VideoFrame>();
+                                if (vf != null)
+                                {
+                                    byte[] data = new byte[vf.GetDataSize()];
+                                    vf.CopyData(ref data);
+                                    // Pass the original frame to support formats requiring Filter conversion like MJPG
+                                    renderer.UpdateVideoFrame(colorIndex, (int)vf.GetWidth(), (int)vf.GetHeight(),
+                                        vf.GetFormat(), data, vf);
+                                }
                             }
                         }
 
                         var depthFrame = frameset.GetDepthFrame();
                         if (depthFrame != null)
                         {
-                            byte[] data = new byte[depthFrame.GetDataSize()];
-                            depthFrame.CopyData(ref data);
-                            renderer.UpdateVideoFrame(depthIndex, (int)depthFrame.GetWidth(),
-                                (int)depthFrame.GetHeight(), depthFrame.GetFormat(), data);
+                            using (depthFrame)
+                            {
+                                byte[] data = new byte[depthFrame.GetDataSize()];
+                                depthFrame.CopyData(ref data);
+                                renderer.UpdateVideoFrame(depthIndex, (int)depthFrame.GetWidth(),
+                                    (int)depthFrame.GetHeight(), depthFrame.GetFormat(), data);
+                            }
                         }
 
                         // Process all auxiliary frames (IR, dual color sensors)

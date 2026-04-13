@@ -298,28 +298,28 @@ namespace Orbbec
         * @brief Get structured data type of device property
         *
         * @param propertyId Property id
-        * @param data Property data obtained
+        * @param data Property data obtained (byte array)
         * @param dataSize Get the size of the attribute
         * \else
         * @brief 获取structured data类型的设备属性
         *
         * @param propertyId 属性id
-        * @param data 获取的属性数据
+        * @param data 获取的属性数据（字节数组）
         * @param dataSize 获取的属性大小
         * \endif
         */
-        public void GetStructuredData<T>(PropertyId propertyId, ref T data) where T : struct
+        public void GetStructuredData(PropertyId propertyId, byte[] data, ref uint dataSize)
         {
             IntPtr error = IntPtr.Zero;
 
-            uint dataSize = (uint)Marshal.SizeOf(typeof(T));
             IntPtr dataPtr = Marshal.AllocHGlobal((int)dataSize);
             try
             {
                 obNative.ob_device_get_structured_data(_handle.Ptr, propertyId, dataPtr, ref dataSize, ref error);
                 NativeException.HandleError(error);
 
-                data = Marshal.PtrToStructure<T>(dataPtr);
+                // Copy data from unmanaged memory to byte array
+                Marshal.Copy(dataPtr, data, 0, (int)dataSize);
             }
             finally
             {

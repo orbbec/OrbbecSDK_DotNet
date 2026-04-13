@@ -30,7 +30,7 @@ namespace Samples.PostProcessing
             {
                 pipe = new Pipeline();
                 device = pipe.GetDevice();
-                var sensor = device.GetSensor(SensorType.OB_SENSOR_DEPTH);
+                using var sensor = device.GetSensor(SensorType.OB_SENSOR_DEPTH);
                 var filterList = sensor.CreateRecommendedFilters();
 
                 PrintFiltersInfo(filterList);

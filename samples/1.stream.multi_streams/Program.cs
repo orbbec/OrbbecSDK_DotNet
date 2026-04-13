@@ -30,7 +30,7 @@ namespace Samples.MultiStreams
             {
                 pipe = new Pipeline();
                 device = pipe.GetDevice();
-                var deviceInfo = device.GetDeviceInfo();
+                using var deviceInfo = device.GetDeviceInfo();
                 var pidStr = deviceInfo.Pid();
                 var vid = deviceInfo.Vid();
                 // Parse hex string like "0x1001"
@@ -153,7 +153,7 @@ namespace Samples.MultiStreams
                         {
                             if (frameType == FrameType.OB_FRAME_CONFIDENCE)
                             {
-                                var depthFrame = frameSet.GetFrame(FrameType.OB_FRAME_DEPTH)?.As<VideoFrame>();
+                                using var depthFrame = frameSet.GetFrame(FrameType.OB_FRAME_DEPTH)?.As<VideoFrame>();
                                 if (depthFrame == null)
                                 {
                                     continue;

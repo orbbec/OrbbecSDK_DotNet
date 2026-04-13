@@ -45,7 +45,7 @@ namespace Samples.Record
                 }
 
                 device = deviceList.GetDevice(0);
-                var devInfo = device.GetDeviceInfo();
+                using var devInfo = device.GetDeviceInfo();
                 var pidStr = devInfo.Pid();
                 var vid = devInfo.Vid();
                 // Parse pid from hex string (format: "0x1234")
@@ -112,6 +112,7 @@ namespace Samples.Record
             finally
             {
                 pipe?.Stop();
+                pipe?.Dispose();
                 device?.Dispose();
                 ctx?.Dispose();
                 Console.WriteLine("Record sample exited.");
@@ -221,11 +222,12 @@ namespace Samples.Record
 
                             if (frameType == FrameType.OB_FRAME_CONFIDENCE)
                             {
-                                var depthFrame = frameSet.GetFrame(FrameType.OB_FRAME_DEPTH)?.As<VideoFrame>();
-                                if (depthFrame == null)
+                                using var depthFrameRaw = frameSet.GetFrame(FrameType.OB_FRAME_DEPTH);
+                                if (depthFrameRaw == null)
                                 {
                                     continue;
                                 }
+                                using var depthFrame = depthFrameRaw.As<VideoFrame>();
                                 byte[] data = new byte[frame.GetDataSize()];
                                 frame.CopyData(ref data);
                                 renderer.UpdateVideoFrame(textureIndex, (int)depthFrame.GetWidth(), (int)depthFrame.GetHeight(), Format.OB_FORMAT_Y8, data);

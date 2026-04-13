@@ -94,8 +94,9 @@ namespace Samples.MultiDevicesSync
             {
                 if (_pipeline != null)
                 {
-                    var profileList = _pipeline.GetStreamProfileList(_sensorType);
-                    var streamProfile = profileList.GetProfile(0).As<VideoStreamProfile>();
+                    using var profileList = _pipeline.GetStreamProfileList(_sensorType);
+                    using var streamProfileRaw = profileList.GetProfile(0);
+                    var streamProfile = streamProfileRaw.As<VideoStreamProfile>();
                     var fps = streamProfile.GetFPS();
 
                     HalfTspGap = (uint)(500.0f / fps + 0.5);

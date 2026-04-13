@@ -16,7 +16,7 @@ namespace Samples.Enumerate
                 while (true)
                 {
                     // Query the list of connected devices
-                    var deviceList = context.QueryDeviceList();
+                    using var deviceList = context.QueryDeviceList();
                     if (deviceList.DeviceCount() < 1)
                     {
                         Console.WriteLine("No device found! Please connect a supported device and retry this program.");

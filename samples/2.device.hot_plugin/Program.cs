@@ -27,7 +27,7 @@ namespace Samples.HotPlugin
                     PrintDeviceList("removed", removedList);
                 });
 
-                var currentList = ctx.QueryDeviceList();
+                using var currentList = ctx.QueryDeviceList();
                 PrintDeviceList("connected", currentList);
                 currentList.Dispose();
 
@@ -45,10 +45,10 @@ namespace Samples.HotPlugin
 
                         if (keyInfo.Key == ConsoleKey.R)
                         {
-                            using (currentList = ctx.QueryDeviceList())
+                            using (var rebootList = ctx.QueryDeviceList())
                             {
                                 Console.WriteLine("Rebooting devices...");
-                                RebootDevices(currentList);
+                                RebootDevices(rebootList);
                             }
                         }
                     }

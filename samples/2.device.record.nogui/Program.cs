@@ -7,6 +7,7 @@ namespace Samples.RecordNoGui
     {
         private static Dictionary<FrameType, ulong> _frameCountMap = new Dictionary<FrameType, ulong>();
         private static readonly object _lock = new object();
+        private static volatile bool _isRunning = true;
 
         static void Main(string[] args)
         {
@@ -24,18 +25,18 @@ namespace Samples.RecordNoGui
                 using var context = new Context();
 
                 // Query device list
-                var deviceList = context.QueryDeviceList();
+                using var deviceList = context.QueryDeviceList();
                 if (deviceList.DeviceCount() < 1)
                 {
                     Console.WriteLine("No device found! Please connect a supported device and retry this program.");
                     Console.WriteLine("\nPress any key to exit.");
                     Console.ReadKey(true);
-                    Environment.Exit(1);
+                    return;
                 }
 
                 // Acquire first available device
-                var device = deviceList.GetDevice(0);
-                var devInfo = device.GetDeviceInfo();
+                using var device = deviceList.GetDevice(0);
+                using var devInfo = device.GetDeviceInfo();
                 var pidStr = devInfo.Pid();
                 var vid = devInfo.Vid();
                 // Parse pid from hex string (format: "0x1234")
@@ -56,7 +57,7 @@ namespace Samples.RecordNoGui
 
                 // Create a config and enable all streams
                 using var config = new Config();
-                var sensorList = device.GetSensorList();
+                using var sensorList = device.GetSensorList();
                 var count = sensorList.SensorCount();
                 for (uint i = 0; i < count; i++)
                 {
@@ -74,10 +75,17 @@ namespace Samples.RecordNoGui
                 // Start pipeline with callback
                 pipe.Start(config, OnFrameset);
 
+                // Register Ctrl+C handler for graceful shutdown
+                Console.CancelKeyPress += (s, e) =>
+                {
+                    e.Cancel = true;
+                    _isRunning = false;
+                };
+
                 // Initialize recording device with output file
                 var startTime = GetNowTimesMs();
                 uint waitTime = 1000;
-                var recordDevice = new RecordDevice(device, filePath, true);
+                using var recordDevice = new RecordDevice(device, filePath, true);
 
                 // Operation prompt
                 Console.WriteLine("Streams and recorder have started!");
@@ -137,40 +145,43 @@ namespace Samples.RecordNoGui
                             Console.WriteLine();
                         }
                     }
-                } while (true);
+                } while (_isRunning);
 
-                // Stop the pipeline
+                // Stop pipeline before disposing
                 pipe.Stop();
-
-                // Flush and save recording file (dispose recordDevice)
-                recordDevice.Dispose();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
                 Console.WriteLine("\nPress any key to exit.");
                 Console.ReadKey(true);
-                Environment.Exit(1);
             }
         }
 
         static void OnFrameset(Frameset frameset)
         {
-            lock (_lock)
+            try
             {
-                var count = frameset.GetFrameCount();
-                for (uint i = 0; i < count; i++)
+                lock (_lock)
                 {
-                    using var frame = frameset.GetFrameByIndex((int)i);
-                    if (frame != null)
+                    var count = frameset.GetFrameCount();
+                    for (uint i = 0; i < count; i++)
                     {
-                        var type = frame.GetFrameType();
-                        if (_frameCountMap.ContainsKey(type))
-                            _frameCountMap[type]++;
-                        else
-                            _frameCountMap[type] = 1;
+                        using var frame = frameset.GetFrameByIndex((int)i);
+                        if (frame != null)
+                        {
+                            var type = frame.GetFrameType();
+                            if (_frameCountMap.ContainsKey(type))
+                                _frameCountMap[type]++;
+                            else
+                                _frameCountMap[type] = 1;
+                        }
                     }
                 }
+            }
+            finally
+            {
+                frameset.Dispose();
             }
         }
 

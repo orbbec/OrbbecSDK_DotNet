@@ -64,7 +64,7 @@ namespace Samples.Depth
                     using var frameSet = pipeline.WaitForFrames(100);
                     if (frameSet == null) continue;
 
-                    var depthFrame = frameSet.GetDepthFrame();
+                    using var depthFrame = frameSet.GetDepthFrame();
                     if (depthFrame == null) continue;
 
                     // for Y16 format depth frame, print the distance of the center pixel every 30 frames
